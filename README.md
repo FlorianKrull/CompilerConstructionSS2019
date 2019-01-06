@@ -10,7 +10,7 @@
 | 2019-06-21 | Milestone 5     |
 | 2019-06-30 | Final           |
 
-[Example Input](example_input.md)
+[Example Input]: example_input.md
 
 - [mC Compiler Specification](specification.md)
 - [Getting Started Code-base](https://git.uibk.ac.at/c7031162/mcc)
