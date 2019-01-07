@@ -1,15 +1,14 @@
-void lucas_number (int x, int y, int num){
- int z;
- z=0;
- while(num >= x)
- {
-   print_int(x);
-   print(", ");
-   z=x+y;
-   x=y;
-   y=z;
- }
-
+void lucas_number (int x, int y, int num)
+{
+    int z;
+    z=0;
+    while(num >= x) {
+        print_int(x);
+        print(", ");
+        z=x+y;
+        x=y;
+        y=z;
+    }
 }
 
 int main()

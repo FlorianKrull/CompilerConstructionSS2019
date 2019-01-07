@@ -1,30 +1,30 @@
 /* Test booleans and greater/smaller comparisons */
+
 void guessNumber(int number, int max) {
     bool success;
     success = false;
     while(!success) {
         print("Enter a number between 0 and ");
         print_int(max);
-	print("\n");
+        print("\n");
         int guess;
         guess = read_int();
         success = guess == number;
-        if(success) 
+        if(success)
             print("you guessed correct");
         else {
-            if(guess < number) 
+            if(guess < number)
                 print("the number is bigger\n");
-            else 
+            else
                 print("the number is smaller\n");
         }
     }
     print_nl();
 }
-    
+
 int main() {
     int test;
     test = 3;
     guessNumber(test, 10);
     return 0;
 }
-    

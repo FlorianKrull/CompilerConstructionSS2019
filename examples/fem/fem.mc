@@ -16,7 +16,7 @@ int main()
 	if (Vbat < 0.0) {
 		print("Please plug the battery in the right way");
 		print_nl();
-		return;
+		return 1;
 	}
 
 	print("Resistor value: ");
@@ -28,7 +28,7 @@ int main()
 	if (R < 0.0 || C < 0.0) {
 		print("Part values must be positive");
 		print_nl();
-		return;
+		return 1;
 	}
 
 	print("Time step: ");
@@ -47,7 +47,7 @@ int main()
 	if (dt < 0.0 || iter < 0) {
 		print("Cowardly refusing to go backwards in time");
 		print_nl();
-		return;
+		return 1;
 	}
 
 	Vc = 0.0;
@@ -68,5 +68,5 @@ int main()
 		iter = iter - 1;
 	}
 
-    return 0;
+	return 0;
 }
