@@ -1,6 +1,6 @@
 # Submission Guideline
 
-- `XX` is to be replaced with the number of your team with leading zero (e.g `02`).
+- `XX` is to be replaced with the number of your team with leading zero (e.g. `02`).
 - `Y` is to be replaced with the corresponding milestone number.
 - One submission *per team*.
 

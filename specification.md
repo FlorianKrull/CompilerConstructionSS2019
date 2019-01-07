@@ -5,12 +5,12 @@ Like a regular compiler, the mC compiler is divided into 3 main parts: front-end
 
 The front-end's task is to validate a given input using syntactic and semantic checks.
 The syntactic checking is done by the *parser* which, on success, generates an abstract syntax tree (AST).
-This tree data structure is mainly used for semantic checking, although one can also apply transformations on it.
+This tree data structure is mainly used for semantic checking, although one can also apply transformations to it.
 Moving on, the AST is translated to the compiler's intermediate representation (IR) and passed to the core.
 Invalid inputs cause errors to be reported.
 
 The core provides infrastructure for running analyses and transformations on the IR.
-These analyses and transformation are commonly used for optimisation.
+These analyses and transformations are commonly used for optimisation.
 Additional data structures, like the control flow graph (CFG), are utilised for this phase.
 Next, the (optimised) IR is passed to the back-end.
 
@@ -35,7 +35,7 @@ The mC compiler is implemented using modern C (or C++) adhering to the C11 (or C
 3. **Control flow graph**
     - Valid inputs are convert to IR.
     - The IR can be printed (see `mc_ir`)
-    - The CFG can be printed in the DOT format.
+    - The CFG is generated and can be printed in the DOT format.
 4. **Back-end**
     - Valid inputs are converted to IR and then to assembly code.
     - GCC is invoked to create the final executable.
@@ -72,14 +72,6 @@ digit            = /[0-9]/
 
 identifier       = alpha , [ { alpha_num } ]
 
-bool_literal     = "true" | "false"
-
-int_literal      = { digit }
-
-float_literal    = { digit } , "." , { digit }
-
-string_literal   = /"[^"]*"/
-
 
 # Operators
 
@@ -102,6 +94,14 @@ literal          = bool_literal
                  | int_literal
                  | float_literal
                  | string_literal
+
+bool_literal     = "true" | "false"
+
+int_literal      = { digit }
+
+float_literal    = { digit } , "." , { digit }
+
+string_literal   = /"[^"]*"/
 
 
 # Declarations / Assignments
@@ -160,30 +160,31 @@ program          = [ { function_def } ]
 
 mC supports only *C-style* comments, starting with `/*` and ending with `*/`.
 Like in C, they can span across multiple lines.
-Comments are discarded by the parser, but do not forget to take newlines into account for line numbering.
+Comments are discarded by the parser; however, line breaks are taken into account for line numbering.
 
 ### Size Limitations
 
-Inside your compiler, use `long` and `double` to store mC's `int` / `float` literals.
-You may assume that they are big and precise enough to store the corresponding literal.
+`long` and `double` is used in the compiler to store mC's `int` and `float` literals, respectively.
+It is assumed that both types are big and precise enough to store the corresponding literal.
 
-Similarly for arrays, you may assume that arrays are at most `LONG_MAX` bytes long.
+Furthermore, it is assumed that arrays are at most `LONG_MAX` bytes long.
 
 ### Special Semantics
 
 #### Boolean
 
-For mC we consider `bool` a first-class citizen, distinct from `int`.
-The operators `!`, `&&`, and `||` can only be used for booleans.
-Additionally we do *not* support short-circuit evaluation.
+`bool` is considered a first-class citizen, distinct from `int`.
+
+The operators `!`, `&&`, and `||` can only be used with Booleans.
+Short-circuit evaluation is *not* supported.
 
 #### Strings
 
 Strings are immutable and do not support any operation (e.g. concatenation).
-Yet, like comments, strings can span across multiple lines.
-Furthermore, they do not support escape sequences.
+Like comments, strings can span across multiple lines.
+Escape sequences are *not* supported.
 
-Their sole purpose is to be used with the built-in `print` function.
+Their sole purpose is to be used with the built-in `print` function (see below).
 
 #### Arrays
 
@@ -202,7 +203,7 @@ For example, the following code is *invalid*:
 
     c = a + b;    /* not supported */
 
-You'd have to do this via a loop, assigning every element:
+This needs to be rewritten as a loop in order to work:
 
     int i;
     i = 0;
@@ -220,33 +221,35 @@ Even further, one cannot assign to a variable of array type.
 Function arguments are always passed by value.
 
 `bool`, `int`, and `float` are passed directly.
-Strings and arrays are passed via pointers.
+Strings and arrays are passed via pointers internally.
 
 #### Type Conversion
 
-There are no type conversion, neither implicit nor explicit.
+There are *no* type conversion, neither implicit nor explicit.
 
 An expression used as a condition (for `if` or `while`) is expected to be of type `bool`.
 
 #### Entry Point
 
-Your top-level rule is `program` which simply consists of 0 or more function definitions.
+The top-level rule is `program` which simply consists of 0 or more function definitions.
+
 While the parser happily accepts empty source files, a semantic check enforces that a function named `main` must be present.
 `main` takes no arguments and returns an `int`.
+
+On success, an mC program returns `0`.
 
 #### Declaration, Definition, and Initialization
 
 `declaration` is used to declare variables which can then be initialised with `assignment`.
+Splitting declaration and initialisation simplifies the creation of symbol tables.
 
-Furthermore we do not provide a way to declare functions.
-All functions are declared by their definition.
-It is possible to call a function before it has been defined.
+Functions are always declared by their definition.
+Contrary to C, it is possible to call a function before it has been defined.
 
 #### Empty Parameter List
 
-In C, the parameter list of a function taking no arguments contains only `void`.
-For mC we simply use an empty parameter list.
-Hence, instead of writing `int main(void)` we write `int main()`.
+In C, the parameter list of a function taking no arguments is written as `(void)`.
+mC, in this case, just uses an empty parameter list `()`.
 
 #### Dangling Else
 
@@ -261,7 +264,7 @@ The following mC code snippets are semantically equivalent:
                          |            }
                          |        }
 
-### I/O
+### Built-in Functions
 
 The following built-in functions are provided by the compiler for I/O operations:
 
@@ -281,7 +284,7 @@ The focus lies on a clean and modular implementation as well as a straight forwa
 For example, each semantic check may traverse the AST in isolation.
 
 - Exported symbols are prefixed with `mcc_`.
-- It is threadsafe.
+- It is thread-safe.
 - No memory is leaked — even in error cases.
 - Functions do not interact directly with `stdin`, `stdout`, or `stderr`.
 - No function terminates the application on correct usage.
@@ -303,19 +306,24 @@ An invalid input is rejected, resulting in a meaningful error message, for insta
     foo.mc:3:8: error: unexpected '{', expected ‘(’
 
 It is recommended to closely follow the error message format of other compilers.
+This allows for better integration with IDEs.
+
 Displaying the offending source line along with the error message is helpful, but not required.
+
 Parsing may stop on the first error.
 Error recovery is optional.
 
 The parser component may be generated by tools like `flex` and `bison`, or similar.
-However, pay attention to operator precedence.
+Although, you are encouraged to implement a recursive descent or combinator parser instead.
+Nevertheless, pay attention to operator precedence.
 
 Note that partial mC programs, like an expression or statement, are not valid inputs for the main *parse* function.
-However, the library can provide additional functions for parsing single expressions or statements.
+The library may provide additional functions for parsing single expressions or statements.
 
 ### Abstract Syntax Tree
 
-The AST data structure definition itself is *not* specified.
+The AST data structure itself is *not* specified.
+
 Consider using the visitor pattern for tree traversals.
 
 Given this example input:
@@ -330,7 +338,7 @@ int fib(int n)
 
 The visualisation of the AST for the `fib` function could look like this:
 
-![`fib` AST exampe](images/fib_ast.png)
+![`fib` AST example](images/fib_ast.png)
 
 ### Semantic Checks
 
@@ -342,7 +350,7 @@ As the parser only does syntactic checking, additional semantic checks are imple
 - Checking for calls to unknown functions
 - Checking for presence of `main` and correct signature
 - Checking that all execution paths of a non-void function return a value
-- Type checking (remember, nor implicit or explicit conversions)
+- Type checking (remember, neither implicit nor explicit type conversions)
     - This also includes checking arguments and return types for call expressions.
 
 In addition to the AST, *symbol tables* are created and used for semantic checking.
@@ -353,7 +361,7 @@ Be sure to correctly model [*shadowing*](https://en.wikipedia.org/wiki/Variable_
 As IR, a low-level [three-address code (TAC)](https://en.wikipedia.org/wiki/Three-address_code) is used.
 The instruction set of this code is *not* specified.
 
-Note that the compiler core is independent from the front-end or back-end.
+The compiler's core is independent from the front- and back-end.
 
 ### Control Flow Graph
 
@@ -364,30 +372,32 @@ It is recommended to also provide a visitor mechanism for this graph.
 
 ### Assembly Code Generation
 
-mC targets x86 and uses GCC as back-end compiler.
-On an x86_64 system, GCC multilib support must be available and the flag `-m32` is passed to the compiler.
+The mC compiler targets x86 and uses GCC as back-end compiler.
+On an x86_64 system, GCC multi-lib support must be available and the flag `-m32` is passed to the compiler.
 
 The code generated by the back-end is compiled with the [GNU Assembler](https://en.wikipedia.org/wiki/GNU_Assembler) (by GCC).
 Pay special attention to floating point and integer handling.
 
 Use [cdecl calling convention](https://en.wikipedia.org/wiki/X86_calling_conventions#cdecl).
-It is paramount to correctly implement the calling convention, otherwise you will corrupt your stack during function calls and returns.
+It is paramount to correctly implement the calling convention, otherwise the stack may get corrupted during function calls and returns.
 
 ## Applications
 
-Apart from the main compiler executable `mcc`, additional auxiliary executables are implemented.
+Apart from the main compiler executable `mcc`, additional auxiliary executables are provided.
 These executables aid the development process and are used for evaluation.
 
-Most of the applications are defined by their usage information.
+The applications are commonly defined by their usage information.
 Composing them with other command-line tools, like `dot`, is a core feature.
 
-Unless specified, the exact output format is up to you.
-However, do *not* omit details — like simplifying the AST.
+The exact output format is not specified in all cases.
+However, details should *not* be omitted — like simplifying the AST>
 
 All applications exit with code `EXIT_SUCCESS` iff they succeeded in their operation.
 
-Note each executable excepts multiple inputs files.
-Each input is parsed in isolation; the ASTs are merged before semantic checks are run.
+Each executable excepts multiple inputs files.
+The inputs are parsed in isolation; the resulting ASTs are merged before semantic checks are run.
+
+Errors are written to `stderr`.
 
 ### `mcc`
 
@@ -420,7 +430,7 @@ This is the main compiler executable, sometimes referred to as *driver*.
     OPTIONS:
       -h, --help                displays this help message
       -o, --output <file>       write the output to <file> (defaults to stdout)
-      -f, --function <name>     limit scope to given function
+      -f, --function <name>     limit scope to the given function
 
 ### `mc_symbol_table`
 
@@ -434,7 +444,7 @@ This is the main compiler executable, sometimes referred to as *driver*.
     OPTIONS:
       -h, --help                displays this help message
       -o, --output <file>       write the output to <file> (defaults to stdout)
-      -f, --function <name>     limit scope to given function
+      -f, --function <name>     limit scope to the given function
 
 ### `mc_type_check_trace`
 
@@ -448,7 +458,7 @@ This is the main compiler executable, sometimes referred to as *driver*.
     OPTIONS:
       -h, --help                displays this help message
       -o, --output <file>       write the output to <file> (defaults to stdout)
-      -f, --function <name>     limit scope to given function
+      -f, --function <name>     limit scope to the given function
 
 ### `mc_ir`
 
@@ -462,7 +472,7 @@ This is the main compiler executable, sometimes referred to as *driver*.
     OPTIONS:
       -h, --help                displays this help message
       -o, --output <file>       write the output to <file> (defaults to stdout)
-      -f, --function <name>     limit scope to given function
+      -f, --function <name>     limit scope to the given function
 
 ### `mc_cfg_to_dot`
 
@@ -476,7 +486,7 @@ This is the main compiler executable, sometimes referred to as *driver*.
     OPTIONS:
       -h, --help                displays this help message
       -o, --output <file>       write the output to <file> (defaults to stdout)
-      -f, --function <name>     limit scope to given function
+      -f, --function <name>     limit scope to the given function
 
 ### `mc_asm`
 
@@ -490,7 +500,7 @@ This is the main compiler executable, sometimes referred to as *driver*.
     OPTIONS:
       -h, --help                displays this help message
       -o, --output <file>       write the output to <file> (defaults to stdout)
-      -f, --function <name>     limit scope to given function
+      -f, --function <name>     limit scope to the given function
 
 ## Project Structure
 
@@ -501,7 +511,7 @@ The following directory layout is used.
     │   ├── mc_ast_to_dot.c
     │   ├── mcc.c
     │   └── …
-    ├── docs/                               # Additional documentation resides here.
+    ├── docs/                               # Additional documentation goes here.
     │   └── …
     ├── include/                            # All public headers live here, note the `mcc` subdirectory.
     │   └── mcc/
@@ -510,7 +520,7 @@ The following directory layout is used.
     │       ├── ast_visit.h
     │       ├── parser.h
     │       └── …
-    ├── src/                                # The actual implementation, may also contain private headers and so on.
+    ├── src/                                # The actual implementation; may also contain private headers and so on.
     │   ├── ast.c
     │   ├── ast_print.c
     │   ├── ast_visit.c
@@ -537,7 +547,7 @@ The README is kept short and clean with the following sections:
 
 `src` contains the implementation of the library, while `include` defines its API.
 
-Each application (C file inside `app`) is liked against the shared library and uses the provided interface.
+Each application (C file inside `app`) is linked against the shared library and uses the provided interface.
 They mainly contain argument parsing and combine the functionality provided by the library to achieve their task.
 
 The repository does not contain or track generated files.
@@ -554,7 +564,7 @@ Complex issues may reference a dedicated document inside `docs` providing more d
 ## Build Infrastructure
 
 As build system (generator), use either [Meson](http://mesonbuild.com/), [CMake](https://cmake.org/), or plain Makefiles.
-Ensure dependencies between source files are modelled correctly.
+Dependencies between source files are modelled correctly to enable a short development cycle.
 
 *Note:* Talk to me if you want to use a different build system.
 
@@ -563,7 +573,7 @@ Ensure dependencies between source files are modelled correctly.
 The default build configuration is *release* (optimisations enabled).
 Unless Meson or CMake is used, the README documents how to switch to a *debug* configuration.
 
-Warnings are always enabled; `-Wall -Wextra` are used at least.
+Warnings are always enabled: `-Wall -Wextra` are used at least.
 
 ### Testing
 
@@ -572,16 +582,16 @@ Crucial or complicated logic is tested adequately.
 The project infrastructure provides a *simple* way to run all unit and integration tests.
 See the getting started code-base for an example (`scripts/run_integration_tests`).
 
-Similarly, a way to run unit tests using`valgrind` is provided.
+Similarly, a way to run unit tests using `valgrind` is provided.
 
 ### Coverage
 
-An HTML coverage report can be obtained follow the *simple* instructions inside the README.
+An HTML coverage report can be obtained following *simple* instructions inside the README.
 
 ### Dependencies
 
-The implementation should not have any dependencies apart from the C (or C++) standard library and a unit testing framework.
 The *prerequisites* section of the README enumerates the dependencies.
+The implementation should not have any dependencies apart from the C (or C++) standard library and a unit testing framework.
 
 The unit testing framework is *vendored* and automatically used by the build system.
 See the getting started code-base for an example.
@@ -598,7 +608,7 @@ Architectural design and readability of your code will be judged.
 - Do not waste time or space (memory leaks).
 - Check for leaks using `valgrind`, especially in error cases.
 - Keep design and development principles in mind, especially KISS and DRY.
-- Always state the sources of non-original content.
+- Always state the source of non-original content.
     - Use persistent links when possible.
     - Ideas and inspirations should be referenced too.
 
@@ -607,7 +617,7 @@ Architectural design and readability of your code will be judged.
 ### C/C++
 
 - While not required, it is highly recommended to use a formatting tool, like [ClangFormat](https://clang.llvm.org/docs/ClangFormat.html).
-  A configuration file is provided with the getting started code-base, however, you are free to rule your own.
+  A configuration file is provided in the getting started code-base, however, you are free to rule your own.
 - Lines should not exceed 120 columns.
 - The nesting depth of control statements should not exceed 4.
     - Move inner code to dedicated functions or macros.
@@ -626,8 +636,8 @@ Architectural design and readability of your code will be judged.
     - Separators can be helpful, but they should not distract the reader.
 - Keep public header files free from implementation details, this also applies to the overview comment.
 - Use assertions to verify preconditions.
-- Ensure the correct usage of library functions, and always check return codes.
-- Prefer bound-checking functions, like `snprintf` over non-bound-checking variant.
+- Ensure the correct usage of library functions, remember to always check return codes.
+- Prefer bound-checking functions, like `snprintf`, over their non-bound-checking variant.
 
 Also, keep the following in mind, taken from [Linux Kernel Coding Style](https://www.kernel.org/doc/html/v4.10/process/coding-style.html):
 

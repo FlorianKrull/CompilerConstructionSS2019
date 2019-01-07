@@ -11,6 +11,6 @@ The example may read form `stdin` and write to `stdout` using the built-in funct
 Provide an `.stdin.txt` and `.stdout.txt` for verification purposes.
 
 The getting started code-base provides a stub for the mC compiler.
-It converts mC to C and compiles it using GCC.
+It converts mC to C and compiles the result using GCC.
 
 See [Submission Guideline](submission.md).
