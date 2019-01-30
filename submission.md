@@ -33,14 +33,14 @@ List your team members in the mail body.
     - Known issues should be present
 5. Run the following command:
 
-       $ git archive --prefix=team_XX_milestone_Y/ --format=zip HEAD > team_XX_milestone_Y.zip
+        $ git archive --prefix=team_XX_milestone_Y/ --format=zip HEAD > team_XX_milestone_Y.zip
 
 6. Verify that the resulting archive contains everything you want to submit and nothing more.
 7. Submit the zip archive via mail using the following line as subject (or link below).
 
-       703602 - Team XX Milestone Y
+        703602 - Team XX Milestone Y
 
-   📧 [send email](mailto:alexander.hirsch@uibk.ac.at?subject=703602%20-%20Team%20XX%20Milestone%20Y)
+    📧 [send email](mailto:alexander.hirsch@uibk.ac.at?subject=703602%20-%20Team%20XX%20Milestone%20Y)
 
 ## Final Submission
 
@@ -56,11 +56,11 @@ List your team members in the mail body.
     - Known issues must be present
 5. Run the following command:
 
-       $ git archive --prefix=team_XX_final/ --format=zip HEAD > team_XX_final.zip
+        $ git archive --prefix=team_XX_final/ --format=zip HEAD > team_XX_final.zip
 
 6. Verify that the resulting archive contains everything you want to submit and nothing more.
 7. Submit the zip archive via mail using the following line as subject (or link below).
 
-       703602 - Team XX Final
+        703602 - Team XX Final
 
-   📧 [send email](mailto:alexander.hirsch@uibk.ac.at?subject=703602%20-%20Team%20XX%20Final)
+    📧 [send email](mailto:alexander.hirsch@uibk.ac.at?subject=703602%20-%20Team%20XX%20Final)
