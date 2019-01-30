@@ -537,6 +537,8 @@ The following directory layout is used.
     │   └── unit/                           # Unit tests, typically one file per unit.
     │       ├── parser_test.c
     │       └── …
+    ├── vendor/                             # Third-party libraries and tools go here.
+    │   └── …
     └── README.md
 
 The README is kept short and clean with the following sections:
@@ -552,7 +554,7 @@ They mainly contain argument parsing and combine the functionality provided by t
 
 The repository does not contain or track generated files.
 
-Under normal circumstances, all generated files are placed somewhere inside the build directory.
+Under normal circumstances, all generated files are placed somewhere inside the build directory (i.e. out-of-source build).
 
 ### Known Issues
 
@@ -605,7 +607,7 @@ Architectural design and readability of your code will be judged.
 - Files contain *one* newline at the end.
 - Lines do not contain trailing white-space.
 - Your code does not trigger warnings, justify them if otherwise.
-- Do not waste time or space (memory leaks).
+- Do not waste time or space (this includes memory leaks).
 - Check for leaks using `valgrind`, especially in error cases.
 - Keep design and development principles in mind, especially KISS and DRY.
 - Always state the source of non-original content.
