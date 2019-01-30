@@ -9,7 +9,7 @@
 Assuming your example input is named `mandelbrot`, zip the corresponding files like so:
 
     mandelbrot.zip
-    └── mandelbrot
+    └── mandelbrot/
         ├── mandelbrot.mc
         ├── mandelbrot.stdin.txt
         └── mandelbrot.stdout.txt
