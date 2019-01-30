@@ -370,6 +370,31 @@ This graph is commonly used by analyses for extracting structural information cr
 
 It is recommended to also provide a visitor mechanism for this graph.
 
+Like the AST, it can be visualised.
+The example below is taken from [Marc Moreno Maza](http://www.csd.uwo.ca/~moreno/CS447/Lectures/CodeOptimization.html/node6.html).
+
+Given this example IR:
+
+```
+    s = 0
+    i = 0
+    n = 10
+L1: t1 = a - b
+    ifz t1 goto L2
+    t2 = i * 4
+    s  = s + t2
+    goto L3
+L2: s = s + i
+L3: i  = i + 1
+    t3 = n - i
+    ifnz t3 goto L1
+    t4 = a - b
+```
+
+The visualisation of the corresponding CFG could look like this:
+
+![CFG Example](images/cfg.png)
+
 ### Assembly Code Generation
 
 The mC compiler targets x86 and uses GCC as back-end compiler.
