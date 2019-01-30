@@ -8,7 +8,7 @@
 | 2019-05-24 | Milestone 3     |
 | 2019-06-14 | Milestone 4     |
 | 2019-06-21 | Milestone 5     |
-| 2019-06-30 | Final           |
+| 2019-07-12 | Final           |
 
 [Example Input]: example_input.md
 
