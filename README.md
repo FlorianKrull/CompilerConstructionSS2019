@@ -43,6 +43,8 @@ Your final grade is determined mostly by the final submission.
 A positive grade for your final submission is required to pass this course.
 
 In addition to this, I'll do short QA sessions during the course which influence your final grade.
+For each QA session, you receive either a plus or a minus.
+To pass this course, you need to have more pluses than minuses by the end of the semester.
 
 Other submissions are not graded.
 

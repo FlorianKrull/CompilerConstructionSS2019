@@ -50,7 +50,7 @@ List your team members in the mail body.
 4. Ensure everything works.
     - Everything builds
     - No (unjustified) warnings
-    - All unit test succeed
+    - All unit tests succeed
     - All integration tests succeed
     - No memory is leaked
     - Known issues must be present
