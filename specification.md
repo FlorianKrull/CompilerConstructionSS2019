@@ -359,7 +359,8 @@ As the parser only does syntactic checking, additional semantic checks are imple
 - Checking for presence of `main` and correct signature
 - Checking that all execution paths of a non-void function return a value
 - Type checking (remember, neither implicit nor explicit type conversions)
-    - This also includes checking arguments and return types for call expressions.
+    - Includes checking operations on arrays
+    - Includes checking arguments and return types for call expressions
 
 In addition to the AST, *symbol tables* are created and used for semantic checking.
 Be sure to correctly model [*shadowing*](https://en.wikipedia.org/wiki/Variable_shadowing).
