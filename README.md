@@ -51,8 +51,8 @@ See [Final Submission Evaluation Scheme](evaluation_scheme.md) for more details.
 ### Evaluation System
 
 I'll be using a virtualised, updated Ubuntu 18.04 LTS (64 bit) to examine your submissions.
+From this you can infer the software versions I'll be using.
 The submitted code has to compile and run on this system.
-This information tells you which software versions I'll be using.
 
 ### Absence
 

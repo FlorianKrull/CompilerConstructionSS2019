@@ -1,11 +1,11 @@
 # mC Compiler Specification
 
 This document describes the mC compiler as well as the mC language itself along with some requirements.
-Like a regular compiler, the mC compiler is divided into 3 main parts: front-end, back-end, and a core in-between.
+Like a regular compiler the mC compiler is divided into 3 main parts: front-end, back-end, and a core in-between.
 
 The front-end's task is to validate a given input using syntactic and semantic checks.
-The syntactic checking is done by the *parser* which, on success, generates an abstract syntax tree (AST).
-This tree data structure is mainly used for semantic checking, although one can also apply transformations to it.
+The syntactic checking is done by the *parser*, which, on success, generates an abstract syntax tree (AST).
+This tree data structure is mainly used for semantic checking, although transformations can also be applied to it.
 Moving on, the AST is translated to the compiler's intermediate representation (IR) and passed to the core.
 Invalid inputs cause errors to be reported.
 
@@ -33,7 +33,7 @@ The mC compiler is implemented using modern C (or C++) adhering to the C11 (or C
     - Type checking can be traced (see `mc_type_check_trace`).
     - Symbol tables can be viewed (see `mc_symbol_table`).
 3. **Control flow graph**
-    - Valid inputs are convert to IR.
+    - Valid inputs are converted to IR.
     - The IR can be printed (see `mc_ir`).
     - The CFG is generated and can be printed in the DOT format (see `mc_cfg_to_dot`).
 4. **Back-end**
@@ -50,9 +50,9 @@ The semantics of mC are identical to C unless specified otherwise.
 
 ### Grammar
 
-The next segment presents the grammar of mC using this notation:
+The next segment defines the grammar of mC using this notation:
 
-- `#` starts a line comment
+- `#` starts a single line comment
 - `,` indicates concatenation
 - `|` indicates alternation
 - `( )` indicates grouping
@@ -183,6 +183,7 @@ Short-circuit evaluation is *not* supported.
 
 Strings are immutable and do not support any operation (e.g. concatenation).
 Like comments, strings can span across multiple lines.
+Newlines and indentation whitespaces are part of the string, when dealing with multiline strings.
 Escape sequences are *not* supported.
 
 Their sole purpose is to be used with the built-in `print` function (see below).
@@ -219,10 +220,10 @@ Even further, one cannot assign to a variable of array type.
 
 #### Call by Value / Call by Reference
 
-`bool`, `int`, and `float` are passed directly.
-Strings and arrays are passed via pointers internally.
+`bool`, `int`, and `float` are passed directly (by value).
+Strings and arrays are passed via pointers internally (by reference).
 
-Modifications to an array done inside a function are visible outside of that function.
+Modifications made to an array inside a function are visible outside of that function.
 
 #### Type Conversion
 
@@ -247,7 +248,8 @@ On success, an mC program returns `0`.
 Splitting declaration and initialisation simplifies the creation of symbol tables.
 
 Functions are always declared by their definition.
-Contrary to C, it is possible to call a function before it has been defined.
+Forward declarations are therefore *not* supported.
+Contrary to C, it is possible to call a function before it has been declared (in case of mC defined).
 
 #### Empty Parameter List
 
@@ -286,6 +288,8 @@ It can be used either programmatically or via the provided command-line applicat
 The focus lies on a clean and modular implementation as well as a straight forward architecture, rather than raw performance.
 For example, each semantic check may traverse the AST in isolation.
 
+The compiler guarantees the following:
+
 - Exported symbols are prefixed with `mcc_`.
 - It is thread-safe.
 - No memory is leaked — even in error cases.
@@ -294,7 +298,7 @@ For example, each semantic check may traverse the AST in isolation.
 
 ### Logging
 
-Logging infrastructure may be present, however all log output is disabled by default.
+Logging infrastructure may be present; however, all log output is disabled by default.
 The log level can be set with the environment variable `MCC_LOG_LEVEL`.
 
     0 = no logging
@@ -426,9 +430,9 @@ Composing them with other command-line tools, like `dot`, is a core feature.
 The exact output format is not specified in all cases.
 However, details should *not* be omitted — like simplifying the AST.
 
-All applications exit with code `EXIT_SUCCESS` iff they succeeded in their operation.
+All applications exit with code `EXIT_SUCCESS` *iff* they succeeded in their operation.
 
-Each executable excepts multiple inputs files.
+Each executable accepts multiple input files.
 The inputs are parsed in isolation; the resulting ASTs are merged before semantic checks are run.
 
 Errors are written to `stderr`.
@@ -450,7 +454,7 @@ This is the main compiler executable, sometimes referred to as *driver*.
       -o, --output <file>       write the output to <file> (defaults to 'a.out')
 
     Environment Variables:
-      MCC_BACKEND               override the backend compiler (defaults to 'gcc' in PATH)
+      MCC_BACKEND               override the back-end compiler (defaults to 'gcc' in PATH)
 
 ### `mc_ast_to_dot`
 
@@ -498,7 +502,7 @@ This is the main compiler executable, sometimes referred to as *driver*.
 
     usage: mc_ir [OPTIONS] file...
 
-    Utility for viewing the generated intermediate reprensetation. Errors are
+    Utility for viewing the generated intermediate representation. Errors are
     reported on invalid inputs.
 
     Use '-' as input file to read from stdin.
@@ -512,7 +516,7 @@ This is the main compiler executable, sometimes referred to as *driver*.
 
     usage: mc_cfg_to_dot [OPTIONS] file...
 
-    Utility for printing a contorl flow graph in the DOT format. The output
+    Utility for printing a control flow graph in the DOT format. The output
     can be visualised using graphviz. Errors are reported on invalid inputs.
 
     Use '-' as input file to read from stdin.
@@ -592,7 +596,7 @@ Under normal circumstances, all generated files are placed somewhere inside the 
 
 ### Known Issues
 
-At any point in time, the README contain a list of unfixed, known issues.
+At any point in time, the README contains a list of unfixed, known issues.
 
 Each entry is kept short and concise and should be justified.
 More complex issues may reference a dedicated document inside `docs` providing more details.
@@ -639,7 +643,7 @@ Architectural design and readability of your code will be judged.
 - Don't be a git — use [Git](https://git-scm.com/)!
 - Files are UTF-8 encoded and use Unix line-endings (`\n`).
 - Files contain *one* newline at the end.
-- Lines do not contain trailing white-space.
+- Lines do not contain trailing whitespaces.
 - Your code does not trigger warnings, justify them if otherwise.
 - Do not waste time or space (this includes memory leaks).
 - Check for leaks using `valgrind`, especially in error cases.
