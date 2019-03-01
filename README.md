@@ -29,22 +29,19 @@ I'll be present for questions all the time, yet a big part of this course is to 
 Please note that minor modifications may be made to the specification until 1 week before the final deadline.
 Therefore, double check for modifications before submitting — Git provides you the diff anyway.
 
-Apart from this, there will be one *required* submissions near the beginning of the semester.
+Apart from this, there will be one *required* submission near the beginning of the semester.
 You have to submit an additional example input, which may be added to the set of example inputs — this way the number of integration tests is extended.
 
 Furthermore, there are five *optional* milestones.
 They provide a golden thread and enable you to receive feedback, plus you get a feel for my reviewing scheme.
 
-You can work together in teams of 1–3 people. Teams may span across pro-seminar groups.
+You may work together in teams of 1–3 people.
+Teams may span across pro-seminar groups.
 
 ## Grading
 
-Your final grade is determined mostly by the final submission.
-A positive grade for your final submission is required to pass this course.
-
-In addition to this, I'll do short QA sessions during the course which influence your final grade.
-For each QA session, you receive either a plus or a minus.
-To pass this course, you need to have more pluses than minuses by the end of the semester.
+The final grade is computed as the weighted average of the final submission (80%) and the QA sessions (20%).
+Both of these parts as well as the majority of QA session grades must be positive to pass this course.
 
 Other submissions are not graded.
 
