@@ -44,7 +44,7 @@ This includes things like:
 - [ ] All integration tests succeed
     - provided test inputs must be included
 
-- [ ] Additional integration tests used for evaluation succeed
+- [ ] Additional integration tests (provided by the instructor) succeed
 
 - [ ] Architecture consists of shared library + executables
 
