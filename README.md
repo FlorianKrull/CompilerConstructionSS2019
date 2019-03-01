@@ -33,7 +33,7 @@ Apart from this, there will be one *required* submission near the beginning of t
 You have to submit an additional example input, which may be added to the set of example inputs — this way the number of integration tests is extended.
 
 Furthermore, there are five *optional* milestones.
-They provide a golden thread and enable you to receive feedback, plus you get a feel for my reviewing scheme.
+They provide a golden thread and enable you to receive feedback.
 
 You may work together in teams of 1–3 people.
 Teams may span across pro-seminar groups.
@@ -46,6 +46,7 @@ Both of these parts as well as the majority of QA session grades must be positiv
 Other submissions are not graded.
 
 Be sure to adhere to the specification, deviating from it (without stating a proper reason) will negatively impact your grade.
+See [Final Submission Evaluation Scheme](evaluation_scheme.md) for more details.
 
 ### Evaluation System
 
