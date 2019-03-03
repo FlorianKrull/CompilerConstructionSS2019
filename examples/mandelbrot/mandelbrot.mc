@@ -12,7 +12,7 @@ float transform_y(float y)
 	return ((1.0) - ((1.0) - (-1.0)) * (fy / 50.0)) * 2.0;
 }
 
-bool is_in_set(float pX, float pY)
+bool is_in_set(float pX, float pY, int iterations)
 {
 	float temp;
 	float x;
@@ -23,14 +23,14 @@ bool is_in_set(float pX, float pY)
 	y = 0.0;
 	i = 0;
 
-	while (((x * x + y * y) <= 4.0) && i < 30) {
+	while (((x * x + y * y) <= 4.0) && i < iterations) {
 		temp = x * x - y * y + pX;
 		y = 2.0 * x * y + pY;
 		x = temp;
 		i = i + 1;
 	}
 
-	if (i == 30)
+	if (i == iterations)
 		return true;
 
 	return false;
@@ -45,6 +45,9 @@ int main()
 
 	y = 0.0;
 
+	int iterations;
+	iterations = read_int();
+
 	while (y < 50.0) {
 		x = 0.0;
 
@@ -53,7 +56,7 @@ int main()
 			fy = transform_y(y);
 			x = x + 1.0;
 
-			if (is_in_set(fx, fy)) {
+			if (is_in_set(fx, fy, iterations)) {
 				print(".");
 			} else {
 				print(" ");
