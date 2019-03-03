@@ -9,7 +9,7 @@ The following key is used for calculating the resulting grade:
 - **4:** (76%, 68%]
 - **5:** < 68%
 
-It is required that for at least one test input, featuring input and output, a respective executable can be built and run successfully.
+It is required that for the *mandelbrot* test input, a respective executable can be built and run successfully.
 
 Points *may* be subtracted for shortcomings not explicitly listed in this form.
 This includes things like:
