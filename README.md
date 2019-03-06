@@ -1,4 +1,4 @@
-# Compiler Construction (draft)
+# Compiler Construction
 
 |    Date    |    Deadline     |
 | ---------- | --------------- |
