@@ -1,16 +1,14 @@
 # Compiler Construction
 
-|    Date    |    Deadline     |
-| ---------- | --------------- |
-| 2019-03-15 | [Example Input] |
-| 2019-04-05 | Milestone 1     |
-| 2019-05-03 | Milestone 2     |
-| 2019-05-24 | Milestone 3     |
-| 2019-06-14 | Milestone 4     |
-| 2019-06-21 | Milestone 5     |
-| 2019-07-12 | Final           |
-
-[Example Input]: example_input.md
+|    Date    |                  Deadline                  |
+| ---------- | ------------------------------------------ |
+| 2019-03-15 | [Example Input](example_input.md)          |
+| 2019-04-05 | [Milestone 1](specification.md#milestones) |
+| 2019-05-03 | [Milestone 2](specification.md#milestones) |
+| 2019-05-24 | [Milestone 3](specification.md#milestones) |
+| 2019-06-14 | [Milestone 4](specification.md#milestones) |
+| 2019-06-21 | [Milestone 5](specification.md#milestones) |
+| 2019-07-12 | [Final](evaluation_scheme.md)              |
 
 - [mC Compiler Specification](specification.md)
 - [Getting Started Code-base](https://git.uibk.ac.at/c7031162/mcc)
