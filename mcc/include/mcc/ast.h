@@ -37,7 +37,17 @@ enum mcc_ast_binary_op {
 	MCC_AST_BINARY_OP_SUB,
 	MCC_AST_BINARY_OP_MUL,
 	MCC_AST_BINARY_OP_DIV,
+    MCC_AST_BINARY_OP_AND,
+    MCC_AST_BINARY_OP_OR,
+    MCC_AST_BINARY_OP_EQUALS,
+    MCC_AST_BINARY_OP_NOT_EQUALS,
+    MCC_AST_BINARY_OP_LESS,
+    MCC_AST_BINARY_OP_GREATER,
+    MCC_AST_BINARY_OP_LESS_EQUALS,
+    MCC_AST_BINARY_OP_GREATER_EQUALS,
 };
+
+enum mCc_ast_unary_op { MCC_AST_UNARY_OP_NOT, MCC_AST_UNARY_OP_MINUS };
 
 // ---------------------------------------------------------------- Expressions
 
