@@ -31,7 +31,6 @@ void mcc_parser_error();
 
 %token <long>   INT_LITERAL   "integer literal"
 %token <double> FLOAT_LITERAL "float literal"
-%token <double> FLOAT_LITERAL "float literal"
 %token <char*>   STRING_LITERAL   "string literal"
 
 
