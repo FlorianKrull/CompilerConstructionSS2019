@@ -43,10 +43,6 @@ void mcc_parser_error();
 %token LBRACE "{"
 %token RBRACE "}"
 
-%token COMMA ","
-
-%token SEMIKOLON ";"
-
 %token ASSIGNMENT "="
 
 %token PLUS  "+"
@@ -54,6 +50,34 @@ void mcc_parser_error();
 %token ASTER "*"
 %token SLASH "/"
 
+%token LESS "<"
+
+%token GREATER ">"
+
+%token LESS_EQ "<="
+%token GREATER_EQ ">="
+%token EQUALS "=="
+%token NOT_EQUALS "!="
+
+%token SEMICOLON ";"
+%token COMMA ","
+
+%token NEGATION "!"
+
+%token AND "&&"
+%token OR "||"
+
+%token BOOL_TYPE "bool"
+%token INT_TYPE "int"
+%token FLOAT_TYPE "float"
+%token STRING_TYPE "string"
+%token VOID_TYPE "void"
+
+%token IF "if"
+%token ELSE "else"
+%token WHILE "while"
+%token FOR "for"
+%token RETURN "return"
 
 %left PLUS MINUS
 %left ASTER SLASH

@@ -74,6 +74,7 @@ string_literal [q"][^"]*["]|(\".*\")|('.*')
 "else"            { return TK_ELSE; }
 "while"           { return TK_WHILE; }
 "return"          { return TK_RETURN; }
+"for"             { return TK_FOR; }
 
 [ \t\r\n]+        { /* ignore */ }
 
