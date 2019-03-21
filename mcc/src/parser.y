@@ -63,6 +63,7 @@ expression : literal                      { $$ = mcc_ast_new_expression_literal(
 
 literal : INT_LITERAL   { $$ = mcc_ast_new_literal_int($1);   loc($$, @1); }
         | FLOAT_LITERAL { $$ = mcc_ast_new_literal_float($1); loc($$, @1); }
+		| STRING_LITERAL {$$ = mcc_ast_new_literal_string($1); loc($$,@1); }
         ;
 
 %%
