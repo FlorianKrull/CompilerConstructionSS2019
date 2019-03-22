@@ -31,7 +31,7 @@ void mcc_parser_error();
 
 %token <long>   INT_LITERAL   "integer literal"
 %token <double> FLOAT_LITERAL "float literal"
-%token <char*>   STRING_LITERAL   "string literal"
+%token <char*>  STRING_LITERAL   "string literal"
 
 
 %token LPARENTH "("
@@ -102,6 +102,7 @@ expression : literal                      { $$ = mcc_ast_new_expression_literal(
 
 literal : INT_LITERAL   { $$ = mcc_ast_new_literal_int($1);   loc($$, @1); }
         | FLOAT_LITERAL { $$ = mcc_ast_new_literal_float($1); loc($$, @1); }
+        | STRING_LITERAL { $$ = mcc_ast_new_literal_string($1); loc($$, @1); }
         ;
 
 %%
