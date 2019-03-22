@@ -28,7 +28,6 @@ void mcc_parser_error();
 %locations
 
 %token END 0 "EOF"
-
 %token <long>   INT_LITERAL   "integer literal"
 %token <double> FLOAT_LITERAL "float literal"
 %token <char*>   STRING_LITERAL   "string literal"

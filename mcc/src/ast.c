@@ -100,6 +100,18 @@ struct mcc_ast_literal *mcc_ast_new_literal_float(double value)
 	return lit;
 }
 
+struct mcc_ast_literal *mcc_ast_new_literal_string(char* value){
+
+	struct mcc_ast_literal *lit = malloc(sizeof(*lit));
+	if (!lit) {
+		return NULL;
+	}
+
+	lit->type = MCC_AST_LITERAL_TYPE_STRING;
+	lit->s_value = value;
+	return lit;
+}
+
 void mcc_ast_delete_literal(struct mcc_ast_literal *literal)
 {
 	assert(literal);
