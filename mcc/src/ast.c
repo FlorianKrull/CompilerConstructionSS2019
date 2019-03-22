@@ -1,4 +1,5 @@
 #include "mcc/ast.h"
+#include "../include/mcc/ast.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -102,7 +103,7 @@ struct mcc_ast_literal *mcc_ast_new_literal_float(double value)
 
 struct mcc_ast_literal *mcc_ast_new_literal_string(char* value)
 {
-	struct mcc_ast_literal *list = malloc(sizeof(mcc_ast_literl));
+	struct mcc_ast_literal *lit = malloc(sizeof(mcc_ast_literl));
 
 	if (!lit) {
 		return NULL;
