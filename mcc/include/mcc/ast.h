@@ -92,7 +92,7 @@ void mcc_ast_delete_expression(struct mcc_ast_expression *expression);
 enum mcc_ast_literal_type {
 	MCC_AST_LITERAL_TYPE_INT,
 	MCC_AST_LITERAL_TYPE_FLOAT,
-	MCC_AST_LITERAL_TYPE_STRING,
+	MCC_AST_LITERAL_TYPE_STRING
 };
 
 struct mcc_ast_literal {
@@ -106,6 +106,7 @@ struct mcc_ast_literal {
 		// MCC_AST_LITERAL_TYPE_FLOAT
 		double f_value;
 
+		// MCC_AST_LITERAL_TYPE_STRING
 		char* s_value;
 	};
 };

@@ -28,7 +28,7 @@ int_literal   [0-9]+
 float_literal [0-9]+\.[0-9]+
 bool_literal true|false
 identifier [a-zA-Z_][a-zA-Z0-9_]*
-string_literal [q"][^"]*["]|(\".*\")|('.*')
+string_literal ["][^"]*["]|(\".*\")|('.*')
 
 %%
 
