@@ -31,6 +31,7 @@ void mcc_parser_error();
 %token <long>   INT_LITERAL   "integer literal"
 %token <double> FLOAT_LITERAL "float literal"
 %token <char*>   STRING_LITERAL   "string literal"
+%token <const char*> IDENTIFIER "identifier"
 
 
 %token LPARENTH "("
@@ -101,8 +102,22 @@ expression : literal                      { $$ = mcc_ast_new_expression_literal(
 
 literal : INT_LITERAL   { $$ = mcc_ast_new_literal_int($1);   loc($$, @1); }
         | FLOAT_LITERAL { $$ = mcc_ast_new_literal_float($1); loc($$, @1); }
-		| STRING_LITERAL {$$ = mcc_ast_new_literal_string($1); loc($$,@1); }
+		| STRING_LITERAL { $$ = mcc_ast_new_literal_string($1); loc($$,@1); }
         ;
+
+type : INT_TYPE { $$ = MCC_AST_LITERAL_TYPE_INT; }
+     | FLOAT_TYPE { $$ = MCC_AST_LITERAL_TYPE_FLOAT; }
+     | STRING_TYPE { $$ = MCC_AST_LITERAL_TYPE_STRING; }
+     ;
+
+statement : expression
+          | IF LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statment_if(); loc($$, @1); }
+          | IF LPARENTH expression RPARENTH statement ELSE statement
+          | WHILE LPARENTH expression RIPARENTH statement
+          | LBRACE statement_list RBRACE
+		  ;
+
+assignment :
 
 %%
 

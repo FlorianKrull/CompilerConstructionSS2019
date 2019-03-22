@@ -1,8 +1,10 @@
 #include "mcc/ast_print.h"
 
 #include <assert.h>
+#include <_stdio.h>
 
 #include "mcc/ast_visit.h"
+#include "../include/mcc/ast.h"
 
 const char *mcc_ast_print_binary_op(enum mcc_ast_binary_op op)
 {

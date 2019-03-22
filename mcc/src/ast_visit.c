@@ -1,4 +1,5 @@
 #include "mcc/ast_visit.h"
+#include "../include/mcc/ast.h"
 
 #include <assert.h>
 

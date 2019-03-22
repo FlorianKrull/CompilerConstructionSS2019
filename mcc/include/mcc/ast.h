@@ -77,6 +77,7 @@ struct mcc_ast_expression {
 	};
 };
 
+
 struct mcc_ast_expression *mcc_ast_new_expression_literal(struct mcc_ast_literal *literal);
 
 struct mcc_ast_expression *mcc_ast_new_expression_binary_op(enum mcc_ast_binary_op op,
@@ -86,6 +87,38 @@ struct mcc_ast_expression *mcc_ast_new_expression_binary_op(enum mcc_ast_binary_
 struct mcc_ast_expression *mcc_ast_new_expression_parenth(struct mcc_ast_expression *expression);
 
 void mcc_ast_delete_expression(struct mcc_ast_expression *expression);
+
+
+// ------------------------------------------------------------------- Statements
+
+enum mcc_ast_statement_type {
+    MCC_AST_STATEMENT_TYPE_IF,
+    MCC_AST_STATEMENT_TYPE_BLOCK
+};
+
+
+
+struct mcc_ast_statement {
+    struct mcc_ast_node node;
+
+    enum mcc_ast_statement_type type;
+
+    union {
+        struct mcc_ast_expression *expression;
+
+        struct mcc_ast_statement *statement;
+
+        struct mcc_ast_statment_list *statement_list;
+
+    };
+
+
+};
+
+
+// struct mcc_ast_statement mcc_ast_new_if_statement(struct mcc_ast_);
+
+struct mcc_ast_statement mcc_ast_new_block_statement()
 
 // ------------------------------------------------------------------- Literals
 
