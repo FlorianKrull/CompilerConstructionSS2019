@@ -115,6 +115,8 @@ struct mcc_ast_literal *mcc_ast_new_literal_int(long value);
 
 struct mcc_ast_literal *mcc_ast_new_literal_float(double value);
 
+struct mcc_ast_literal *mcc_ast_new_literal_string(char* value);
+
 void mcc_ast_delete_literal(struct mcc_ast_literal *literal);
 
 // -------------------------------------------------------------------- Utility
