@@ -68,6 +68,9 @@ void mcc_ast_visit_literal(struct mcc_ast_literal *literal, struct mcc_ast_visit
 	case MCC_AST_LITERAL_TYPE_FLOAT:
 		visit(literal, visitor->literal_float, visitor);
 		break;
+	
+	case MCC_AST_LITERAL_TYPE_STRING:
+		visit(literal, visitor->literal_string,visitor);
 	}
 
 	visit_if_post_order(literal, visitor->literal, visitor);

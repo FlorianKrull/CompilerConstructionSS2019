@@ -15,6 +15,22 @@ const char *mcc_ast_print_binary_op(enum mcc_ast_binary_op op)
 		return "*";
 	case MCC_AST_BINARY_OP_DIV:
 		return "/";
+	case MCC_AST_BINARY_OP_AND:
+		return "&&";
+	case MCC_AST_BINARY_OP_OR:
+		return "||";
+	case MCC_AST_BINARY_OP_EQUALS:
+		return "==";
+	case MCC_AST_BINARY_OP_GREATER:
+		return ">";
+	case MCC_AST_BINARY_OP_GREATER_EQUALS:
+		return ">=";
+	case MCC_AST_BINARY_OP_LESS:
+		return "<";
+	case MCC_AST_BINARY_OP_LESS_EQUALS:
+		return "<=";
+	case MCC_AST_BINARY_OP_NOT_EQUALS:
+		return "!=";
 	}
 
 	return "unknown op";
