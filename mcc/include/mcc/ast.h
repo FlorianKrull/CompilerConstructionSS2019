@@ -17,6 +17,7 @@
 struct mcc_ast_expression;
 struct mcc_ast_literal;
 struct mcc_ast_statement;
+struct mCc_ast_identifier;
 
 
 // ------------------------------------------------------------------- AST Node
@@ -30,6 +31,17 @@ struct mcc_ast_source_location {
 
 struct mcc_ast_node {
 	struct mcc_ast_source_location sloc;
+};
+
+// -------------------------------------------------------------------- Types
+
+
+
+enum mCc_ast_data_type {
+    MCC_AST_DATA_TYPE_INT,
+    MCC_AST_DATA_TYPE_STRING,
+    MCC_AST_DATA_TYPE_BOOL,
+    MCC_AST_DATA_TYPE_FLOAT
 };
 
 // ------------------------------------------------------------------ Operators
@@ -56,7 +68,10 @@ enum mCc_ast_unary_op { MCC_AST_UNARY_OP_NOT, MCC_AST_UNARY_OP_MINUS };
 enum mcc_ast_expression_type {
 	MCC_AST_EXPRESSION_TYPE_LITERAL,
 	MCC_AST_EXPRESSION_TYPE_BINARY_OP,
+	MCC_AST_EXPRESSION_TYPE_UNARY_OP,
 	MCC_AST_EXPRESSION_TYPE_PARENTH,
+	MCC_AST_EXPRESSION_TYPE_IDENTIFIER,
+
 };
 
 struct mcc_ast_expression {
@@ -159,6 +174,8 @@ struct mcc_ast_literal *mcc_ast_new_literal_string(char* value);
 struct mcc_ast_literal *mcc_ast_new_literal_bool(bool value);
 
 void mcc_ast_delete_literal(struct mcc_ast_literal *literal);
+
+
 
 // -------------------------------------------------------------------- Utility
 

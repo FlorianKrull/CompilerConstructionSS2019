@@ -122,3 +122,5 @@ void mcc_ast_delete_literal(struct mcc_ast_literal *literal)
 	assert(literal);
 	free(literal);
 }
+
+// ------------------------------------------------------------------- Statements

@@ -86,6 +86,8 @@ void mcc_parser_error();
 %left EQUALS NOT_EQUALS
 %left LESS GREATER LESS_EQ GREATER_EQ
 
+%type <enum mCc_ast_data_type> type
+
 %type <struct mcc_ast_expression *> expression
 %type <struct mcc_ast_literal *> literal
 
@@ -109,9 +111,10 @@ literal : INT_LITERAL   { $$ = mcc_ast_new_literal_int($1);   loc($$, @1); }
 		| STRING_LITERAL { $$ = mcc_ast_new_literal_string($1); loc($$,@1); }
         ;
 
-type : INT_TYPE { $$ = MCC_AST_LITERAL_TYPE_INT; }
-     | FLOAT_TYPE { $$ = MCC_AST_LITERAL_TYPE_FLOAT; }
-     | STRING_TYPE { $$ = MCC_AST_LITERAL_TYPE_STRING; }
+type : INT_TYPE { $$ = MCC_AST_DATA_TYPE_INT; }
+     | FLOAT_TYPE { $$ = MCC_AST_DATA_TYPE_FLOAT; }
+     | STRING_TYPE { $$ = MCC_AST_DATA_TYPE_STRING; }
+	 | BOOL_TYPE { $$ = MCC_AST_DATA_TYPE_BOOL;}
      ;
 
 statement : expression

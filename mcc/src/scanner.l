@@ -29,7 +29,8 @@ float_literal [0-9]+\.[0-9]+
 bool_literal true|false
 identifier [a-zA-Z_][a-zA-Z0-9_]*
 string_literal ["][^"]*["]|(\".*\")|('.*')
-
+comment (\/\*.*\*\/)
+comment_multiline ("/*"([^*]|\*+[^*/])*\*+"/")
 %%
 
 
@@ -76,8 +77,11 @@ string_literal ["][^"]*["]|(\".*\")|('.*')
 "return"          { return TK_RETURN; }
 "for"             { return TK_FOR; }
 
+
 [ \t\r\n]+        { /* ignore */ }
 
 <<EOF>>           { return TK_END; }
+
+
 
 .                 { fprintf(stderr, "invalid character '%c'\n", yytext[0]); }
