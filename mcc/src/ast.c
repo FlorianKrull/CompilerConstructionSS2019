@@ -138,3 +138,17 @@ void mcc_ast_delete_literal(struct mcc_ast_literal *literal)
 }
 
 // ------------------------------------------------------------------- Statements
+
+struct mCc_ast_statement *
+mCc_ast_new_statement_expression(struct mCc_ast_expression *expression)
+{
+	assert(expression);
+
+	struct mCc_ast_statement *stmt = malloc(sizeof(*stmt));
+	if (!stmt)
+		return NULL;
+
+	stmt->type = MCC_AST_STATEMENT_TYPE_EXPR;
+	stmt->expression = expression;
+	return stmt;
+}

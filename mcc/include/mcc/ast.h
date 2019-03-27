@@ -113,7 +113,13 @@ void mcc_ast_delete_expression(struct mcc_ast_expression *expression);
 
 enum mcc_ast_statement_type {
     MCC_AST_STATEMENT_TYPE_IF,
-    MCC_AST_STATEMENT_TYPE_BLOCK
+	MCC_AST_STATEMENT_TYPE_IFELSE,
+	MCC_AST_STATEMENT_TYPE_WHILE,
+	MCC_AST_STATEMENT_TYPE_DECL,
+	MCC_AST_STATEMENT_TYPE_ASSGN,
+	MCC_AST_STATEMENT_TYPE_DECLA,
+	MCC_AST_STATEMENT_TYPE_LIST,
+	MCC_AST_STATEMENT_TYPE_BLOCK
 };
 
 
@@ -126,17 +132,50 @@ struct mcc_ast_statement {
     union {
         struct mcc_ast_expression *expression;
 
-        struct mcc_ast_statement *statement;
+		struct mcc_ast_declaration *declaration;
 
-        struct mcc_ast_statment_list *statement_list;
+		struct {
+			struct mcc_ast_expression *if_condition;
+			struct mcc_ast_statement *if_stmt;
+			struct mcc_ast_statement *else_stmt;
+		};
+
+		struct {
+			struct mcc_ast_expression *while_condition;
+			struct mcc_ast_statement *while_stmt;
+		};
+
+		struct {
+			struct mcc_ast_identifier *id_assgn;
+			struct mcc_ast_expression *lhs_assgn;
+			struct mcc_ast_expression *rhs_assgn;
+		};
+
+		struct mcc_ast_statment_list *statement_list;
 
     };
 
 
 };
 
+struct mcc_ast_statement *mcc_ast_new_statement_expression (struct mcc_ast_expression *expression);
 
-// struct mcc_ast_statement mcc_ast_new_if_statement(struct mcc_ast_);
+struct mcc_ast_statement *mcc_ast_new_statement_declaration(struct mcc_ast_declaration *declaration);
+
+struct mcc_ast_statement *mcc_ast_new_if_statement(struct mcc_ast_expression *condition,
+												   struct mcc_ast_statement *if_stmt,
+												   struct mcc_ast_statement *else_stmt);
+
+
+struct mcc_ast_statement *mcc_ast_new_while_statement(struct mcc_ast_expression *condition,
+												   	  struct mcc_ast_statement *while_stmt);
+
+struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_identifier *id_assgn,
+														   struct mcc_ast_expression *lhs_assgn,
+														   struct mcc_ast_expression *rhs_assgn );
+
+struct mcc_ast_statement *mcc_ast_new_statement_list(struct mcc_ast_statement_list *statement_list);
+
 
 struct mcc_ast_statement mcc_ast_new_block_statement();
 
