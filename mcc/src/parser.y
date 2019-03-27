@@ -90,6 +90,7 @@ void mcc_parser_error();
 
 %type <struct mcc_ast_expression *> expression
 %type <struct mcc_ast_literal *> literal
+%type <struct mCc_ast_statement *> statement compound_stmt
 
 %start toplevel
 
@@ -117,8 +118,8 @@ type : INT_TYPE { $$ = MCC_AST_DATA_TYPE_INT; }
 	 | BOOL_TYPE { $$ = MCC_AST_DATA_TYPE_BOOL;}
      ;
 
-statement : expression
-          | IF LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statment_if(); loc($$, @1); }
+statement : expression SEMICOLON  											{ $$ = mCc_ast_new_statement_expression($1);      loc($$, @1, @2); }
+          | IF LPARENTH expression RPARENTH statement 						{ $$ = mcc_ast_new_statment_if(); loc($$, @1); }
           | IF LPARENTH expression RPARENTH statement ELSE statement
           | WHILE LPARENTH expression RPARENTH statement
           | LBRACE statement_list RBRACE

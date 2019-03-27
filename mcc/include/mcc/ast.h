@@ -10,6 +10,9 @@
 // Also note that this makes excessive use of C11's *anonymous structs and
 // unions* feature.
 
+// library to support boolean data type
+#include <stdbool.h>
+
 #ifndef MCC_AST_H
 #define MCC_AST_H
 
