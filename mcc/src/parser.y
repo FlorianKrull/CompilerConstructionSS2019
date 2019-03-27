@@ -51,9 +51,7 @@ void mcc_parser_error();
 %token SLASH "/"
 
 %token LESS "<"
-
 %token GREATER ">"
-
 %token LESS_EQ "<="
 %token GREATER_EQ ">="
 %token EQUALS "=="
@@ -79,8 +77,14 @@ void mcc_parser_error();
 %token FOR "for"
 %token RETURN "return"
 
+
+/* precedence */
+
 %left PLUS MINUS
 %left ASTER SLASH
+%left OR AND
+%left EQUALS NOT_EQUALS
+%left LESS GREATER LESS_EQ GREATER_EQ
 
 %type <struct mcc_ast_expression *> expression
 %type <struct mcc_ast_literal *> literal
@@ -113,11 +117,21 @@ type : INT_TYPE { $$ = MCC_AST_LITERAL_TYPE_INT; }
 statement : expression
           | IF LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statment_if(); loc($$, @1); }
           | IF LPARENTH expression RPARENTH statement ELSE statement
-          | WHILE LPARENTH expression RIPARENTH statement
+          | WHILE LPARENTH expression RPARENTH statement
           | LBRACE statement_list RBRACE
 		  ;
 
-assignment :
+statement_list : statement
+			| expression SEMICOLON statement_list;
+
+
+
+assignment :  IDENTIFIER ASSIGNMENT INT_LITERAL
+			| IDENTIFIER ASSIGNMENT FLOAT_LITERAL
+			| IDENTIFIER ASSIGNMENT STRING_LITERAL
+			;
+
+
 
 %%
 
