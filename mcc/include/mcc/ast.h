@@ -16,6 +16,8 @@
 // Forward Declarations
 struct mcc_ast_expression;
 struct mcc_ast_literal;
+struct mcc_ast_statement;
+
 
 // ------------------------------------------------------------------- AST Node
 
@@ -118,14 +120,15 @@ struct mcc_ast_statement {
 
 // struct mcc_ast_statement mcc_ast_new_if_statement(struct mcc_ast_);
 
-struct mcc_ast_statement mcc_ast_new_block_statement()
+struct mcc_ast_statement mcc_ast_new_block_statement();
 
 // ------------------------------------------------------------------- Literals
 
 enum mcc_ast_literal_type {
 	MCC_AST_LITERAL_TYPE_INT,
 	MCC_AST_LITERAL_TYPE_FLOAT,
-	MCC_AST_LITERAL_TYPE_STRING
+	MCC_AST_LITERAL_TYPE_STRING,
+	MCC_AST_LITERAL_TYPE_BOOL
 };
 
 struct mcc_ast_literal {
@@ -141,6 +144,9 @@ struct mcc_ast_literal {
 
 		// MCC_AST_LITERAL_TYPE_STRING
 		char* s_value;
+
+		// MCC_AST_LITERAL_TYPE_BOOL
+		bool b_value;
 	};
 };
 
@@ -149,6 +155,8 @@ struct mcc_ast_literal *mcc_ast_new_literal_int(long value);
 struct mcc_ast_literal *mcc_ast_new_literal_float(double value);
 
 struct mcc_ast_literal *mcc_ast_new_literal_string(char* value);
+
+struct mcc_ast_literal *mcc_ast_new_literal_bool(bool value);
 
 void mcc_ast_delete_literal(struct mcc_ast_literal *literal);
 
