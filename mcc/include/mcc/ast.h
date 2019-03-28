@@ -152,7 +152,6 @@ struct mcc_ast_statement {
 			struct mcc_ast_expression *rhs_assgn;
 		};
 
-		struct mcc_ast_statment_list *statement_list;
 
     };
 
@@ -175,7 +174,7 @@ struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_identi
 														   struct mcc_ast_expression *lhs_assgn,
 														   struct mcc_ast_expression *rhs_assgn );
 
-struct mcc_ast_statement *mcc_ast_new_statement_list(struct mcc_ast_statement_list *statement_list);
+
 
 
 struct mcc_ast_statement mcc_ast_new_block_statement();
