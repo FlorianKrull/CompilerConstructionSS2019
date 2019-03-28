@@ -64,7 +64,7 @@ enum mcc_ast_binary_op {
     MCC_AST_BINARY_OP_GREATER_EQUALS,
 };
 
-enum mCc_ast_unary_op { MCC_AST_UNARY_OP_NOT, MCC_AST_UNARY_OP_MINUS };
+enum mcc_ast_unary_op { MCC_AST_UNARY_OP_NOT, MCC_AST_UNARY_OP_MINUS };
 
 // ---------------------------------------------------------------- Expressions
 
