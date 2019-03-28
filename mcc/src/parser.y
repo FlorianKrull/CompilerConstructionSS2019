@@ -60,7 +60,7 @@ void mcc_parser_error();
 %token SEMICOLON ";"
 %token COMMA ","
 
-%token NEGATION "!"
+%token NOT "!"
 
 %token AND "&&"
 %token OR "||"
@@ -78,19 +78,13 @@ void mcc_parser_error();
 %token RETURN "return"
 
 
-/* precedence */
+%type <enum mcc_ast_data_type> type
 
-%left PLUS MINUS
-%left ASTER SLASH
-%left OR AND
-%left EQUALS NOT_EQUALS
-%left LESS GREATER LESS_EQ GREATER_EQ
-
-%type <enum mCc_ast_data_type> type
-
-%type <struct mcc_ast_expression *> expression
 %type <struct mcc_ast_literal *> literal
-%type <struct mCc_ast_statement *> statement compound_stmt
+%type <struct mcc_ast_expression *> expression binary_op
+%type <struct mcc_ast_unary_op > unary_op
+%type <struct mcc_ast_new_identifier *> identifier
+%type <struct mcc_ast_statement *> statement compound_stmt
 
 %start toplevel
 
@@ -112,13 +106,20 @@ literal : INT_LITERAL   { $$ = mcc_ast_new_literal_int($1);   loc($$, @1); }
 		| STRING_LITERAL { $$ = mcc_ast_new_literal_string($1); loc($$,@1); }
         ;
 
+unary_op : NOT {$$ = MCC_AST_UNARY_OP_NOT;}
+		 | MINUS {$$ = MCC_AST_UNARY_OP_NEG;}
+		 ;
+
+identifier : IDENTIFIER { $$ = mcc_ast_new_identifier($1); loc($$, @1, @1); }
+           ;
+
 type : INT_TYPE { $$ = MCC_AST_DATA_TYPE_INT; }
      | FLOAT_TYPE { $$ = MCC_AST_DATA_TYPE_FLOAT; }
      | STRING_TYPE { $$ = MCC_AST_DATA_TYPE_STRING; }
 	 | BOOL_TYPE { $$ = MCC_AST_DATA_TYPE_BOOL; }
      ;
 
-statement : expression SEMICOLON  											{ $$ = mCc_ast_new_statement_expression($1);      loc($$, @1, @2); }
+statement : expression SEMICOLON  											{ $$ = mcc_ast_new_statement_expression($1);      loc($$, @1, @2); }
           | IF LPARENTH expression RPARENTH statement 						{ $$ = mcc_ast_new_statment_if(); loc($$, @1); }
           | IF LPARENTH expression RPARENTH statement ELSE statement
           | WHILE LPARENTH expression RPARENTH statement

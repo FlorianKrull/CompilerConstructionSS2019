@@ -60,7 +60,7 @@ comment_multiline ("/*"([^*]|\*+[^*/])*\*+"/")
 ";"               { return TK_SEMICOLON; }
 ","               { return TK_COMMA; }
 
-"!"               { return TK_NEGATION; }
+"!"               { return TK_NOT; }
 
 "&&"              { return TK_AND; }
 "||"              { return TK_OR; }

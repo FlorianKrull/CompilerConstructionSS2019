@@ -20,7 +20,7 @@
 struct mcc_ast_expression;
 struct mcc_ast_literal;
 struct mcc_ast_statement;
-struct mCc_ast_identifier;
+struct mcc_ast_identifier;
 
 
 // ------------------------------------------------------------------- AST Node
@@ -40,7 +40,7 @@ struct mcc_ast_node {
 
 
 
-enum mCc_ast_data_type {
+enum mcc_ast_data_type {
     MCC_AST_DATA_TYPE_INT,
     MCC_AST_DATA_TYPE_STRING,
     MCC_AST_DATA_TYPE_BOOL,
@@ -105,10 +105,34 @@ struct mcc_ast_expression *mcc_ast_new_expression_binary_op(enum mcc_ast_binary_
                                                             struct mcc_ast_expression *lhs,
                                                             struct mcc_ast_expression *rhs);
 
+struct mcc_ast_expression *mcc_ast_new_exprssion_unary_op( enum mcc_ast_unary_op op,
+														   struct mcc_ast_expression *rhs);
+
 struct mcc_ast_expression *mcc_ast_new_expression_parenth(struct mcc_ast_expression *expression);
+
+// struct mcc_ast_expression *mcc_ast_new_expression_call(struct mcc_ast_identifier *identifier,
+// 													   struct mcc_ast_argument *argument );
 
 void mcc_ast_delete_expression(struct mcc_ast_expression *expression);
 
+// ------------------------------------------------------------------- Arguments
+
+// struct mcc_ast_arguments{
+
+// 	struct mcc_ast_node;
+// 	struct mcc_ast_arguments *next_arg;
+// 	struct mcc_ast_expression *expression;
+// }
+
+
+
+// ------------------------------------------------------------------- Identifier
+
+struct mcc_ast_identifier{
+
+	struct mcc_ast_node node;
+	char *i_value;
+};
 
 // ------------------------------------------------------------------- Statements
 

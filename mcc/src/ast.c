@@ -156,6 +156,29 @@ void mcc_ast_delete_literal(struct mcc_ast_literal *literal)
 	free(literal);
 }
 
+// ------------------------------------------------------------------- Identifier
+
+struct mcc_ast_identifier *mcc_ast_new_identifier(char *value)
+{
+	struct mcc_ast_identifier *id = malloc(sizeof(*id));
+	if (!id) {
+		return NULL;
+	}
+
+	char *str = malloc((strlen(value) + 1) * sizeof(char));
+	strcpy(str, value);
+
+	id->i_value = str;
+	return id;
+}
+
+void mcc_ast_delete_identifier(struct mcc_ast_identifier *identifier)
+{
+	assert(identifier);
+	free(identifier->i_value);
+	free(identifier);
+}
+
 // ------------------------------------------------------------------- Statements
 
 struct mcc_ast_statement *mcc_ast_new_statement_expression(struct mcc_ast_expression *expression)
