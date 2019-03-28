@@ -139,8 +139,7 @@ void mcc_ast_delete_literal(struct mcc_ast_literal *literal)
 
 // ------------------------------------------------------------------- Statements
 
-struct mcc_ast_statement *
-mCc_ast_new_statement_expression(struct mCc_ast_expression *expression)
+struct mcc_ast_statement *mcc_ast_new_statement_expression(struct mcc_ast_expression *expression)
 {
 	assert(expression);
 

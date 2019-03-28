@@ -115,20 +115,14 @@ literal : INT_LITERAL   { $$ = mcc_ast_new_literal_int($1);   loc($$, @1); }
 type : INT_TYPE { $$ = MCC_AST_DATA_TYPE_INT; }
      | FLOAT_TYPE { $$ = MCC_AST_DATA_TYPE_FLOAT; }
      | STRING_TYPE { $$ = MCC_AST_DATA_TYPE_STRING; }
-	 | BOOL_TYPE { $$ = MCC_AST_DATA_TYPE_BOOL;}
+	 | BOOL_TYPE { $$ = MCC_AST_DATA_TYPE_BOOL; }
      ;
 
 statement : expression SEMICOLON  											{ $$ = mCc_ast_new_statement_expression($1);      loc($$, @1, @2); }
           | IF LPARENTH expression RPARENTH statement 						{ $$ = mcc_ast_new_statment_if(); loc($$, @1); }
           | IF LPARENTH expression RPARENTH statement ELSE statement
           | WHILE LPARENTH expression RPARENTH statement
-          | LBRACE statement_list RBRACE
 		  ;
-
-statement_list : statement
-			| expression SEMICOLON statement_list;
-
-
 
 assignment :  IDENTIFIER ASSIGNMENT INT_LITERAL
 			| IDENTIFIER ASSIGNMENT FLOAT_LITERAL
