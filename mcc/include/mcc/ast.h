@@ -69,6 +69,7 @@ enum mCc_ast_unary_op { MCC_AST_UNARY_OP_NOT, MCC_AST_UNARY_OP_MINUS };
 // ---------------------------------------------------------------- Expressions
 
 enum mcc_ast_expression_type {
+    MCC_AST_STATEMENT_TYPE_EXPR,
 	MCC_AST_EXPRESSION_TYPE_LITERAL,
 	MCC_AST_EXPRESSION_TYPE_BINARY_OP,
 	MCC_AST_EXPRESSION_TYPE_UNARY_OP,
