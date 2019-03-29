@@ -32,6 +32,7 @@ void mcc_parser_error();
 %token <double> FLOAT_LITERAL "float literal"
 %token <char*>   STRING_LITERAL   "string literal"
 %token <const char*> IDENTIFIER "identifier"
+%token <bool> BOOL_LITERAL "bool literal"
 
 
 %token LPARENTH "("
@@ -94,21 +95,24 @@ toplevel : expression { *result = $1; }
          ;
 
 expression : literal                      { $$ = mcc_ast_new_expression_literal($1);                              loc($$, @1); }
-           | expression PLUS  expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_ADD, $1, $3); loc($$, @1); }
-           | expression MINUS expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_SUB, $1, $3); loc($$, @1); }
-           | expression ASTER expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_MUL, $1, $3); loc($$, @1); }
-           | expression SLASH expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_DIV, $1, $3); loc($$, @1); }
            | LPARENTH expression RPARENTH { $$ = mcc_ast_new_expression_parenth($2);                              loc($$, @1); }
            ;
 
 literal : INT_LITERAL   { $$ = mcc_ast_new_literal_int($1);   loc($$, @1); }
         | FLOAT_LITERAL { $$ = mcc_ast_new_literal_float($1); loc($$, @1); }
 		| STRING_LITERAL { $$ = mcc_ast_new_literal_string($1); loc($$,@1); }
+		| BOOL_LITERAL { $$ = mcc_ast_new_literal_bool($1); loc($$,@1); }
         ;
 
 unary_op : NOT {$$ = MCC_AST_UNARY_OP_NOT;}
 		 | MINUS {$$ = MCC_AST_UNARY_OP_NEG;}
 		 ;
+
+binary_op :  expression PLUS  expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_ADD, $1, $3); loc($$, @1, @3); }
+           | expression MINUS expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_SUB, $1, $3); loc($$, @1, @3); }
+           | expression ASTER expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_MUL, $1, $3); loc($$, @1, @3); }
+           | expression SLASH expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_DIV, $1, $3); loc($$, @1, @3); }
+		   | expression GREATER expression { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_LESS, $1, $3); loc($$, @1, @3); }
 
 identifier : IDENTIFIER { $$ = mcc_ast_new_identifier($1); loc($$, @1, @1); }
            ;
