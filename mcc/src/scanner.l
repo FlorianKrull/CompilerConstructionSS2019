@@ -48,7 +48,7 @@ while  { return TK_WHILE_KW; }
 return { return TK_RETURN_KW; }
 
 void   { return TK_VOID_TYPE; }  
-bool   { return TK_BOOL_TYPE; }
+boolean   { return TK_BOOL_TYPE; }
 int    { return TK_INT_TYPE; }
 float  { return TK_FLOAT_TYPE; }
 string { return TK_STR_TYPE; }

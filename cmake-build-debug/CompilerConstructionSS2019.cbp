@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="CompilerConstructionSS2019"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="CompilerConstructionSS2019">
+				<Option output="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug/CompilerConstructionSS2019" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/include"/>
+					<Add directory="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/src/utils"/>
+					<Add directory="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/vendor/cutest"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug/Makefile&quot;  VERBOSE=1 CompilerConstructionSS2019"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="CompilerConstructionSS2019/fast">
+				<Option output="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug/CompilerConstructionSS2019" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/include"/>
+					<Add directory="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/src/utils"/>
+					<Add directory="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/vendor/cutest"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug/Makefile&quot;  VERBOSE=1 CompilerConstructionSS2019/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/app/mc_ast_to_dot.c">
+			<Option target="CompilerConstructionSS2019"/>
+		</Unit>
+		<Unit filename="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/app/mcc.c">
+			<Option target="CompilerConstructionSS2019"/>
+		</Unit>
+		<Unit filename="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/include/ast.h">
+			<Option target="CompilerConstructionSS2019"/>
+		</Unit>
+		<Unit filename="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/include/ast_print.h">
+			<Option target="CompilerConstructionSS2019"/>
+		</Unit>
+		<Unit filename="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/include/ast_visit.h">
+			<Option target="CompilerConstructionSS2019"/>
+		</Unit>
+		<Unit filename="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/include/parser.h">
+			<Option target="CompilerConstructionSS2019"/>
+		</Unit>
+		<Unit filename="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/resources/mc_builtins.c">
+			<Option target="CompilerConstructionSS2019"/>
+		</Unit>
+		<Unit filename="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/src/ast.c">
+			<Option target="CompilerConstructionSS2019"/>
+		</Unit>
+		<Unit filename="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/src/ast_print.c">
+			<Option target="CompilerConstructionSS2019"/>
+		</Unit>
+		<Unit filename="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/src/ast_visit.c">
+			<Option target="CompilerConstructionSS2019"/>
+		</Unit>
+		<Unit filename="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/src/utils/unused.h">
+			<Option target="CompilerConstructionSS2019"/>
+		</Unit>
+		<Unit filename="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/test/unit/parser_test.c">
+			<Option target="CompilerConstructionSS2019"/>
+		</Unit>
+		<Unit filename="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/vendor/cutest/AllTests.c">
+			<Option target="CompilerConstructionSS2019"/>
+		</Unit>
+		<Unit filename="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/vendor/cutest/CuTest.c">
+			<Option target="CompilerConstructionSS2019"/>
+		</Unit>
+		<Unit filename="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/vendor/cutest/CuTest.h">
+			<Option target="CompilerConstructionSS2019"/>
+		</Unit>
+		<Unit filename="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/vendor/cutest/CuTestTest.c">
+			<Option target="CompilerConstructionSS2019"/>
+		</Unit>
+		<Unit filename="/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
