@@ -293,7 +293,7 @@ struct mcc_ast_statement *mcc_ast_new_statement_statement_list(struct mcc_ast_st
     struct mcc_ast_statement *stmt = construct_statement();
 
     stmt -> type = MCC_AST_STATEMENT_TYPE_COMPOUND;
-    stmt -> statement_list = statement_list;
+    stmt -> compound_statement = statement_list;
 
     return stmt;
 }
