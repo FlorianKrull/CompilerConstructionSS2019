@@ -1,8 +1,8 @@
 #include "mcc/ast.h"
-#include "../include/mcc/ast.h"
 
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 
 // ---------------------------------------------------------------- Expressions
 
@@ -189,7 +189,49 @@ struct mcc_ast_statement *mcc_ast_new_statement_expression(struct mcc_ast_expres
 	if (!stmt)
 		return NULL;
 
-	stmt -> type = MCC_AST_STATEMENT_TYPE_EXPR;
+	stmt -> type = MMC_AST_STATEMENT_TYPE_EXPRESSION;
 	stmt -> expression = expression;
 	return stmt;
 }
+
+
+struct mcc_ast_statement *mcc_ast_new_if_statement(struct mcc_ast_expression *condition,
+                                                   struct mcc_ast_statement *if_stmt,
+                                                   struct mcc_ast_statement *else_stmt)
+{
+    assert(condition);
+    assert(if_stmt);
+    assert(else_stmt);
+
+    struct mcc_ast_statement *stmt = malloc(sizeof(*stmt));
+
+    if (!stmt)
+        return NULL;
+
+    stmt -> type = MCC_AST_STATEMENT_TYPE_IF;
+
+    stmt -> if_stmt = if_stmt;
+    if (else_stmt) {
+        stmt -> else_stmt = else_stmt;
+    }
+
+    return stmt;
+}
+
+struct mcc_ast_statement *mcc_ast_new_statement_declaration(enum mcc_ast_data_type data_type,
+                                                            struct mcc_ast_identifier *identifier)
+{
+    assert(data_type);
+    assert(identifier);
+
+    struct mcc_ast_statement *stmt = malloc(sizeof(*stmt));
+
+    if (!stmt)
+        return NULL;
+
+    stmt -> type = MCC_AST_STATEMENT_TYPE_DECL;
+
+    stmt -> id_assgn = identifier;
+
+    return stmt;
+};
