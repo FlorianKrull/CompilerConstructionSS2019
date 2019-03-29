@@ -118,8 +118,8 @@ literal : INT_LITERAL   { $$ = mcc_ast_new_literal_int($1);   loc($$, @1); }
 		| BOOL_LITERAL { $$ = mcc_ast_new_literal_bool($1); loc($$,@1); }
 		;
 
-unary_op : NOT {$$ = MCC_AST_UNARY_OP_NOT;}
-		 | MINUS {$$ = MCC_AST_UNARY_OP_NEG;}
+unary_op : NOT {$$ = MCC_AST_UNARY_OP_NOT; }
+		 | MINUS {$$ = MCC_AST_UNARY_OP_NEG; }
 		 ;
 
 binary_op : expression PLUS  expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_ADD, $1, $3);   loc($$, @1); }
@@ -156,7 +156,7 @@ declaration: type IDENTIFIER SEMICOLON { $$ = mcc_ast_new_statement_declaration(
 while_statement: WHILE LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statement_while($3, $5); loc($$, @1); }
 			   ;
 
-compound_statement: LBRACE statement_list LBRACE { $$ = $2; loc($$; @1)}
+compound_statement: LBRACE statement_list LBRACE { $$ = $2; loc($$; @1); }
 				  ;
 
 statement_list: %empty
