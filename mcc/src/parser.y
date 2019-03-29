@@ -121,11 +121,11 @@ unary_op : NOT {$$ = MCC_AST_UNARY_OP_NOT;}
 		 | MINUS {$$ = MCC_AST_UNARY_OP_NEG;}
 		 ;
 
-binary_op :  expression PLUS  expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_ADD, $1, $3); loc($$, @1, @3); }
-		  | expression MINUS expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_SUB, $1, $3); loc($$, @1, @3); }
-		  | expression ASTER expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_MUL, $1, $3); loc($$, @1, @3); }
-		  | expression SLASH expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_DIV, $1, $3); loc($$, @1, @3); }
-		  | expression GREATER expression { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_LESS, $1, $3); loc($$, @1, @3); }
+binary_op :  expression PLUS  expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_ADD, $1, $3); loc($$, @1); }
+		  | expression MINUS expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_SUB, $1, $3); loc($$, @1); }
+		  | expression ASTER expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_MUL, $1, $3); loc($$, @1); }
+		  | expression SLASH expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_DIV, $1, $3); loc($$, @1); }
+		  | expression GREATER expression { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_LESS, $1, $3); loc($$, @1); }
 
 identifier : IDENTIFIER { $$ = mcc_ast_new_identifier($1); loc($$, @1); }
            ;
@@ -143,7 +143,7 @@ statement : expression SEMICOLON { $$ = mCc_ast_new_statement_expression($1); lo
 		  ;
 
 if_statement: IF LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statment_if($3, $5); loc($$, @1); }
-            | IF LPARENTH expression RPARENTH statement ELSE statement	{ $$ = mcc_ast_new_statment_if($3, $5, $7); loc($$, @1); }
+            | IF LPARENTH expression RPARENTH statement ELSE statement { $$ = mcc_ast_new_statment_if($3, $5, $7); loc($$, @1); }
             ;
 
 declaration: type IDENTIFIER SEMICOLON { $$ = mcc_ast_new_statement_declaration($1, $2); loc($$, @1); };
