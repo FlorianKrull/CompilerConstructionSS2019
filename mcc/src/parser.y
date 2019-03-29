@@ -104,10 +104,10 @@ void mcc_parser_error();
 toplevel : expression { *result = $1; }
          ;
 
-expression : literal                      { $$ = mcc_ast_new_expression_literal($1);   loc($$, @1); }
-           | LPARENTH expression RPARENTH { $$ = mcc_ast_new_expression_parenth($2);   loc($$, @1); }
-		   | unary_op expression 		  { $$ = mcc_ast_new_expression_unary_op($1,$2);  loc($$, @1, @2);}
-		   | binary_op   				  { $$ = $1; }
+expression : literal                      		{ $$ = mcc_ast_new_expression_literal($1);   loc($$, @1); }
+           | LPARENTH expression RPARENTH	 	{ $$ = mcc_ast_new_expression_parenth($2);   loc($$, @1); }
+		   | unary_op expression 		  		{ $$ = mcc_ast_new_expression_unary_op($1,$2);  loc($$, @1);}
+		   | expression binary_op expression  	{ $$ = mcc_ast_new_expression_binary_op($1,$2); loc($$,@1) }
            ;
 
 literal : INT_LITERAL   { $$ = mcc_ast_new_literal_int($1);   loc($$, @1); }
@@ -120,17 +120,17 @@ unary_op : NOT {$$ = MCC_AST_UNARY_OP_NOT;}
 		 | MINUS {$$ = MCC_AST_UNARY_OP_MINUS;}
 		 ;
 
-binary_op :  expression PLUS  expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_ADD, $1, $3); loc($$, @1, @3); }
-           | expression MINUS expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_SUB, $1, $3); loc($$, @1, @3); }
-           | expression ASTER expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_MUL, $1, $3); loc($$, @1, @3); }
-           | expression SLASH expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_DIV, $1, $3); loc($$, @1, @3); }
-		   | expression EQUALS expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_EQUALS, $1, $3); loc($$, @1, @3); }
-		   | expression NOT_EQUALS expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_NOT_EQUALS, $1, $3); loc($$, @1, @3); }
-		   | expression LESS expression { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_LESS, $1, $3); loc($$, @1, @3); }
-		   | expression GREATER expression { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_GREATER, $1, $3); loc($$, @1, @3); }
-		   | expression LESS_EQ expression { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_LESS_EQUALS, $1, $3); loc($$, @1, @3); }
-		   | expression GREATER_EQ expression { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_GREATER_EQUALS, $1, $3); loc($$, @1, @3); }
-		   ;
+binary_op : PLUS { $$ = MCC_AST_BINARY_OP_ADD }
+			| MINUS { $$ = MCC_AST_BINARY_OP_SUB }
+			| ASTER { $$ = MCC_AST_BINARY_OP_MUL }
+			| SLASH { $$ = MCC_AST_BINARY_OP_DIV }
+			| EQUALS { $$ = MCC_AST_BINARY_OP_EQUALS }
+			| NOT_EQUALS { $$ = MCC_AST_BINARY_OP_NOT_EQUALS }
+			| LESS { $$ = MCC_AST_BINARY_OP_LESS }
+			| GREATER { $$ = MCC_AST_BINARY_OP_GREATER }
+			| LESS_EQ { $$ = MCC_AST_BINARY_OP_LESS_EQUALS}
+			| GREATER_EQ { $$ = MCC_AST_BINARY_OP_GREATER_EQUALS}
+			;
 
 identifier : IDENTIFIER { $$ = mcc_ast_new_identifier($1); loc($$, @1); }
            ;
