@@ -149,7 +149,11 @@ enum mcc_ast_statement_type {
 	MCC_AST_STATEMENT_TYPE_BLOCK
 };
 
-
+struct mcc_ast_statement_list {
+    int size;
+    int max_size;
+    struct mcc_ast_statement *list[];
+};
 
 struct mcc_ast_statement {
     struct mcc_ast_node node;
@@ -178,6 +182,8 @@ struct mcc_ast_statement {
 			struct mcc_ast_expression *rhs_assgn;
 		};
 
+        struct mcc_ast_statement_list *statement_list;
+
 
     };
 
@@ -186,11 +192,11 @@ struct mcc_ast_statement {
 
 struct mcc_ast_statement *mcc_ast_new_statement_expression (struct mcc_ast_expression *expression);
 
-struct mcc_ast_statement *mcc_ast_new_if_statement(struct mcc_ast_expression *condition,
+struct mcc_ast_statement *mcc_ast_new_statement_if(struct mcc_ast_expression *condition,
 												   struct mcc_ast_statement *if_stmt,
                                                    struct mcc_ast_statement *else_stmt);
 
-struct mcc_ast_statement *mcc_ast_new_while_statement(struct mcc_ast_expression *condition,
+struct mcc_ast_statement *mcc_ast_new_statement_while(struct mcc_ast_expression *condition,
 												   	  struct mcc_ast_statement *while_stmt);
 
 struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_identifier *id_assgn,
@@ -199,6 +205,9 @@ struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_identi
 
 struct mcc_ast_statement *mcc_ast_new_statement_declaration(enum mcc_ast_data_type data_type,
 															struct mcc_ast_identifier *identifier);
+
+struct mcc_ast_statement *mcc_ast_new_statement_statement_list(struct mcc_ast_statement_list *statement_list,
+                                                                struct mcc_ast_statement *next_statement);
 
 
 

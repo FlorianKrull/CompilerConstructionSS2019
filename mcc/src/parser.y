@@ -91,7 +91,8 @@ void mcc_parser_error();
 %type <struct mcc_ast_expression *> expression binary_op
 %type <struct mcc_ast_unary_op > unary_op
 %type <struct mcc_ast_new_identifier *> identifier
-%type <struct mcc_ast_statement *> statement if_statement declaration
+%type <struct mcc_ast_statement *> statement if_statement declaration while_statement compound_statement
+%type <struct mcc_ast_statement_list *> statement_list
 
 %type <enum mCc_ast_data_type> type
 
@@ -121,11 +122,11 @@ unary_op : NOT {$$ = MCC_AST_UNARY_OP_NOT;}
 		 | MINUS {$$ = MCC_AST_UNARY_OP_NEG;}
 		 ;
 
-binary_op :  expression PLUS  expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_ADD, $1, $3); loc($$, @1); }
-		  | expression MINUS expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_SUB, $1, $3); loc($$, @1); }
-		  | expression ASTER expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_MUL, $1, $3); loc($$, @1); }
-		  | expression SLASH expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_DIV, $1, $3); loc($$, @1); }
-		  | expression GREATER expression { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_LESS, $1, $3); loc($$, @1); }
+binary_op : expression PLUS  expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_ADD, $1, $3);   loc($$, @1); }
+		  | expression MINUS expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_SUB, $1, $3);    loc($$, @1); }
+		  | expression ASTER expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_MUL, $1, $3);    loc($$, @1); }
+		  | expression SLASH expression  { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_DIV, $1, $3);    loc($$, @1); }
+		  | expression GREATER expression { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_LESS, $1, $3);  loc($$, @1); }
 
 identifier : IDENTIFIER { $$ = mcc_ast_new_identifier($1); loc($$, @1); }
            ;
@@ -136,22 +137,31 @@ type : INT_TYPE { $$ = MCC_AST_DATA_TYPE_INT; }
 	 | BOOL_TYPE { $$ = MCC_AST_DATA_TYPE_BOOL; }
      ;
 
-statement : expression SEMICOLON { $$ = mCc_ast_new_statement_expression($1); loc($$, @1, @2); }
-          | if_statement { $$= $1;  loc($$, @1); }
-          | declaration { $$ = $1; loc($$, @1) }
-		  | while_statement { $$ = $1; loc($$, @1)}
+statement : expression SEMICOLON    { $$ = mCc_ast_new_statement_expression($1); loc($$, @1); }
+          | if_statement            { $$= $1;  loc($$, @1); }
+		  | while_statement         { $$ = $1; loc($$, @1); }
+		  | compound_statement      { $$ = $1; loc($$, @1); }
+          | assignment SEMICOLON    { $$ = $1; loc($$, @1); }
+          | declaration SEMICOLON   { $$ = $1; loc($$, @1); }
 		  ;
 
-if_statement: IF LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statment_if($3, $5); loc($$, @1); }
-            | IF LPARENTH expression RPARENTH statement ELSE statement { $$ = mcc_ast_new_statment_if($3, $5, $7); loc($$, @1); }
+if_statement: IF LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statment_if($3, $5);                     loc($$, @1); }
+            | IF LPARENTH expression RPARENTH statement ELSE statement { $$ = mcc_ast_new_statment_if($3, $5, $7);  loc($$, @1); }
             ;
 
 declaration: type IDENTIFIER SEMICOLON { $$ = mcc_ast_new_statement_declaration($1, $2); loc($$, @1); };
            | type LBRACKET INT_LITERAL RBRACKET IDENTIFIER
+		   ;
 
-while_statement: WHILE LPARENTH expression RPARENTH statement
+while_statement: WHILE LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statement_while($3, $5); loc($$, @1); }
+			   ;
 
+compound_statement: LBRACE statement_list LBRACE { $$ = $2; loc($$; @1)}
+				  ;
 
+statement_list: %empty
+			  | statement_list statement { $$ = mcc_ast_new_statement_list($1, $2); loc($$, @1); }
+			  ;
 
 assignment :  IDENTIFIER ASSIGNMENT INT_LITERAL
 			| IDENTIFIER ASSIGNMENT FLOAT_LITERAL

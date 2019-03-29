@@ -181,13 +181,20 @@ void mcc_ast_delete_identifier(struct mcc_ast_identifier *identifier)
 
 // ------------------------------------------------------------------- Statements
 
+struct mcc_ast_statement *construct_statement()
+{
+    struct mcc_ast_statement *stmt = malloc(sizeof(*stmt));
+    if (!stmt)
+        return NULL;
+
+    return stmt;
+}
+
 struct mcc_ast_statement *mcc_ast_new_statement_expression(struct mcc_ast_expression *expression)
 {
 	assert(expression);
 
-	struct mcc_ast_statement *stmt = malloc(sizeof(*stmt));
-	if (!stmt)
-		return NULL;
+	struct mcc_ast_statement *stmt = construct_statement();
 
 	stmt -> type = MMC_AST_STATEMENT_TYPE_EXPRESSION;
 	stmt -> expression = expression;
@@ -195,7 +202,7 @@ struct mcc_ast_statement *mcc_ast_new_statement_expression(struct mcc_ast_expres
 }
 
 
-struct mcc_ast_statement *mcc_ast_new_if_statement(struct mcc_ast_expression *condition,
+struct mcc_ast_statement *mcc_ast_new_statement_if(struct mcc_ast_expression *condition,
                                                    struct mcc_ast_statement *if_stmt,
                                                    struct mcc_ast_statement *else_stmt)
 {
@@ -203,13 +210,9 @@ struct mcc_ast_statement *mcc_ast_new_if_statement(struct mcc_ast_expression *co
     assert(if_stmt);
     assert(else_stmt);
 
-    struct mcc_ast_statement *stmt = malloc(sizeof(*stmt));
-
-    if (!stmt)
-        return NULL;
+    struct mcc_ast_statement *stmt = construct_statement();
 
     stmt -> type = MCC_AST_STATEMENT_TYPE_IF;
-
     stmt -> if_stmt = if_stmt;
     if (else_stmt) {
         stmt -> else_stmt = else_stmt;
@@ -221,17 +224,76 @@ struct mcc_ast_statement *mcc_ast_new_if_statement(struct mcc_ast_expression *co
 struct mcc_ast_statement *mcc_ast_new_statement_declaration(enum mcc_ast_data_type data_type,
                                                             struct mcc_ast_identifier *identifier)
 {
-    assert(data_type);
     assert(identifier);
 
-    struct mcc_ast_statement *stmt = malloc(sizeof(*stmt));
-
-    if (!stmt)
-        return NULL;
+    struct mcc_ast_statement *stmt = construct_statement();
 
     stmt -> type = MCC_AST_STATEMENT_TYPE_DECL;
-
     stmt -> id_assgn = identifier;
 
     return stmt;
-};
+}
+
+struct mcc_ast_statement *mcc_ast_new_statement_while(struct mcc_ast_expression *condition,
+                                                      struct mcc_ast_statement *while_stmt)
+{
+    assert(condition);
+    assert(while_stmt);
+
+    struct mcc_ast_statement *stmt = construct_statement();
+
+    stmt -> type = MCC_AST_STATEMENT_TYPE_WHILE;
+    stmt -> while_condition = condition;
+    stmt -> while_stmt = while_stmt;
+
+    return stmt;
+}
+
+struct mcc_ast_statement_list *construct_new_statement_list(int size, int max)
+{
+    struct mcc_ast_statement_list *stmt_list = malloc(sizeof(*stmt_list) + max);
+    stmt_list -> size = size;
+    stmt_list -> max_size = max;
+
+    return stmt_list;
+}
+
+struct mcc_ast_statement *mcc_ast_new_statement_statement_list(struct mcc_ast_statement_list *statement_list,
+                                                               struct mcc_ast_statement *next_statement)
+{
+    assert(next_statement);
+
+    if (!statement_list) {
+        // create new statement - start with statement array of size 10
+        statement_list = construct_new_statement_list(0, 10);
+        statement_list -> list[0] = next_statement;
+    } else {
+        int max = statement_list -> max_size;
+        int current = statement_list -> size;
+        struct mcc_ast_statement *stmt_list[] = statement_list -> list;
+
+        if (current < max) {
+            statement_list -> list[current] = next_statement;
+        } else {
+            // double size of statement list
+            statement_list = realloc(statement_list, sizeof(*statement_list) + (max * 2));
+
+            // in case realloc fails return NULL for now
+            // TODO create new statement list and free old one?
+            if (!statement_list) {
+                return NULL;
+            }
+
+            statement_list -> max_size = max * 2;
+            statement_list -> size = current + 1;
+            statement_list -> list[current] = next_statement;
+        }
+    }
+
+    struct mcc_ast_statement *stmt = construct_statement();
+
+    stmt -> type = MCC_AST_STATEMENT_TYPE_COMPOUND;
+    stmt -> statement_list = statement_list;
+
+    return stmt;
+}
