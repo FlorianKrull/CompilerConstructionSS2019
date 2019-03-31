@@ -22,6 +22,8 @@ struct mcc_parser_result {
 	enum mcc_parser_status status;
 
 	struct mcc_ast_expression *expression;
+	struct mcc_ast_literal *literal;
+	struct mcc_ast_declaration *declaration;
 	struct mcc_ast_statement *statement;
 
 	

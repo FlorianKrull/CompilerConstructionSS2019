@@ -2,7 +2,7 @@
 
 %define api.pure full
 %lex-param   {void *scanner}
-%parse-param {void *scanner} {struct mcc_ast_expression** result}
+%parse-param {void *scanner} {struct mcc_ast_literal** result_literal}{ struct mcc_ast_declaration** result_declaration}
 
 %define parse.trace
 %define parse.error verbose
@@ -87,9 +87,10 @@ void mcc_parser_error();
 %left EQUALS NOT_EQUALS
 %left LESS GREATER LESS_EQ GREATER_EQ
 
+%type <enum mcc_ast_binary_op> binary_op
+%type <enum mcc_ast_unary_op> unary_op
 %type <struct mcc_ast_literal *> literal
-%type <struct mcc_ast_expression *> expression binary_op unary_op
-%type <struct mcc_ast_new_identifier *> identifier
+%type <struct mcc_ast_expression *> expression
 %type <struct mcc_ast_statement *> statement if_statement declaration while_statement compound_statement assignment
 %type <struct mcc_ast_statement_list *> statement_list
 
@@ -100,26 +101,26 @@ void mcc_parser_error();
 
 %%
 
-toplevel : expression { *result = $1; }
+toplevel : literal { *result_literal = $1; }
+         | declaration { *result_declaration = $1; }
          ;
 
-expression : literal                      		{ $$ = mcc_ast_new_expression_literal($1);   loc($$, @1); }
-           | LPARENTH expression RPARENTH	 	{ $$ = mcc_ast_new_expression_parenth($2);   loc($$, @1); }
-		   | unary_op expression 		  		{ $$ = mcc_ast_new_expression_unary_op($1,$2);  loc($$, @1);}
-		   | expression binary_op expression  	{ $$ = mcc_ast_new_expression_binary_op($2,$1, $3); loc($$,@1); }
+expression : literal                      		{ $$ = mcc_ast_new_expression_literal($1);              loc($$, @1); }
+           | LPARENTH expression RPARENTH	 	{ $$ = mcc_ast_new_expression_parenth($2);              loc($$, @1); }
+		   | expression binary_op expression  	{ $$ = mcc_ast_new_expression_binary_op($2, $1, $3);    loc($$, @1); }
            ;
 
-literal : INT_LITERAL   { $$ = mcc_ast_new_literal_int($1);   loc($$, @1); }
-        | FLOAT_LITERAL { $$ = mcc_ast_new_literal_float($1); loc($$, @1); }
-		| STRING_LITERAL { $$ = mcc_ast_new_literal_string($1); loc($$,@1); }
-		| BOOL_LITERAL { $$ = mcc_ast_new_literal_bool($1); loc($$,@1); }
+literal : INT_LITERAL       { $$ = mcc_ast_new_literal_int($1);     loc($$, @1); }
+        | FLOAT_LITERAL     { $$ = mcc_ast_new_literal_float($1);   loc($$, @1); }
+		| STRING_LITERAL    { $$ = mcc_ast_new_literal_string($1);  loc($$,@1);  }
+		| BOOL_LITERAL      { $$ = mcc_ast_new_literal_bool($1);    loc($$,@1);  }
 		;
 
-unary_op : NOT {$$ = MCC_AST_UNARY_OP_NOT;}
-		 | MINUS {$$ = MCC_AST_UNARY_OP_MINUS;}
+unary_op : NOT { $$ = MCC_AST_UNARY_OP_NOT; }
+		 | MINUS  {$$ = MCC_AST_UNARY_OP_MINUS; }
 		 ;
 
-binary_op : PLUS { $$ = MCC_AST_BINARY_OP_ADD; }
+binary_op : PLUS { $$= MCC_AST_BINARY_OP_ADD; }
 			| MINUS { $$ = MCC_AST_BINARY_OP_SUB; }
 			| ASTER { $$ = MCC_AST_BINARY_OP_MUL; }
 			| SLASH { $$ = MCC_AST_BINARY_OP_DIV; }
@@ -130,9 +131,6 @@ binary_op : PLUS { $$ = MCC_AST_BINARY_OP_ADD; }
 			| LESS_EQ { $$ = MCC_AST_BINARY_OP_LESS_EQUALS; }
 			| GREATER_EQ { $$ = MCC_AST_BINARY_OP_GREATER_EQUALS; }
 			;
-
-identifier : IDENTIFIER { $$ = mcc_ast_new_identifier($1); loc($$, @1); }
-           ;
 
 type : INT_TYPE { $$ = MCC_AST_DATA_TYPE_INT; }
      | FLOAT_TYPE { $$ = MCC_AST_DATA_TYPE_FLOAT; }
@@ -151,7 +149,7 @@ if_statement: IF LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statm
             | IF LPARENTH expression RPARENTH statement ELSE statement { $$ = mcc_ast_new_statment_if($3, $5, $7);  loc($$, @1); }
             ;
 
-declaration: type IDENTIFIER SEMICOLON { $$ = mcc_ast_new_statement_declaration($1, $2); loc($$, @1); }
+declaration: type IDENTIFIER SEMICOLON { $$ = mcc_ast_new_declaration($1, $2); loc($$, @1); }
 		   ;
 
 while_statement: WHILE LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statement_while($3, $5); loc($$, @1); }
@@ -203,6 +201,7 @@ struct mcc_parser_result mcc_parse_string(const char *input)
 
 struct mcc_parser_result mcc_parse_file(FILE *input)
 {
+    printf("Parse file \n");
 	assert(input);
 
 	yyscan_t scanner;
@@ -213,7 +212,7 @@ struct mcc_parser_result mcc_parse_file(FILE *input)
 	    .status = MCC_PARSER_STATUS_OK,
 	};
 
-	if (yyparse(scanner, &result.expression) != 0) {
+	if (yyparse(scanner, &result.literal, &result.declaration) != 0) {
 		result.status = MCC_PARSER_STATUS_UNKNOWN_ERROR;
 	}
 

@@ -66,7 +66,10 @@ enum mcc_ast_binary_op {
 };
 
 
-enum mcc_ast_unary_op { MCC_AST_UNARY_OP_NOT, MCC_AST_UNARY_OP_MINUS };
+enum mcc_ast_unary_op {
+    MCC_AST_UNARY_OP_NOT,
+    MCC_AST_UNARY_OP_MINUS
+};
 
 // ---------------------------------------------------------------- Expressions
 
@@ -133,11 +136,28 @@ void mcc_ast_delete_expression(struct mcc_ast_expression *expression);
 
 // ------------------------------------------------------------------- Identifier
 
-struct mcc_ast_identifier{
+struct mcc_ast_identifier {
 
 	struct mcc_ast_node node;
 	char *i_value;
 };
+
+struct mcc_ast_identifier *mcc_ast_new_identifier(char *value);
+
+
+// ------------------------------------------------------------------- Declaration
+
+struct mcc_ast_declaration {
+	struct mcc_ast_node *node;
+
+	enum mcc_ast_data_type type;
+
+	struct mcc_ast_identifier *ident;
+
+};
+
+struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type, struct mcc_ast_identifier *ident);
+
 
 // ------------------------------------------------------------------- Statements
 

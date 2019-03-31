@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
+
 
 // ---------------------------------------------------------------- Expressions
 
@@ -50,9 +52,9 @@ struct mcc_ast_expression *mcc_ast_new_expression_unary_op(enum mcc_ast_unary_op
 		return NULL;
 	}
 
-	expr->type = MCC_AST_EXPRESSION_TYPE_UNARY_OP;
-	expr->up = op;
-	expr->rhs = rhs;
+	expr -> type = MCC_AST_EXPRESSION_TYPE_UNARY_OP;
+	expr -> up = op;
+	expr -> rhs = rhs;
 	return expr;
 
 
@@ -124,6 +126,7 @@ struct mcc_ast_literal *mcc_ast_new_literal_string(char* value)
 {
 	struct mcc_ast_literal *lit = malloc(sizeof(*lit));
 
+
 	if (!lit) {
 		return NULL;
 	}
@@ -179,6 +182,22 @@ void mcc_ast_delete_identifier(struct mcc_ast_identifier *identifier)
 	free(identifier);
 }
 
+// ------------------------------------------------------------------- Declaration
+
+struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type, struct mcc_ast_identifier *ident)
+{
+    assert(ident);
+
+    struct mcc_ast_declaration *decl= malloc(sizeof(*decl));
+
+    decl -> type = type;
+    decl -> ident = ident;
+
+
+    return decl;
+}
+
+
 // ------------------------------------------------------------------- Statements
 
 struct mcc_ast_statement *construct_statement()
@@ -225,6 +244,8 @@ struct mcc_ast_statement *mcc_ast_new_statement_declaration(enum mcc_ast_data_ty
                                                             struct mcc_ast_identifier *identifier)
 {
     assert(identifier);
+
+    printf("Parse declaration");
 
     struct mcc_ast_statement *stmt = construct_statement();
 
