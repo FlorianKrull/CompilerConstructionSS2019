@@ -57,6 +57,7 @@ void mcc_ast_visit_expression(struct mcc_ast_expression *expression, struct mcc_
 		break;
 	}
 
+
 	visit_if_post_order(expression, visitor->expression, visitor);
 }
 
@@ -85,4 +86,25 @@ void mcc_ast_visit_literal(struct mcc_ast_literal *literal, struct mcc_ast_visit
 	}
 
 	visit_if_post_order(literal, visitor->literal, visitor);
+}
+
+void mcc_ast_visit_declaration(struct mcc_ast_declaration *declaration, struct mcc_ast_visitor *visitor)
+{
+	assert(declaration);
+	assert(visitor);
+
+	visit_if_pre_order(declaration, visitor->declaration, visitor);
+
+	mcc_ast_visit_identifier(declaration -> ident, visitor);
+
+
+	visit_if_post_order(declaration, visitor->declaration, visitor);
+}
+
+void mcc_ast_visit_identifier(struct mcc_ast_identifier *identifier, struct mcc_ast_visitor *visitor)
+{
+	assert(identifier);
+	assert(visitor);
+
+	visit(identifier, visitor -> identifier, visitor);
 }

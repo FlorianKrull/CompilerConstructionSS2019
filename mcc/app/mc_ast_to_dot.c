@@ -8,7 +8,7 @@
 
 void print_usage(const char *prg) {
     printf("usage: %s <FILE>\n\n", prg);
-    printf("  <FILE>        Input filepath or - for stdin\n");
+    printf("  <FILE>  Input filepath or - for stdin\n");
 }
 
 int main(int argc, char *argv[]) {
@@ -30,19 +30,22 @@ int main(int argc, char *argv[]) {
     }
 
     struct mcc_ast_expression *expr = NULL;
+    struct mcc_ast_declaration *decl = NULL;
 
     // parsing phase
     {
+        printf("Start parsing \n");
         struct mcc_parser_result result = mcc_parse_file(in);
         if (result.status != MCC_PARSER_STATUS_OK) {
             printf("NOT OK");
             return EXIT_FAILURE;
         }
         printf("OK");
-        expr = result.expression;
+        decl = result.declaration;
+        result.expression = expr;
     }
 
-    mcc_ast_print_dot(stdout, expr);
+    mcc_ast_print_dot(stdout, decl);
 
     // cleanup
     mcc_ast_delete(expr);
