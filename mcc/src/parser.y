@@ -88,13 +88,12 @@ void mcc_parser_error();
 %left LESS GREATER LESS_EQ GREATER_EQ
 
 %type <struct mcc_ast_literal *> literal
-%type <struct mcc_ast_expression *> expression binary_op
-%type <struct mcc_ast_unary_op > unary_op
+%type <struct mcc_ast_expression *> expression binary_op unary_op
 %type <struct mcc_ast_new_identifier *> identifier
-%type <struct mcc_ast_statement *> statement if_statement declaration while_statement compound_statement
+%type <struct mcc_ast_statement *> statement if_statement declaration while_statement compound_statement assignment
 %type <struct mcc_ast_statement_list *> statement_list
 
-%type <enum mCc_ast_data_type> type
+%type <enum mcc_ast_data_type> type
 
 
 %start toplevel
@@ -107,7 +106,7 @@ toplevel : expression { *result = $1; }
 expression : literal                      		{ $$ = mcc_ast_new_expression_literal($1);   loc($$, @1); }
            | LPARENTH expression RPARENTH	 	{ $$ = mcc_ast_new_expression_parenth($2);   loc($$, @1); }
 		   | unary_op expression 		  		{ $$ = mcc_ast_new_expression_unary_op($1,$2);  loc($$, @1);}
-		   | expression binary_op expression  	{ $$ = mcc_ast_new_expression_binary_op($1,$2); loc($$,@1) }
+		   | expression binary_op expression  	{ $$ = mcc_ast_new_expression_binary_op($2,$1, $3); loc($$,@1); }
            ;
 
 literal : INT_LITERAL   { $$ = mcc_ast_new_literal_int($1);   loc($$, @1); }
@@ -120,16 +119,16 @@ unary_op : NOT {$$ = MCC_AST_UNARY_OP_NOT;}
 		 | MINUS {$$ = MCC_AST_UNARY_OP_MINUS;}
 		 ;
 
-binary_op : PLUS { $$ = MCC_AST_BINARY_OP_ADD }
-			| MINUS { $$ = MCC_AST_BINARY_OP_SUB }
-			| ASTER { $$ = MCC_AST_BINARY_OP_MUL }
-			| SLASH { $$ = MCC_AST_BINARY_OP_DIV }
-			| EQUALS { $$ = MCC_AST_BINARY_OP_EQUALS }
-			| NOT_EQUALS { $$ = MCC_AST_BINARY_OP_NOT_EQUALS }
-			| LESS { $$ = MCC_AST_BINARY_OP_LESS }
-			| GREATER { $$ = MCC_AST_BINARY_OP_GREATER }
-			| LESS_EQ { $$ = MCC_AST_BINARY_OP_LESS_EQUALS}
-			| GREATER_EQ { $$ = MCC_AST_BINARY_OP_GREATER_EQUALS}
+binary_op : PLUS { $$ = MCC_AST_BINARY_OP_ADD; }
+			| MINUS { $$ = MCC_AST_BINARY_OP_SUB; }
+			| ASTER { $$ = MCC_AST_BINARY_OP_MUL; }
+			| SLASH { $$ = MCC_AST_BINARY_OP_DIV; }
+			| EQUALS { $$ = MCC_AST_BINARY_OP_EQUALS; }
+			| NOT_EQUALS { $$ = MCC_AST_BINARY_OP_NOT_EQUALS; }
+			| LESS { $$ = MCC_AST_BINARY_OP_LESS; }
+			| GREATER { $$ = MCC_AST_BINARY_OP_GREATER; }
+			| LESS_EQ { $$ = MCC_AST_BINARY_OP_LESS_EQUALS; }
+			| GREATER_EQ { $$ = MCC_AST_BINARY_OP_GREATER_EQUALS; }
 			;
 
 identifier : IDENTIFIER { $$ = mcc_ast_new_identifier($1); loc($$, @1); }
@@ -141,7 +140,7 @@ type : INT_TYPE { $$ = MCC_AST_DATA_TYPE_INT; }
 	 | BOOL_TYPE { $$ = MCC_AST_DATA_TYPE_BOOL; }
      ;
 
-statement : expression SEMICOLON    { $$ = mCc_ast_new_statement_expression($1); loc($$, @1); }
+statement : expression SEMICOLON    { $$ = mcc_ast_new_statement_expression($1); loc($$, @1); }
           | if_statement            { $$= $1;  loc($$, @1); }
 		  | while_statement         { $$ = $1; loc($$, @1); }
 		  | compound_statement      { $$ = $1; loc($$, @1); }
@@ -152,8 +151,7 @@ if_statement: IF LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statm
             | IF LPARENTH expression RPARENTH statement ELSE statement { $$ = mcc_ast_new_statment_if($3, $5, $7);  loc($$, @1); }
             ;
 
-declaration: type IDENTIFIER SEMICOLON { $$ = mcc_ast_new_statement_declaration($1, $2); loc($$, @1); };
-           | type LBRACKET INT_LITERAL RBRACKET IDENTIFIER
+declaration: type IDENTIFIER SEMICOLON { $$ = mcc_ast_new_statement_declaration($1, $2); loc($$, @1); }
 		   ;
 
 while_statement: WHILE LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statement_while($3, $5); loc($$, @1); }
@@ -162,14 +160,13 @@ while_statement: WHILE LPARENTH expression RPARENTH statement { $$ = mcc_ast_new
 compound_statement: LBRACE statement_list LBRACE { $$ = $2; loc($$; @1); }
 				  ;
 
-statement_list: %empty
+statement_list: %empty { $$ = mcc_ast_empty_node() }
 			  | statement_list statement { $$ = mcc_ast_new_statement_list($1, $2); loc($$, @1); }
 			  ;
 
-assignment :  IDENTIFIER ASSIGNMENT INT_LITERAL
-			| IDENTIFIER ASSIGNMENT FLOAT_LITERAL
-			| IDENTIFIER ASSIGNMENT STRING_LITERAL
-			;
+assignment:  IDENTIFIER ASSIGNMENT expression 					            { $$ = mcc_ast_new_statement_assignment($1, 0, $3); 	loc($$, @1); };
+          |  IDENTIFIER LBRACKET expression RBRACKET ASSIGNMENT expression  { $$ = mcc_ast_new_statement_assignment($1, $3, $6); 	loc($$, @1); };
+          ;
 
 %%
 

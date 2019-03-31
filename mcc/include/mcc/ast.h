@@ -92,10 +92,12 @@ struct mcc_ast_expression {
 		// MCC_AST_EXPRESSION_TYPE_BINARY_OP
 		struct {
 			enum mcc_ast_binary_op op;
+            enum mcc_ast_unary_op up;
 			struct mcc_ast_expression *lhs;
 			struct mcc_ast_expression *rhs;
 		};
 
+        // MCC_AST_EXPRESSION_TYPE_UNARY_OP
 		// MCC_AST_EXPRESSION_TYPE_PARENTH
 		struct mcc_ast_expression *expression;
 	};
@@ -145,9 +147,8 @@ enum mcc_ast_statement_type {
 	MCC_AST_STATEMENT_TYPE_WHILE,
 	MCC_AST_STATEMENT_TYPE_DECL,
 	MCC_AST_STATEMENT_TYPE_ASSGN,
-	MCC_AST_STATEMENT_TYPE_DECLA,
 	MCC_AST_STATEMENT_TYPE_COMPOUND,
-	MCC_AST_STATEMENT_TYPE_BLOCK
+	// MCC_AST_STATEMENT_TYPE_BLOCK
 };
 
 struct mcc_ast_statement_list {
@@ -164,7 +165,10 @@ struct mcc_ast_statement {
     union {
         struct mcc_ast_expression *expression;
 
-		struct mcc_ast_declaration *declaration;
+		struct {
+            enum mcc_ast_data_type data_type;
+            struct mcc_ast_identifier *id_decl;
+        };
 
 		struct {
 			struct mcc_ast_expression *if_condition;
@@ -184,11 +188,7 @@ struct mcc_ast_statement {
 		};
 
         struct mcc_ast_statement_list *compound_statement;
-
-
     };
-
-
 };
 
 struct mcc_ast_statement *mcc_ast_new_statement_expression (struct mcc_ast_expression *expression);
@@ -252,6 +252,11 @@ struct mcc_ast_literal *mcc_ast_new_literal_string(char* value);
 struct mcc_ast_literal *mcc_ast_new_literal_bool(bool value);
 
 void mcc_ast_delete_literal(struct mcc_ast_literal *literal);
+
+void mcc_ast_empty_node();
+
+
+// -------------------------------------------------------------------- Assignment
 
 
 
