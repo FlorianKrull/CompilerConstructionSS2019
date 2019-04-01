@@ -9,8 +9,6 @@
 #define MCC_PARSER_H
 
 #include <stdio.h>
-#include "stdlib.h"
-
 
 #include "mcc/ast.h"
 
@@ -22,15 +20,18 @@ enum mcc_parser_status {
 
 struct mcc_parser_result {
 	enum mcc_parser_status status;
+
 	struct mcc_ast_expression *expression;
-	struct mcc_parser_error *errors;
+	struct mcc_ast_literal *literal;
+	struct mcc_ast_declaration *declaration;
+	struct mcc_ast_statement *statement;
+
+	
 };
-
-
-
 
 struct mcc_parser_result mcc_parse_string(const char *input);
 
 struct mcc_parser_result mcc_parse_file(FILE *input);
+
 
 #endif // MCC_PARSER_H

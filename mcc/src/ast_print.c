@@ -1,24 +1,81 @@
 #include "mcc/ast_print.h"
 
 #include <assert.h>
+#include <stdio.h>
 
 #include "mcc/ast_visit.h"
+#include "../include/mcc/ast.h"
 
 const char *mcc_ast_print_binary_op(enum mcc_ast_binary_op op)
 {
 	switch (op) {
-	case MCC_AST_BINARY_OP_ADD:
-		return "+";
-	case MCC_AST_BINARY_OP_SUB:
-		return "-";
-	case MCC_AST_BINARY_OP_MUL:
-		return "*";
-	case MCC_AST_BINARY_OP_DIV:
-		return "/";
+		case MCC_AST_BINARY_OP_ADD:
+			return "+";
+		case MCC_AST_BINARY_OP_SUB:
+			return "-";
+		case MCC_AST_BINARY_OP_MUL:
+			return "*";
+		case MCC_AST_BINARY_OP_DIV:
+			return "/";
+		case MCC_AST_BINARY_OP_AND:
+			return "&&";
+		case MCC_AST_BINARY_OP_OR:
+			return "||";
+		case MCC_AST_BINARY_OP_EQUALS:
+			return "==";
+		case MCC_AST_BINARY_OP_GREATER:
+			return ">";
+		case MCC_AST_BINARY_OP_GREATER_EQUALS:
+			return ">=";
+		case MCC_AST_BINARY_OP_LESS:
+			return "<";
+		case MCC_AST_BINARY_OP_LESS_EQUALS:
+			return "<=";
+		case MCC_AST_BINARY_OP_NOT_EQUALS:
+			return "!=";
 	}
 
 	return "unknown op";
 }
+
+const char *mcc_ast_print_data_type(enum mcc_ast_data_type dt)
+{
+	switch (dt) {
+		case MCC_AST_DATA_TYPE_INT:
+			return "INT";
+		case MCC_AST_DATA_TYPE_STRING:
+			return "STRING";
+		case MCC_AST_DATA_TYPE_BOOL:
+			return "BOOL";
+		case MCC_AST_DATA_TYPE_FLOAT:
+			return "FLOAT";
+	}
+
+	return "unknown data type";
+}
+
+const char *mcc_ast_print_statement(enum mcc_ast_statement_type stmt_type)
+{
+	switch (stmt_type) {
+		case MMC_AST_STATEMENT_TYPE_EXPRESSION:
+			return "EXPR_STMT";
+		case MCC_AST_STATEMENT_TYPE_IF:
+			return "IF_STMT";
+		case MCC_AST_STATEMENT_TYPE_WHILE:
+			return "WHILE_STMT";
+		case MCC_AST_STATEMENT_TYPE_DECL:
+			return "DECL_STMT";
+		case MCC_AST_STATEMENT_TYPE_ASSGN:
+			return "ASSGN_STMT";
+		case MCC_AST_STATEMENT_TYPE_COMPOUND:
+			return "COMPOUND_STMT";
+		case MCC_AST_STATEMENT_TYPE_RET:
+			return "RET_STMT";
+	}
+
+	return "unknown statement";
+}
+
 
 // ---------------------------------------------------------------- DOT Printer
 
@@ -82,6 +139,17 @@ static void print_dot_expression_binary_op(struct mcc_ast_expression *expression
 	print_dot_edge(out, expression, expression->rhs, "rhs");
 }
 
+static void print_dot_statement_if(struct mcc_ast_statement *statement, void *data)
+{
+	assert(statement);
+	assert(data);
+
+	FILE *out = data;
+	print_dot_edge(out, statement, statement -> if_condition, "if_condition");
+	print_dot_edge(out, statement, statement -> if_stmt, "if_statement");
+
+}
+
 static void print_dot_expression_parenth(struct mcc_ast_expression *expression, void *data)
 {
 	assert(expression);
@@ -116,6 +184,20 @@ static void print_dot_literal_float(struct mcc_ast_literal *literal, void *data)
 	print_dot_node(out, literal, label);
 }
 
+static void print_dot_declaration(struct mcc_ast_declaration *declaration, void *data)
+{
+	assert(declaration);
+	assert(data);
+
+	char label[LABEL_SIZE] = {0};
+	snprintf(label, sizeof(label), "%f", declaration->type);
+
+	FILE *out = data;
+	print_dot_node(out, declaration, label);
+	print_dot_edge(out, declaration, &declaration -> type, "declaration type");
+	print_dot_edge(out, declaration, &declaration -> ident -> i_value, "declaration ident");
+}
+
 // Setup an AST Visitor for printing.
 static struct mcc_ast_visitor print_dot_visitor(FILE *out)
 {
@@ -133,6 +215,8 @@ static struct mcc_ast_visitor print_dot_visitor(FILE *out)
 
 	    .literal_int = print_dot_literal_int,
 	    .literal_float = print_dot_literal_float,
+
+		.declaration = print_dot_declaration
 	};
 }
 
@@ -158,6 +242,19 @@ void mcc_ast_print_dot_literal(FILE *out, struct mcc_ast_literal *literal)
 
 	struct mcc_ast_visitor visitor = print_dot_visitor(out);
 	mcc_ast_visit(literal, &visitor);
+
+	print_dot_end(out);
+}
+
+void mcc_ast_print_dot_declaration(FILE *out, struct mcc_ast_declaration *declaration)
+{
+	assert(out);
+	assert(declaration);
+
+	print_dot_begin(out);
+
+	struct mcc_ast_visitor visitor = print_dot_visitor(out);
+	mcc_ast_visit(declaration, &visitor);
 
 	print_dot_end(out);
 }

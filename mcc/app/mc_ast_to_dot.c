@@ -1,27 +1,54 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "mcc/ast.h"
 #include "mcc/ast_print.h"
 #include "mcc/parser.h"
 
-int main(void)
-{
-	struct mcc_ast_expression *expr = NULL;
+void print_usage(const char *prg) {
+    printf("usage: %s <FILE>\n\n", prg);
+    printf("  <FILE>  Input filepath or - for stdin\n");
+}
 
-	// parsing phase
-	{
-		struct mcc_parser_result result = mcc_parse_file(stdin);
-		if (result.status != MCC_PARSER_STATUS_OK) {
-			return EXIT_FAILURE;
-		}
-		expr = result.expression;
-	}
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        print_usage(argv[0]);
+        return EXIT_FAILURE;
+    }
 
-	mcc_ast_print_dot(stdout, expr);
+    // determine input source
+    FILE *in;
+    if (strcmp("-", argv[1]) == 0) {
+        in = stdin;
+    } else {
+        in = fopen(argv[1], "r");
+        if (!in) {
+            perror("fopen");
+            return EXIT_FAILURE;
+        }
+    }
 
-	// cleanup
-	mcc_ast_delete(expr);
+    struct mcc_ast_expression *expr = NULL;
+    struct mcc_ast_declaration *decl = NULL;
 
-	return EXIT_SUCCESS;
+    // parsing phase
+    {
+        printf("Start parsing \n");
+        struct mcc_parser_result result = mcc_parse_file(in);
+        if (result.status != MCC_PARSER_STATUS_OK) {
+            printf("NOT OK");
+            return EXIT_FAILURE;
+        }
+        printf("OK");
+        decl = result.declaration;
+        result.expression = expr;
+    }
+
+    mcc_ast_print_dot(stdout, decl);
+
+    // cleanup
+    mcc_ast_delete(expr);
+
+    return EXIT_SUCCESS;
 }

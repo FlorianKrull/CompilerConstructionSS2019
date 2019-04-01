@@ -6,5 +6,5 @@ C_FLAGS = -g   -std=gnu11
 
 C_DEFINES = 
 
-C_INCLUDES = -I/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/include -I/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/src/utils -I/home/sima_n/Desktop/uni2019/CompilerConstructionSS2019/mcc/vendor/cutest 
+C_INCLUDES = -I/home/sima_n/Desktop/Clemen/CompilerConstructionSS2019/mcc/builddir/mcc@sha -I/home/sima_n/Desktop/Clemen/CompilerConstructionSS2019/mcc/include -I/home/sima_n/Desktop/Clemen/CompilerConstructionSS2019/mcc/include/mcc -I/home/sima_n/Desktop/Clemen/CompilerConstructionSS2019/mcc/src/utils -I/home/sima_n/Desktop/Clemen/CompilerConstructionSS2019/mcc/vendor/cutest 
 
