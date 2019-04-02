@@ -3,7 +3,6 @@ project(CompilerConstructionSS2019 C)
 
 set(CMAKE_C_STANDARD 11)
 
-include_directories(mcc/builddir/mcc@sha)
 include_directories(mcc/include)
 include_directories(mcc/include/mcc)
 include_directories(mcc/src/utils)
@@ -12,12 +11,6 @@ include_directories(mcc/vendor/cutest)
 add_executable(CompilerConstructionSS2019
         mcc/app/mc_ast_to_dot.c
         mcc/app/mcc.c
-        mcc/build-project.shg/meson-private/sanitycheckc.c
-        mcc/builddir/mcc@sha/parser.tab.c
-        mcc/builddir/mcc@sha/parser.tab.h
-        mcc/builddir/mcc@sha/scanner.c
-        mcc/builddir/mcc@sha/scanner.h
-        mcc/builddir/meson-private/sanitycheckc.c
         mcc/include/mcc/ast.h
         mcc/include/mcc/ast_print.h
         mcc/include/mcc/ast_visit.h

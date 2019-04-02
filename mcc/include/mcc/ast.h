@@ -21,7 +21,7 @@ struct mcc_ast_expression;
 struct mcc_ast_literal;
 struct mcc_ast_statement;
 struct mcc_ast_identifier;
-
+struct mcc_ast_parameters;
 
 // ------------------------------------------------------------------- AST Node
 
@@ -132,6 +132,16 @@ void mcc_ast_delete_expression(struct mcc_ast_expression *expression);
 // 	struct mcc_ast_expression *expression;
 // }
 
+//------------------------------------------------------------------------Parameters
+
+struct mcc_ast_parameters{
+
+	struct mcc_ast_node *node;
+	struct mcc_ast_declaration *declaration;
+
+};
+
+
 
 
 // ------------------------------------------------------------------- Identifier
@@ -168,7 +178,7 @@ enum mcc_ast_statement_type {
 	MCC_AST_STATEMENT_TYPE_DECL,
 	MCC_AST_STATEMENT_TYPE_ASSGN,
 	MCC_AST_STATEMENT_TYPE_COMPOUND,
-	MCC_AST_STATEMENT_TYPE_RET;
+	MCC_AST_STATEMENT_TYPE_RET
 	// MCC_AST_STATEMENT_TYPE_BLOCK
 };
 
@@ -202,9 +212,10 @@ struct mcc_ast_statement {
 			struct mcc_ast_expression *while_condition;
 			struct mcc_ast_statement *while_stmt;
 		};
+
 		struct {
 
-			struct mcc_ast_statement *ret_stmt;
+			struct mcc_ast_statement_ret *ret_stmt;
 		};
 
 		struct {
@@ -284,6 +295,15 @@ void mcc_ast_empty_node();
 
 // -------------------------------------------------------------------- Assignment
 
+struct mcc_ast_assignment {
+
+		struct mcc_ast_node *node;
+        struct mcc_ast_expression *expression;
+        struct mcc_ast_identifier *identifier;
+
+
+
+};
 
 
 // -------------------------------------------------------------------- Utility

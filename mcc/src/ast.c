@@ -349,6 +349,53 @@ struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_identi
     return stmt;
 }
 
+//----------------------------------------------------------------------Parameters
+
+struct mcc_ast_parameters *mcc_ast_parameters_decl(struct mcc_ast_parameters *params,
+													struct mcc_ast_decleration *decl)
+{
+
+	assert(params);
+	assert(decl);
+
+	struct mcc_ast_parameters *par= malloc(sizeof(*par));
+     par -> declaration = decl;
+	 memcpy(params -> declaration, decl, sizeof(decl));
+	 free(decl);
+     par -> declaration++;
+
+
+	return params;
+
+}
+
+struct  mcc_ast_parameters *mcc_ast_empty_parameters()
+{
+   struct  mcc_ast_parameters *new_param;
+       malloc(sizeof(new_param));
+
+	return new_param;
+
+}
+
+
+struct mcc_ast_parameters *mcc_ast_single_parameters(struct mcc_ast_declaration * decl){
+
+	assert(decl);
+
+	struct mcc_ast_parameters *single_par = malloc(sizeof(single_par));
+
+	single_par ->declaration = decl;
+
+
+	return  single_par;
+
+}
+
+
+
+//---------------------------------------------------------------------
+
 void mcc_ast_empty_node() {
 }
 

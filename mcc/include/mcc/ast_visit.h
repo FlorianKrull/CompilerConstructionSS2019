@@ -27,7 +27,7 @@ typedef void (*mcc_ast_visit_literal_cb)(struct mcc_ast_literal *, void *userdat
 typedef void (*mcc_ast_visit_declaration_cb)(struct mcc_ast_declaration *, void *userdata);
 typedef void (*mcc_ast_visit_identifier_cb)(struct mcc_ast_identifier *, void *userdata);
 typedef void (*mcc_ast_visit_statement_cb)(struct mcc_ast_statement *, void *userdata);
-
+typedef void (*mcc_ast_visit_parameters_cb)(struct mcc_ast_parameters *, void *userdata);
 
 
 struct mcc_ast_visitor {
@@ -44,12 +44,14 @@ struct mcc_ast_visitor {
 	mcc_ast_visit_expression_cb expression_unary_op;
 	mcc_ast_visit_expression_cb expression_parenth;
 
+
 	mcc_ast_visit_statement_cb statement_if;
 	mcc_ast_visit_statement_cb statement_if_else;
 	mcc_ast_visit_statement_cb statement_assignment;
 	mcc_ast_visit_statement_cb statement_while;
 	mcc_ast_visit_statement_cb statement_compound;
 	mcc_ast_visit_statement_cb statement_declaration;
+	mcc_ast_visit_statement_cb while_statement;
 
 	mcc_ast_visit_literal_cb literal;
 	mcc_ast_visit_literal_cb literal_int;
@@ -59,7 +61,7 @@ struct mcc_ast_visitor {
 
 	mcc_ast_visit_declaration_cb declaration;
 	mcc_ast_visit_identifier_cb identifier;
-
+    mcc_ast_visit_parameters_cb parameters;
 
 };
 
@@ -70,6 +72,11 @@ void mcc_ast_visit_literal(struct mcc_ast_literal *literal, struct mcc_ast_visit
 void mcc_ast_visit_declaration(struct mcc_ast_declaration *declaration, struct mcc_ast_visitor *visitor);
 
 void mcc_ast_visit_identifier(struct mcc_ast_identifier *identifier, struct mcc_ast_visitor *visitor);
+
+//void mcc_ast_statement(struct mcc_ast_statement *statement, struct mcc_ast_visitor *visitor);
+
+void mcc_ast_visit_parameters(struct mcc_ast_parameters *parameters, struct mcc_ast_visitor *visitor);
+
 
 // clang-format off
 

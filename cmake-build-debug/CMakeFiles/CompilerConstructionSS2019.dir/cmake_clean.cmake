@@ -1,10 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/CompilerConstructionSS2019.dir/mcc/app/mc_ast_to_dot.c.o"
   "CMakeFiles/CompilerConstructionSS2019.dir/mcc/app/mcc.c.o"
-  "CMakeFiles/CompilerConstructionSS2019.dir/mcc/build-project.shg/meson-private/sanitycheckc.c.o"
-  "CMakeFiles/CompilerConstructionSS2019.dir/mcc/builddir/mcc@sha/parser.tab.c.o"
-  "CMakeFiles/CompilerConstructionSS2019.dir/mcc/builddir/mcc@sha/scanner.c.o"
-  "CMakeFiles/CompilerConstructionSS2019.dir/mcc/builddir/meson-private/sanitycheckc.c.o"
   "CMakeFiles/CompilerConstructionSS2019.dir/mcc/resources/mc_builtins.c.o"
   "CMakeFiles/CompilerConstructionSS2019.dir/mcc/src/ast.c.o"
   "CMakeFiles/CompilerConstructionSS2019.dir/mcc/src/ast_print.c.o"

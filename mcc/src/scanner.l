@@ -19,6 +19,8 @@
 // - track lines
 // - take line breaks into account
 
+
+
 #define YY_USER_ACTION \
 	yylloc->first_column = yylloc->last_column; \
 	yylloc->last_column += yyleng;
@@ -31,6 +33,7 @@ identifier [a-zA-Z_][a-zA-Z0-9_]*
 string_literal ["][^"]*["]|(\".*\")|('.*')
 comment (\/\*.*\*\/)
 comment_multiline ("/*"([^*]|\*+[^*/])*\*+"/")
+
 %%
 
 
@@ -79,6 +82,10 @@ comment_multiline ("/*"([^*]|\*+[^*/])*\*+"/")
 
 
 [ \t\r\n]+        { /* ignore */ }
+
+
+
+
 
 {identifier}      {
                     yylval->TK_IDENTIFIER = mcc_ast_new_identifier(yytext);

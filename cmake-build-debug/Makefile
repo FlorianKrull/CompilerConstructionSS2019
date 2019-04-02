@@ -48,10 +48,10 @@ RM = /opt/clion-2018.3.4/bin/cmake/linux/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/sima_n/Desktop/Clemen/CompilerConstructionSS2019
+CMAKE_SOURCE_DIR = /home/sima_n/Desktop/CompilerConstructionSS2019
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/sima_n/Desktop/Clemen/CompilerConstructionSS2019/cmake-build-debug
+CMAKE_BINARY_DIR = /home/sima_n/Desktop/CompilerConstructionSS2019/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/sima_n/Desktop/Clemen/CompilerConstructionSS2019/cmake-build-debug/CMakeFiles /home/sima_n/Desktop/Clemen/CompilerConstructionSS2019/cmake-build-debug/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/sima_n/Desktop/CompilerConstructionSS2019/cmake-build-debug/CMakeFiles /home/sima_n/Desktop/CompilerConstructionSS2019/cmake-build-debug/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/sima_n/Desktop/Clemen/CompilerConstructionSS2019/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/sima_n/Desktop/CompilerConstructionSS2019/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -176,114 +176,6 @@ mcc/app/mcc.s: mcc/app/mcc.c.s
 mcc/app/mcc.c.s:
 	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/app/mcc.c.s
 .PHONY : mcc/app/mcc.c.s
-
-mcc/build-project.shg/meson-private/sanitycheckc.o: mcc/build-project.shg/meson-private/sanitycheckc.c.o
-
-.PHONY : mcc/build-project.shg/meson-private/sanitycheckc.o
-
-# target to build an object file
-mcc/build-project.shg/meson-private/sanitycheckc.c.o:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/build-project.shg/meson-private/sanitycheckc.c.o
-.PHONY : mcc/build-project.shg/meson-private/sanitycheckc.c.o
-
-mcc/build-project.shg/meson-private/sanitycheckc.i: mcc/build-project.shg/meson-private/sanitycheckc.c.i
-
-.PHONY : mcc/build-project.shg/meson-private/sanitycheckc.i
-
-# target to preprocess a source file
-mcc/build-project.shg/meson-private/sanitycheckc.c.i:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/build-project.shg/meson-private/sanitycheckc.c.i
-.PHONY : mcc/build-project.shg/meson-private/sanitycheckc.c.i
-
-mcc/build-project.shg/meson-private/sanitycheckc.s: mcc/build-project.shg/meson-private/sanitycheckc.c.s
-
-.PHONY : mcc/build-project.shg/meson-private/sanitycheckc.s
-
-# target to generate assembly for a file
-mcc/build-project.shg/meson-private/sanitycheckc.c.s:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/build-project.shg/meson-private/sanitycheckc.c.s
-.PHONY : mcc/build-project.shg/meson-private/sanitycheckc.c.s
-
-mcc/builddir/mcc@sha/parser.tab.o: mcc/builddir/mcc@sha/parser.tab.c.o
-
-.PHONY : mcc/builddir/mcc@sha/parser.tab.o
-
-# target to build an object file
-mcc/builddir/mcc@sha/parser.tab.c.o:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/builddir/mcc@sha/parser.tab.c.o
-.PHONY : mcc/builddir/mcc@sha/parser.tab.c.o
-
-mcc/builddir/mcc@sha/parser.tab.i: mcc/builddir/mcc@sha/parser.tab.c.i
-
-.PHONY : mcc/builddir/mcc@sha/parser.tab.i
-
-# target to preprocess a source file
-mcc/builddir/mcc@sha/parser.tab.c.i:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/builddir/mcc@sha/parser.tab.c.i
-.PHONY : mcc/builddir/mcc@sha/parser.tab.c.i
-
-mcc/builddir/mcc@sha/parser.tab.s: mcc/builddir/mcc@sha/parser.tab.c.s
-
-.PHONY : mcc/builddir/mcc@sha/parser.tab.s
-
-# target to generate assembly for a file
-mcc/builddir/mcc@sha/parser.tab.c.s:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/builddir/mcc@sha/parser.tab.c.s
-.PHONY : mcc/builddir/mcc@sha/parser.tab.c.s
-
-mcc/builddir/mcc@sha/scanner.o: mcc/builddir/mcc@sha/scanner.c.o
-
-.PHONY : mcc/builddir/mcc@sha/scanner.o
-
-# target to build an object file
-mcc/builddir/mcc@sha/scanner.c.o:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/builddir/mcc@sha/scanner.c.o
-.PHONY : mcc/builddir/mcc@sha/scanner.c.o
-
-mcc/builddir/mcc@sha/scanner.i: mcc/builddir/mcc@sha/scanner.c.i
-
-.PHONY : mcc/builddir/mcc@sha/scanner.i
-
-# target to preprocess a source file
-mcc/builddir/mcc@sha/scanner.c.i:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/builddir/mcc@sha/scanner.c.i
-.PHONY : mcc/builddir/mcc@sha/scanner.c.i
-
-mcc/builddir/mcc@sha/scanner.s: mcc/builddir/mcc@sha/scanner.c.s
-
-.PHONY : mcc/builddir/mcc@sha/scanner.s
-
-# target to generate assembly for a file
-mcc/builddir/mcc@sha/scanner.c.s:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/builddir/mcc@sha/scanner.c.s
-.PHONY : mcc/builddir/mcc@sha/scanner.c.s
-
-mcc/builddir/meson-private/sanitycheckc.o: mcc/builddir/meson-private/sanitycheckc.c.o
-
-.PHONY : mcc/builddir/meson-private/sanitycheckc.o
-
-# target to build an object file
-mcc/builddir/meson-private/sanitycheckc.c.o:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/builddir/meson-private/sanitycheckc.c.o
-.PHONY : mcc/builddir/meson-private/sanitycheckc.c.o
-
-mcc/builddir/meson-private/sanitycheckc.i: mcc/builddir/meson-private/sanitycheckc.c.i
-
-.PHONY : mcc/builddir/meson-private/sanitycheckc.i
-
-# target to preprocess a source file
-mcc/builddir/meson-private/sanitycheckc.c.i:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/builddir/meson-private/sanitycheckc.c.i
-.PHONY : mcc/builddir/meson-private/sanitycheckc.c.i
-
-mcc/builddir/meson-private/sanitycheckc.s: mcc/builddir/meson-private/sanitycheckc.c.s
-
-.PHONY : mcc/builddir/meson-private/sanitycheckc.s
-
-# target to generate assembly for a file
-mcc/builddir/meson-private/sanitycheckc.c.s:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/builddir/meson-private/sanitycheckc.c.s
-.PHONY : mcc/builddir/meson-private/sanitycheckc.c.s
 
 mcc/resources/mc_builtins.o: mcc/resources/mc_builtins.c.o
 
@@ -516,18 +408,6 @@ help:
 	@echo "... mcc/app/mcc.o"
 	@echo "... mcc/app/mcc.i"
 	@echo "... mcc/app/mcc.s"
-	@echo "... mcc/build-project.shg/meson-private/sanitycheckc.o"
-	@echo "... mcc/build-project.shg/meson-private/sanitycheckc.i"
-	@echo "... mcc/build-project.shg/meson-private/sanitycheckc.s"
-	@echo "... mcc/builddir/mcc@sha/parser.tab.o"
-	@echo "... mcc/builddir/mcc@sha/parser.tab.i"
-	@echo "... mcc/builddir/mcc@sha/parser.tab.s"
-	@echo "... mcc/builddir/mcc@sha/scanner.o"
-	@echo "... mcc/builddir/mcc@sha/scanner.i"
-	@echo "... mcc/builddir/mcc@sha/scanner.s"
-	@echo "... mcc/builddir/meson-private/sanitycheckc.o"
-	@echo "... mcc/builddir/meson-private/sanitycheckc.i"
-	@echo "... mcc/builddir/meson-private/sanitycheckc.s"
 	@echo "... mcc/resources/mc_builtins.o"
 	@echo "... mcc/resources/mc_builtins.i"
 	@echo "... mcc/resources/mc_builtins.s"
