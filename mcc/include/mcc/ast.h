@@ -280,6 +280,34 @@ void mcc_ast_empty_node();
 
 
 
+
+// -------------------------------------------------------------------- Parameter
+
+
+struct mcc_ast_parameter {
+	struct mcc_ast_node node;
+	struct mcc_ast_parameter *next;
+	struct mcc_ast_declaration *declaration;
+};
+
+struct mcc_ast_parameter *
+mcc_ast_new_parameter(struct mcc_ast_declaration *declaration);
+
+void mcc_ast_delete_parameter(struct mcc_ast_parameter *parameter);
+
+
+// -------------------------------------------------------------------- Program
+
+struct mcc_ast_program {
+	struct mcc_ast_node node;
+	struct mcc_ast_function_def *function_def;
+};
+
+struct mcc_ast_program *
+mcc_ast_new_program(struct mcc_ast_function_def_list *function_def_list);
+
+void mcc_ast_delete_program(struct mcc_ast_program *program);
+
 // -------------------------------------------------------------------- Utility
 
 // clang-format off

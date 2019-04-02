@@ -78,9 +78,6 @@ void mcc_parser_error();
 %token FOR "for"
 %token RETURN "return"
 
-
-/* precedence */
-
 %left PLUS MINUS
 %left ASTER SLASH
 %left OR AND
@@ -93,11 +90,13 @@ void mcc_parser_error();
 %type <struct mcc_ast_expression *> expression
 %type <struct mcc_ast_statement *> statement if_statement declaration while_statement compound_statement assignment
 %type <struct mcc_ast_statement_list *> statement_list
+%type <enum mcc_ast_data_type> type VOID_TYPE
+%type <struct mcc_ast_function_def *> function_def
+%type <struct mcc_ast_parameter *> parameters
+%type <struct mcc_ast_program *> program
 
-%type <enum mcc_ast_data_type> type
 
-
-%start toplevel
+%start program
 
 %%
 
@@ -136,6 +135,7 @@ type : INT_TYPE { $$ = MCC_AST_DATA_TYPE_INT; }
      | FLOAT_TYPE { $$ = MCC_AST_DATA_TYPE_FLOAT; }
      | STRING_TYPE { $$ = MCC_AST_DATA_TYPE_STRING; }
 	 | BOOL_TYPE { $$ = MCC_AST_DATA_TYPE_BOOL; }
+	 | VOID_TYPE { $$ = MCC_AST_TYPE_VOID;}
      ;
 
 statement : expression SEMICOLON    { $$ = mcc_ast_new_statement_expression($1); loc($$, @1); }
@@ -165,6 +165,17 @@ statement_list: %empty { $$ = mcc_ast_empty_node() }
 assignment:  IDENTIFIER ASSIGNMENT expression 					            { $$ = mcc_ast_new_statement_assignment($1, 0, $3); 	loc($$, @1); };
           |  IDENTIFIER LBRACKET expression RBRACKET ASSIGNMENT expression  { $$ = mcc_ast_new_statement_assignment($1, $3, $6); 	loc($$, @1); };
           ;
+
+parameters  : declaration COMMA parameters { $$ = mcc_ast_new_parameter($1); $$->next = $3; loc($$, @1); }
+			| declaration                  { $$ = mcc_ast_new_parameter($1);                loc($$, @1); }
+			;
+
+function_def : type ID LPARENTH parameters RPARENTH compound_statement { $$ = mcc_ast_new_function_def($1, $2, $4, $6);   loc($$, @1);}
+			 | type ID LPARENTH RPARENTH compound_statement { $$ = mcc_ast_new_function_def($1, $2, NULL, $5);            loc($$, @1);}
+			 ;
+
+program : function_def { $$ = mcc_ast_new_program($1); loc($$, @1);}
+		;
 
 %%
 

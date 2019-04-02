@@ -341,3 +341,27 @@ struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_identi
 void mcc_ast_empty_node() {
 }
 
+// ------------------------------------------------------------------- Parameters
+
+struct mcc_ast_parameter *
+mcc_ast_new_parameter(struct mcc_ast_declaration *declaration)
+{
+	assert(declaration);
+
+	struct mcc_ast_parameter *param = malloc(sizeof(*param));
+	assert(param);
+
+	param->declaration = declaration;
+	param->next = NULL;
+	return param;
+}
+
+void mcc_ast_delete_parameter(struct mcc_ast_parameter *parameter)
+{
+	assert(parameter);
+	mcc_ast_delete_declaration(parameter->declaration);
+	if (parameter->next != NULL) {
+		mcc_ast_delete_parameter(parameter->next);
+	}
+	free(parameter);
+}
