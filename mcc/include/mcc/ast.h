@@ -45,7 +45,8 @@ enum mcc_ast_data_type {
     MCC_AST_DATA_TYPE_INT,
     MCC_AST_DATA_TYPE_STRING,
     MCC_AST_DATA_TYPE_BOOL,
-    MCC_AST_DATA_TYPE_FLOAT
+    MCC_AST_DATA_TYPE_FLOAT,
+	MCC_AST_DATA_TYPE_VOID
 };
 
 // ------------------------------------------------------------------ Operators
@@ -103,6 +104,8 @@ struct mcc_ast_expression {
         // MCC_AST_EXPRESSION_TYPE_UNARY_OP
 		// MCC_AST_EXPRESSION_TYPE_PARENTH
 		struct mcc_ast_expression *expression;
+
+		struct mcc_ast_identifier *identifier;
 	};
 };
 
@@ -152,7 +155,7 @@ struct mcc_ast_declaration {
 
 	enum mcc_ast_data_type type;
 
-	struct mcc_ast_identifier *ident;
+	struct mcc_ast_identifier *identifier;
 
 };
 
@@ -172,9 +175,10 @@ enum mcc_ast_statement_type {
 };
 
 struct mcc_ast_statement_list {
-    int size;
-    int max_size;
-    struct mcc_ast_statement *list[];
+   	struct mcc_ast_node node;
+	struct mcc_ast_statement *statement;
+	struct mcc_ast_statement_list *next;
+	
 };
 
 struct mcc_ast_statement {
@@ -280,6 +284,27 @@ void mcc_ast_empty_node();
 
 
 
+// -------------------------------------------------------------------- Function Definitions
+
+struct mcc_ast_function_def {
+	struct mcc_ast_node node;
+
+	enum mcc_ast_data_type type;
+
+	struct mcc_ast_identifier *identifier;
+
+	struct mcc_ast_parameter *parameter;
+
+	struct mcc_ast_statement *compund_statement;
+};
+
+struct mcc_ast_function_def *mcc_ast_new_function_def( enum mcc_ast_data_type type,
+														struct mcc_ast_identifier *identifier,
+														struct mcc_ast_parameter *parameter,
+														struct mcc_ast_statement *compund_statement);
+
+
+
 
 // -------------------------------------------------------------------- Parameter
 
@@ -304,7 +329,7 @@ struct mcc_ast_program {
 };
 
 struct mcc_ast_program *
-mcc_ast_new_program(struct mcc_ast_function_def_list *function_def_list);
+mcc_ast_new_program(struct mcc_ast_function_def *function_def);
 
 void mcc_ast_delete_program(struct mcc_ast_program *program);
 

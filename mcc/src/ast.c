@@ -184,14 +184,14 @@ void mcc_ast_delete_identifier(struct mcc_ast_identifier *identifier)
 
 // ------------------------------------------------------------------- Declaration
 
-struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type, struct mcc_ast_identifier *ident)
+struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type, struct mcc_ast_identifier *identifier)
 {
-    assert(ident);
+    assert(identifier);
 
     struct mcc_ast_declaration *decl= malloc(sizeof(*decl));
 
     decl -> type = type;
-    decl -> ident = ident;
+    decl -> identifier = identifier;
 
 
     return decl;
@@ -271,54 +271,6 @@ struct mcc_ast_statement *mcc_ast_new_statement_while(struct mcc_ast_expression 
     return stmt;
 }
 
-struct mcc_ast_statement_list *construct_new_statement_list(int size, int max)
-{
-    struct mcc_ast_statement_list *stmt_list = malloc(sizeof(*stmt_list) + max);
-    stmt_list -> size = size;
-    stmt_list -> max_size = max;
-
-    return stmt_list;
-}
-
-struct mcc_ast_statement *mcc_ast_new_statement_statement_list(struct mcc_ast_statement_list *statement_list,
-                                                               struct mcc_ast_statement *next_statement)
-{
-    assert(next_statement);
-
-    if (!statement_list) {
-        // create new statement - start with statement array of size 10
-        statement_list = construct_new_statement_list(0, 10);
-        statement_list -> list[0] = next_statement;
-    } else {
-        int max = statement_list -> max_size;
-        int current = statement_list -> size;
-        // struct mcc_ast_statement *stmt_list[] = statement_list -> list;
-
-        if (current < max) {
-            statement_list -> list[current] = next_statement;
-        } else {
-            // double size of statement list
-            statement_list = realloc(statement_list, sizeof(*statement_list) + (max * 2));
-
-            // in case realloc fails return NULL for now
-            // TODO create new statement list and free old one?
-            if (!statement_list) {
-                return NULL;
-            }
-
-            statement_list -> max_size = max * 2;
-            statement_list -> size = current + 1;
-            statement_list -> list[current] = next_statement;
-        }
-    }
-
-    struct mcc_ast_statement *stmt = construct_statement();
-
-    stmt -> type = MCC_AST_STATEMENT_TYPE_COMPOUND;
-    stmt -> compound_statement = statement_list;
-
-    return stmt;
-}
 
 struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_identifier *id_assgn,
                                                            struct mcc_ast_expression *lhs_assgn,
@@ -341,10 +293,22 @@ struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_identi
 void mcc_ast_empty_node() {
 }
 
+// ------------------------------------------------------------------- Function Definition
+
+struct mcc_ast_function_def *mcc_ast_new_function_def( enum mcc_ast_data_type type, 
+														struct mcc_ast_identifier *identifier,
+														struct mcc_ast_parameter *parameter,
+														struct mcc_ast_statement *compound_statement)
+{
+
+
+
+}
+
+
 // ------------------------------------------------------------------- Parameters
 
-struct mcc_ast_parameter *
-mcc_ast_new_parameter(struct mcc_ast_declaration *declaration)
+struct mcc_ast_parameter *mcc_ast_new_parameter(struct mcc_ast_declaration *declaration)
 {
 	assert(declaration);
 

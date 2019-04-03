@@ -28,12 +28,13 @@ void mcc_parser_error();
 %locations
 
 %token END 0 "EOF"
-%token <long>   INT_LITERAL   "integer literal"
-%token <double> FLOAT_LITERAL "float literal"
+%token <char*>   INT_LITERAL   "integer literal"
+%token <char*> FLOAT_LITERAL "float literal"
 %token <char*>   STRING_LITERAL   "string literal"
-%token <const char*> IDENTIFIER "identifier"
-%token <bool> BOOL_LITERAL "bool literal"
+%token <char*> IDENTIFIER "identifier"
+%token <char*> BOOL_LITERAL "bool literal"
 
+%token <char*>  TYPE            "type"
 
 %token LPARENTH "("
 %token RPARENTH ")"
@@ -78,18 +79,11 @@ void mcc_parser_error();
 %token FOR "for"
 %token RETURN "return"
 
-%left PLUS MINUS
-%left ASTER SLASH
-%left OR AND
-%left EQUALS NOT_EQUALS
-%left LESS GREATER LESS_EQ GREATER_EQ
-
-%type <enum mcc_ast_binary_op> binary_op
-%type <enum mcc_ast_unary_op> unary_op
 %type <struct mcc_ast_literal *> literal
-%type <struct mcc_ast_expression *> expression
-%type <struct mcc_ast_statement *> statement if_statement declaration while_statement compound_statement assignment
-%type <struct mcc_ast_statement_list *> statement_list
+%type <struct mcc_ast_expression *> expression binary_op unary_op
+%type <struct mcc_ast_identifier *> identifier
+%type <struct mcc_ast_declaration *> declaration
+%type <struct mcc_ast_statement *> statement if_statement while_statement compound_statement compound_block assignment
 %type <enum mcc_ast_data_type> type VOID_TYPE
 %type <struct mcc_ast_function_def *> function_def
 %type <struct mcc_ast_parameter *> parameters
@@ -107,6 +101,8 @@ toplevel : literal { *result_literal = $1; }
 expression : literal                      		{ $$ = mcc_ast_new_expression_literal($1);              loc($$, @1); }
            | LPARENTH expression RPARENTH	 	{ $$ = mcc_ast_new_expression_parenth($2);              loc($$, @1); }
 		   | expression binary_op expression  	{ $$ = mcc_ast_new_expression_binary_op($2, $1, $3);    loc($$, @1); }
+		   | identifier 						{ $$ = mcc_ast_new_expression_identifier($1); 			loc($$, @1); }
+
            ;
 
 literal : INT_LITERAL       { $$ = mcc_ast_new_literal_int($1);     loc($$, @1); }
@@ -135,8 +131,12 @@ type : INT_TYPE { $$ = MCC_AST_DATA_TYPE_INT; }
      | FLOAT_TYPE { $$ = MCC_AST_DATA_TYPE_FLOAT; }
      | STRING_TYPE { $$ = MCC_AST_DATA_TYPE_STRING; }
 	 | BOOL_TYPE { $$ = MCC_AST_DATA_TYPE_BOOL; }
-	 | VOID_TYPE { $$ = MCC_AST_TYPE_VOID;}
+	 | VOID_TYPE { $$ = MCC_AST_DATA_TYPE_VOID;}
      ;
+
+
+identifier : IDENTIFIER { $$ = mcc_ast_new_identifier($1); loc($$, @1); }
+           ;
 
 statement : expression SEMICOLON    { $$ = mcc_ast_new_statement_expression($1); loc($$, @1); }
           | if_statement            { $$= $1;  loc($$, @1); }
@@ -144,6 +144,7 @@ statement : expression SEMICOLON    { $$ = mcc_ast_new_statement_expression($1);
 		  | compound_statement      { $$ = $1; loc($$, @1); }
           | assignment SEMICOLON    { $$ = $1; loc($$, @1); }
           | declaration SEMICOLON   { $$ = $1; loc($$, @1); }
+		  ;
 
 if_statement: IF LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statment_if($3, $5);                     loc($$, @1); }
             | IF LPARENTH expression RPARENTH statement ELSE statement { $$ = mcc_ast_new_statment_if($3, $5, $7);  loc($$, @1); }
@@ -155,12 +156,16 @@ declaration: type IDENTIFIER SEMICOLON { $$ = mcc_ast_new_declaration($1, $2); l
 while_statement: WHILE LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statement_while($3, $5); loc($$, @1); }
 			   ;
 
-compound_statement: LBRACE statement_list LBRACE { $$ = $2; loc($$; @1); }
-				  ;
+compound_statement: statement { $$ = mcc_ast_new_statement_compound($1); loc($$, @1); }
+                   | compound_statement statement { $$ = mcc_ast_add_compound_statement($1, $2);loc($$, @1); }
+                   ;
 
-statement_list: %empty { $$ = mcc_ast_empty_node() }
-			  | statement_list statement { $$ = mcc_ast_new_statement_list($1, $2); loc($$, @1); }
-			  ;
+/* Took this idea from : https://norasandler.com/2018/02/25/Write-a-Compiler-6.html */
+
+compound_block : statement { $$ = mcc_ast_new_statement_compound_block($1, $1); loc($$, @1); }
+		   	  | compound_block statement { $$ = mcc_ast_add_compound_statement($1, $2); loc($$, @1); }
+		   	  ;
+
 
 assignment:  IDENTIFIER ASSIGNMENT expression 					            { $$ = mcc_ast_new_statement_assignment($1, 0, $3); 	loc($$, @1); };
           |  IDENTIFIER LBRACKET expression RBRACKET ASSIGNMENT expression  { $$ = mcc_ast_new_statement_assignment($1, $3, $6); 	loc($$, @1); };
@@ -170,8 +175,8 @@ parameters  : declaration COMMA parameters { $$ = mcc_ast_new_parameter($1); $$-
 			| declaration                  { $$ = mcc_ast_new_parameter($1);                loc($$, @1); }
 			;
 
-function_def : type ID LPARENTH parameters RPARENTH compound_statement { $$ = mcc_ast_new_function_def($1, $2, $4, $6);   loc($$, @1);}
-			 | type ID LPARENTH RPARENTH compound_statement { $$ = mcc_ast_new_function_def($1, $2, NULL, $5);            loc($$, @1);}
+function_def : type IDENTIFIER LPARENTH parameters RPARENTH compound_statement { $$ = mcc_ast_new_function_def($1, $2, $4, $6);   loc($$, @1);}
+			 | type IDENTIFIER LPARENTH RPARENTH compound_statement { $$ = mcc_ast_new_function_def($1, $2, NULL, $5);            loc($$, @1);}
 			 ;
 
 program : function_def { $$ = mcc_ast_new_program($1); loc($$, @1);}

@@ -55,6 +55,13 @@ void mcc_ast_visit_expression(struct mcc_ast_expression *expression, struct mcc_
 		mcc_ast_visit(expression->expression, visitor);
 		visit_if_post_order(expression, visitor->expression_parenth, visitor);
 		break;
+
+	case MCC_AST_EXPRESSION_TYPE_IDENTIFIER:
+		visit_if_pre_order(expression, visitor->identifier, visitor);
+		mCc_ast_visit_identifier(expression->identifier, visitor);
+		visit_if_post_order(expression, visitor->identifier,
+		                    visitor);
+		break;
 	}
 
 
@@ -95,7 +102,7 @@ void mcc_ast_visit_declaration(struct mcc_ast_declaration *declaration, struct m
 
 	visit_if_pre_order(declaration, visitor->declaration, visitor);
 
-	mcc_ast_visit_identifier(declaration -> ident, visitor);
+	mcc_ast_visit_identifier(declaration -> identifier, visitor);
 
 
 	visit_if_post_order(declaration, visitor->declaration, visitor);
