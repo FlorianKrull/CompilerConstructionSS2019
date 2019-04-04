@@ -28,11 +28,11 @@ void mcc_parser_error();
 %locations
 
 %token END 0 "EOF"
-%token <char*>   INT_LITERAL   "integer literal"
-%token <char*> FLOAT_LITERAL "float literal"
+%token <long>   INT_LITERAL   "integer literal"
+%token <double> FLOAT_LITERAL "float literal"
 %token <char*>   STRING_LITERAL   "string literal"
 %token <char*> IDENTIFIER "identifier"
-%token <char*> BOOL_LITERAL "bool literal"
+%token <bool> BOOL_LITERAL "bool literal"
 
 %token <char*>  TYPE            "type"
 
@@ -94,8 +94,8 @@ void mcc_parser_error();
 
 %%
 
-toplevel : literal { *result_literal = $1; }
-         | declaration { *result_declaration = $1; }
+toplevel : %empty   { result->program = mCc_ast_new_empty_program(); }
+         | program  { result->program = $1; }
          ;
 
 expression : literal                      		{ $$ = mcc_ast_new_expression_literal($1);              loc($$, @1); }

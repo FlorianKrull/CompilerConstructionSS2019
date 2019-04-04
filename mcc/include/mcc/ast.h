@@ -21,6 +21,7 @@ struct mcc_ast_expression;
 struct mcc_ast_literal;
 struct mcc_ast_statement;
 struct mcc_ast_identifier;
+struct mcc_ast_parameter;
 
 
 // ------------------------------------------------------------------- AST Node
@@ -96,9 +97,13 @@ struct mcc_ast_expression {
 		// MCC_AST_EXPRESSION_TYPE_BINARY_OP
 		struct {
 			enum mcc_ast_binary_op op;
-            enum mcc_ast_unary_op up;
 			struct mcc_ast_expression *lhs;
 			struct mcc_ast_expression *rhs;
+		};
+
+		struct {
+			enum mcc_ast_unary_op unary_op;
+			struct mcc_ast_expression *unary_expression;
 		};
 
         // MCC_AST_EXPRESSION_TYPE_UNARY_OP
@@ -111,6 +116,8 @@ struct mcc_ast_expression {
 
 
 struct mcc_ast_expression *mcc_ast_new_expression_literal(struct mcc_ast_literal *literal);
+
+struct mcc_ast_expression *mcc_ast_new_expression_identifier(struct mcc_ast_identifier *identifier);
 
 struct mcc_ast_expression *mcc_ast_new_expression_binary_op(enum mcc_ast_binary_op op,
                                                             struct mcc_ast_expression *lhs,
@@ -154,12 +161,14 @@ struct mcc_ast_declaration {
 	struct mcc_ast_node *node;
 
 	enum mcc_ast_data_type type;
-
+	struct mcc_ast_literal *array_size;
 	struct mcc_ast_identifier *identifier;
 
 };
 
-struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type, struct mcc_ast_identifier *ident);
+struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type,struct mcc_ast_literal *array_size, struct mcc_ast_identifier *identifier);
+
+void mcc_ast_delete_declaration(struct mcc_ast_declaration *declaration);
 
 
 // ------------------------------------------------------------------- Statements
@@ -278,10 +287,6 @@ struct mcc_ast_literal *mcc_ast_new_literal_bool(bool value);
 void mcc_ast_delete_literal(struct mcc_ast_literal *literal);
 
 void mcc_ast_empty_node();
-
-
-// -------------------------------------------------------------------- Assignment
-
 
 
 // -------------------------------------------------------------------- Function Definitions

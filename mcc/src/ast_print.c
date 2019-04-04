@@ -6,6 +6,17 @@
 #include "mcc/ast_visit.h"
 #include "../include/mcc/ast.h"
 
+const char *mcc_ast_print_unary_op(enum mcc_ast_unary_op op)
+{
+	switch (op) {
+	case MCC_AST_UNARY_OP_MINUS: return "-";
+	case MCC_AST_UNARY_OP_NOT: return "!";
+	}
+
+	return "unknown op";
+}
+
+
 const char *mcc_ast_print_binary_op(enum mcc_ast_binary_op op)
 {
 	switch (op) {
@@ -114,6 +125,8 @@ static void print_dot_edge(FILE *out, const void *src_node, const void *dst_node
 	fprintf(out, "\t\"%p\" -> \"%p\" [label=\"%s\"];\n", src_node, dst_node, label);
 }
 
+// ---------------------------------------------------------------- DOT Printer
+
 static void print_dot_expression_literal(struct mcc_ast_expression *expression, void *data)
 {
 	assert(expression);
@@ -136,6 +149,21 @@ static void print_dot_expression_binary_op(struct mcc_ast_expression *expression
 	print_dot_node(out, expression, label);
 	print_dot_edge(out, expression, expression->lhs, "lhs");
 	print_dot_edge(out, expression, expression->rhs, "rhs");
+}
+
+static void print_dot_expression_unary_op(struct mcc_ast_expression *expression,
+                                          void *data)
+{
+	assert(expression);
+	assert(data);
+
+	char label[LABEL_SIZE] = { 0 };
+	snprintf(label, sizeof(label), "expr: %s",
+	         mCc_ast_print_unary_op(expression->unary_op));
+
+	FILE *out = data;
+	print_dot_node(out, expression, label);
+	print_dot_edge(out, expression, expression->unary_expression, "expr");
 }
 
 static void print_dot_statement_if(struct mcc_ast_statement *statement, void *data)

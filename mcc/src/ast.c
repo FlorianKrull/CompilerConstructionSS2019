@@ -53,7 +53,7 @@ struct mcc_ast_expression *mcc_ast_new_expression_unary_op(enum mcc_ast_unary_op
 	}
 
 	expr -> type = MCC_AST_EXPRESSION_TYPE_UNARY_OP;
-	expr -> up = op;
+	expr -> unary_op = op;
 	expr -> rhs = rhs;
 	return expr;
 
@@ -184,13 +184,17 @@ void mcc_ast_delete_identifier(struct mcc_ast_identifier *identifier)
 
 // ------------------------------------------------------------------- Declaration
 
-struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type, struct mcc_ast_identifier *identifier)
+struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type, struct mcc_ast_literal *array_size,struct mcc_ast_identifier *identifier)
 {
     assert(identifier);
 
     struct mcc_ast_declaration *decl= malloc(sizeof(*decl));
+	if (!decl) {
+		return NULL;
+	}
 
     decl -> type = type;
+	decl->array_size = array_size ? array_size : NULL;
     decl -> identifier = identifier;
 
 
