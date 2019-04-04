@@ -158,7 +158,7 @@ struct mcc_ast_identifier *mcc_ast_new_identifier(char *value);
 // ------------------------------------------------------------------- Declaration
 
 struct mcc_ast_declaration {
-	struct mcc_ast_node *node;
+	struct mcc_ast_node node;
 
 	enum mcc_ast_data_type type;
 	struct mcc_ast_literal *array_size;
@@ -166,7 +166,7 @@ struct mcc_ast_declaration {
 
 };
 
-struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type,struct mcc_ast_literal *array_size, struct mcc_ast_identifier *identifier);
+struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type, struct mcc_ast_identifier *identifier, struct mcc_ast_literal *array_size);
 
 void mcc_ast_delete_declaration(struct mcc_ast_declaration *declaration);
 
@@ -183,11 +183,12 @@ enum mcc_ast_statement_type {
 	// MCC_AST_STATEMENT_TYPE_BLOCK
 };
 
-struct mcc_ast_statement_list {
-   	struct mcc_ast_node node;
-	struct mcc_ast_statement *statement;
-	struct mcc_ast_statement_list *next;
-	
+struct mcc_ast_statement_compound {
+    struct mcc_ast_node node;
+
+    int size;
+    int max_size;
+    struct mcc_ast_statement *list[];
 };
 
 struct mcc_ast_statement {
@@ -220,7 +221,7 @@ struct mcc_ast_statement {
 			struct mcc_ast_expression *rhs_assgn;
 		};
 
-        struct mcc_ast_statement_list *compound_statement;
+        struct mcc_ast_statement_compound *compound_statement;
     };
 };
 
@@ -244,10 +245,12 @@ struct mcc_ast_statement *mcc_ast_new_statement_statement_list(struct mcc_ast_st
                                                                 struct mcc_ast_statement *next_statement);
 
 
+// TODO: ADD compound later
+/*
+struct mcc_ast_statement *mcc_ast_new_block_statement();
 
-
-struct mcc_ast_statement mcc_ast_new_block_statement();
-
+struct mcc_ast_statene *mcc_ast_add_compound_statement();
+*/
 // ------------------------------------------------------------------- Literals
 
 enum mcc_ast_literal_type {
@@ -294,7 +297,7 @@ void mcc_ast_empty_node();
 struct mcc_ast_function_def {
 	struct mcc_ast_node node;
 
-	enum mcc_ast_data_type type;
+	enum mcc_ast_data_type return_type;
 
 	struct mcc_ast_identifier *identifier;
 
@@ -328,13 +331,15 @@ void mcc_ast_delete_parameter(struct mcc_ast_parameter *parameter);
 
 // -------------------------------------------------------------------- Program
 
+
 struct mcc_ast_program {
 	struct mcc_ast_node node;
-	struct mcc_ast_function_def *function_def;
+    int functions_count;
+	struct mcc_ast_function_def *function_def[];
 };
 
 struct mcc_ast_program *
-mcc_ast_new_program(struct mcc_ast_function_def *function_def);
+mcc_ast_new_program(struct mcc_ast_program *program, struct mcc_ast_function_def *function_def);
 
 void mcc_ast_delete_program(struct mcc_ast_program *program);
 

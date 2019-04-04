@@ -101,7 +101,7 @@ toplevel : %empty   { result->program = mCc_ast_new_empty_program(); }
 expression : literal                      		{ $$ = mcc_ast_new_expression_literal($1);              loc($$, @1); }
            | LPARENTH expression RPARENTH	 	{ $$ = mcc_ast_new_expression_parenth($2);              loc($$, @1); }
 		   | expression binary_op expression  	{ $$ = mcc_ast_new_expression_binary_op($2, $1, $3);    loc($$, @1); }
-		   | identifier 						{ $$ = mcc_ast_new_expression_identifier($1); 			loc($$, @1); }
+		   | identifier 						{ $$ = $1; 			                                    loc($$, @1); }
 
            ;
 
@@ -138,32 +138,33 @@ type : INT_TYPE { $$ = MCC_AST_DATA_TYPE_INT; }
 identifier : IDENTIFIER { $$ = mcc_ast_new_identifier($1); loc($$, @1); }
            ;
 
-statement : expression SEMICOLON    { $$ = mcc_ast_new_statement_expression($1); loc($$, @1); }
-          | if_statement            { $$= $1;  loc($$, @1); }
-		  | while_statement         { $$ = $1; loc($$, @1); }
-		  | compound_statement      { $$ = $1; loc($$, @1); }
-          | assignment SEMICOLON    { $$ = $1; loc($$, @1); }
-          | declaration SEMICOLON   { $$ = $1; loc($$, @1); }
+statement : expression SEMICOLON                { $$ = mcc_ast_new_statement_expression($1); loc($$, @1); }
+          | if_statement                        { $$= $1;  loc($$, @1); }
+		  | while_statement                     { $$ = $1; loc($$, @1); }
+		  | compound_statement                  { $$ = $1; loc($$, @1); }
+          | assignment SEMICOLON                { $$ = $1; loc($$, @1); }
+          | declaration SEMICOLON               { $$ = $1; loc($$, @1); }
+          | LBRACE compound_statement RBRACE    { $$ = $2; loc($$, @1); };
 		  ;
 
-if_statement: IF LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statment_if($3, $5);                     loc($$, @1); }
-            | IF LPARENTH expression RPARENTH statement ELSE statement { $$ = mcc_ast_new_statment_if($3, $5, $7);  loc($$, @1); }
+if_statement: IF LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statement_if($3, $5, NULL);                     loc($$, @1); }
+            | IF LPARENTH expression RPARENTH statement ELSE statement { $$ = mcc_ast_new_statement_if($3, $5, $7);  loc($$, @1); }
             ;
 
-declaration: type IDENTIFIER SEMICOLON { $$ = mcc_ast_new_declaration($1, $2); loc($$, @1); }
-		   ;
+declaration: type IDENTIFIER SEMICOLON 									{ $$ = mcc_ast_new_declaration($1, $2, NULL); 	loc($$, @1); }
+		   | type IDENTIFIER LBRACKET INT_LITERAL RBRACKET SEMICOLON 	{ $$ = mcc_ast_new_declaration($1, $2, $4); 	loc($$, @1); };
 
 while_statement: WHILE LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statement_while($3, $5); loc($$, @1); }
 			   ;
 
-compound_statement: statement { $$ = mcc_ast_new_statement_compound($1); loc($$, @1); }
-                   | compound_statement statement { $$ = mcc_ast_add_compound_statement($1, $2);loc($$, @1); }
+compound_statement: statement                     { $$ = mcc_ast_new_statement_compound(NULL, $1);  loc($$, @1); }
+                   | compound_statement statement { $$ = mcc_ast_new_statement_compound($1, $2);    loc($$, @1); }
                    ;
 
 /* Took this idea from : https://norasandler.com/2018/02/25/Write-a-Compiler-6.html */
 
-compound_block : statement { $$ = mcc_ast_new_statement_compound_block($1, $1); loc($$, @1); }
-		   	  | compound_block statement { $$ = mcc_ast_add_compound_statement($1, $2); loc($$, @1); }
+/* compound_block : statement                  { $$ = mcc_ast_new_statement_compound_block($1, $1); loc($$, @1); }
+		   	  | compound_block statement    { $$ = mcc_ast_add_compound_statement($1, $2); loc($$, @1); }*/
 		   	  ;
 
 
@@ -175,11 +176,16 @@ parameters  : declaration COMMA parameters { $$ = mcc_ast_new_parameter($1); $$-
 			| declaration                  { $$ = mcc_ast_new_parameter($1);                loc($$, @1); }
 			;
 
-function_def : type IDENTIFIER LPARENTH parameters RPARENTH compound_statement { $$ = mcc_ast_new_function_def($1, $2, $4, $6);   loc($$, @1);}
-			 | type IDENTIFIER LPARENTH RPARENTH compound_statement { $$ = mcc_ast_new_function_def($1, $2, NULL, $5);            loc($$, @1);}
+function_def : type IDENTIFIER LPARENTH parameters RPARENTH LBRACE compound_statement RBRACE
+                    { $$ = mcc_ast_new_function_def($1, $2, $4, $7); loc($$, @1);}
+			 | type IDENTIFIER LPARENTH RPARENTH LBRACE compound_statement RBRACE
+                    { $$ = mcc_ast_new_function_def($1, $2, NULL, $6); loc($$, @1);}
+             | type IDENTIFIER LPARENTH RPARENTH LBRACE RBRACE
+                    { $$ = mcc_ast_new_function_def($1, $2, NULL, NULL); loc($$, @1);}
 			 ;
 
-program : function_def { $$ = mcc_ast_new_program($1); loc($$, @1);}
+program : function_def { $$ = mcc_ast_new_program(NULL, $1); loc($$, @1); }
+        | program function_def { $$ = mcc_ast_new_program($1, $2); loc($$, @1) };
 		;
 
 %%

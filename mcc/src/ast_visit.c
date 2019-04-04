@@ -58,7 +58,7 @@ void mcc_ast_visit_expression(struct mcc_ast_expression *expression, struct mcc_
 
 	case MCC_AST_EXPRESSION_TYPE_IDENTIFIER:
 		visit_if_pre_order(expression, visitor->identifier, visitor);
-		mCc_ast_visit_identifier(expression->identifier, visitor);
+		mcc_ast_visit_identifier(expression->identifier, visitor);
 		visit_if_post_order(expression, visitor->identifier,
 		                    visitor);
 		break;

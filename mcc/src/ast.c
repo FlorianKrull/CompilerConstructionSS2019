@@ -184,7 +184,7 @@ void mcc_ast_delete_identifier(struct mcc_ast_identifier *identifier)
 
 // ------------------------------------------------------------------- Declaration
 
-struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type, struct mcc_ast_literal *array_size,struct mcc_ast_identifier *identifier)
+struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type, struct mcc_ast_identifier *identifier, struct mcc_ast_literal *array_size)
 {
     assert(identifier);
 
@@ -294,6 +294,60 @@ struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_identi
     return stmt;
 }
 
+struct mcc_ast_statement_compound *construct_new_statement_compound(int max)
+{
+    struct mcc_ast_statement_compound *sc = malloc(sizeof(*sc) + (sizeof(struct mcc_ast_statement) * max));
+    sc -> max_size = max;
+    sc -> size = 0;
+
+    return sc;
+}
+
+struct mcc_ast_statement *mcc_ast_new_statement_compound(struct mcc_ast_statement *prev_statement_block,
+                                                               struct mcc_ast_statement *next_statement)
+{
+    assert(prev_statement_block);
+    assert(next_statement);
+
+    struct mcc_ast_statement_compound *prev_list = prev_statement_block -> compound_statement;
+
+    if (!prev_list) {
+        // create new statement - start with statement array of size 10
+        prev_list = construct_new_statement_compound(10);
+        prev_list -> list[0] = next_statement;
+    } else {
+        int max = prev_list -> max_size;
+        int current = prev_list -> size;
+        // struct mcc_ast_statement *stmt_list[] = statement_list -> list;
+
+        if (current < max) {
+            prev_list -> list[current] = next_statement;
+            prev_list -> size++;
+        } else {
+            // add another 10 to statement list
+            prev_list = realloc(prev_list, sizeof(*prev_list) + (sizeof(struct mcc_ast_statement) * 10));
+
+            // in case realloc fails return NULL for now
+            // TODO create new statement list and free old one?
+            if (!prev_list) {
+                return NULL;
+            }
+
+            prev_list -> max_size = max + 10;
+            prev_list -> size =+ 1;
+            prev_list -> list[current] = next_statement;
+        }
+    }
+
+    struct mcc_ast_statement *stmt = construct_statement();
+
+    stmt -> type = MCC_AST_STATEMENT_TYPE_COMPOUND;
+    stmt -> compound_statement = prev_list;
+
+    return stmt;
+}
+
+
 void mcc_ast_empty_node() {
 }
 
@@ -305,8 +359,41 @@ struct mcc_ast_function_def *mcc_ast_new_function_def( enum mcc_ast_data_type ty
 														struct mcc_ast_statement *compound_statement)
 {
 
+    assert(identifier);
+    assert(parameter);
+    assert(compound_statement);
 
+    struct mcc_ast_function_def *fun = malloc(sizeof(*fun));
 
+    if (!fun) return NULL;
+
+    fun -> identifier = identifier;
+    fun -> parameter = parameter;
+    fun -> compund_statement = compound_statement;
+
+    return fun;
+}
+
+// ------------------------------------------------------------------- Program
+
+struct mcc_ast_program *mcc_ast_new_program(struct mcc_ast_program *program, struct mcc_ast_function_def *function_def)
+{
+    assert(function_def);
+
+    if (!program) {
+        struct mcc_ast_program *p = malloc(sizeof(*p) + (sizeof(struct mcc_ast_function_def)));
+        p->functions_count = 1;
+        p->function_def[0] = function_def;
+
+        return p;
+    } else { // adding function to function list
+        program = realloc(program, sizeof(*program) + sizeof(struct mcc_ast_function_def));
+
+        program -> function_def[(program -> functions_count - 1)] = function_def;
+        program -> functions_count += 1;
+
+        return program;
+    }
 }
 
 
@@ -320,14 +407,13 @@ struct mcc_ast_parameter *mcc_ast_new_parameter(struct mcc_ast_declaration *decl
 	assert(param);
 
 	param->declaration = declaration;
-	param->next = NULL;
 	return param;
 }
 
 void mcc_ast_delete_parameter(struct mcc_ast_parameter *parameter)
 {
 	assert(parameter);
-	mcc_ast_delete_declaration(parameter->declaration);
+	// mcc_ast_delete_declaration(parameter->declaration);
 	if (parameter->next != NULL) {
 		mcc_ast_delete_parameter(parameter->next);
 	}
