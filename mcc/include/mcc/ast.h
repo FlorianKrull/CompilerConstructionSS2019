@@ -119,8 +119,9 @@ struct mcc_ast_expression *mcc_ast_new_expression_literal(struct mcc_ast_literal
 
 struct mcc_ast_expression *mcc_ast_new_expression_identifier(struct mcc_ast_identifier *identifier);
 
-struct mcc_ast_expression *mcc_ast_new_expression_binary_op(enum mcc_ast_binary_op op,
+struct mcc_ast_expression *mcc_ast_new_expression_binary_op(
                                                             struct mcc_ast_expression *lhs,
+															enum mcc_ast_binary_op op,
                                                             struct mcc_ast_expression *rhs);
 
 struct mcc_ast_expression *mcc_ast_new_exprssion_unary_op( enum mcc_ast_unary_op op,
@@ -135,12 +136,12 @@ void mcc_ast_delete_expression(struct mcc_ast_expression *expression);
 
 // ------------------------------------------------------------------- Arguments
 
-// struct mcc_ast_arguments{
+struct mcc_ast_arguments{
 
-// 	struct mcc_ast_node;
-// 	struct mcc_ast_arguments *next_arg;
-// 	struct mcc_ast_expression *expression;
-// }
+	struct mcc_ast_node;
+	struct mcc_ast_arguments *next_arg;
+	struct mcc_ast_expression *expression;
+};
 
 
 

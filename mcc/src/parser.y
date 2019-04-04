@@ -100,7 +100,7 @@ toplevel : %empty   { result->program = mCc_ast_new_empty_program(); }
 
 expression : literal                      		{ $$ = mcc_ast_new_expression_literal($1);              loc($$, @1); }
            | LPARENTH expression RPARENTH	 	{ $$ = mcc_ast_new_expression_parenth($2);              loc($$, @1); }
-		   | expression binary_op expression  	{ $$ = mcc_ast_new_expression_binary_op($2, $1, $3);    loc($$, @1); }
+		   | expression binary_op expression  	{ $$ = mcc_ast_new_expression_binary_op($1, $2, $3);    loc($$, @1); }
 		   | identifier 						{ $$ = mcc_ast_new_expression_identifier($1); 			loc($$, @1); }
 
            ;
@@ -115,7 +115,7 @@ unary_op : NOT { $$ = MCC_AST_UNARY_OP_NOT; }
 		 | MINUS  {$$ = MCC_AST_UNARY_OP_MINUS; }
 		 ;
 
-binary_op : PLUS { $$= MCC_AST_BINARY_OP_ADD; }
+binary_op :   PLUS { $$= MCC_AST_BINARY_OP_ADD; }
 			| MINUS { $$ = MCC_AST_BINARY_OP_SUB; }
 			| ASTER { $$ = MCC_AST_BINARY_OP_MUL; }
 			| SLASH { $$ = MCC_AST_BINARY_OP_DIV; }
