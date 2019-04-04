@@ -21,7 +21,7 @@ struct mcc_ast_expression;
 struct mcc_ast_literal;
 struct mcc_ast_statement;
 struct mcc_ast_identifier;
-struct mcc_ast_parameters;
+
 
 // ------------------------------------------------------------------- AST Node
 
@@ -45,7 +45,8 @@ enum mcc_ast_data_type {
     MCC_AST_DATA_TYPE_INT,
     MCC_AST_DATA_TYPE_STRING,
     MCC_AST_DATA_TYPE_BOOL,
-    MCC_AST_DATA_TYPE_FLOAT
+    MCC_AST_DATA_TYPE_FLOAT,
+	MCC_AST_DATA_TYPE_VOID
 };
 
 // ------------------------------------------------------------------ Operators
@@ -74,6 +75,7 @@ enum mcc_ast_unary_op {
 // ---------------------------------------------------------------- Expressions
 
 enum mcc_ast_expression_type {
+
     MCC_AST_STATEMENT_TYPE_EXPR,
 	MCC_AST_EXPRESSION_TYPE_LITERAL,
 	MCC_AST_EXPRESSION_TYPE_BINARY_OP,
@@ -103,6 +105,8 @@ struct mcc_ast_expression {
         // MCC_AST_EXPRESSION_TYPE_UNARY_OP
 		// MCC_AST_EXPRESSION_TYPE_PARENTH
 		struct mcc_ast_expression *expression;
+
+		struct mcc_ast_identifier *identifier;
 	};
 };
 
@@ -132,16 +136,6 @@ void mcc_ast_delete_expression(struct mcc_ast_expression *expression);
 // 	struct mcc_ast_expression *expression;
 // }
 
-//------------------------------------------------------------------------Parameters
-
-struct mcc_ast_parameters{
-
-	struct mcc_ast_node *node;
-	struct mcc_ast_declaration *declaration;
-
-};
-
-
 
 
 // ------------------------------------------------------------------- Identifier
@@ -162,7 +156,7 @@ struct mcc_ast_declaration {
 
 	enum mcc_ast_data_type type;
 
-	struct mcc_ast_identifier *ident;
+	struct mcc_ast_identifier *identifier;
 
 };
 
@@ -178,14 +172,14 @@ enum mcc_ast_statement_type {
 	MCC_AST_STATEMENT_TYPE_DECL,
 	MCC_AST_STATEMENT_TYPE_ASSGN,
 	MCC_AST_STATEMENT_TYPE_COMPOUND,
-	MCC_AST_STATEMENT_TYPE_RET
 	// MCC_AST_STATEMENT_TYPE_BLOCK
 };
 
 struct mcc_ast_statement_list {
-    int size;
-    int max_size;
-    struct mcc_ast_statement *list[];
+   	struct mcc_ast_node node;
+	struct mcc_ast_statement *statement;
+	struct mcc_ast_statement_list *next;
+	
 };
 
 struct mcc_ast_statement {
@@ -207,15 +201,9 @@ struct mcc_ast_statement {
 			struct mcc_ast_statement *else_stmt;
 		};
 
-
 		struct {
 			struct mcc_ast_expression *while_condition;
 			struct mcc_ast_statement *while_stmt;
-		};
-
-		struct {
-
-			struct mcc_ast_statement_ret *ret_stmt;
 		};
 
 		struct {
@@ -246,7 +234,7 @@ struct mcc_ast_statement *mcc_ast_new_statement_declaration(enum mcc_ast_data_ty
 
 struct mcc_ast_statement *mcc_ast_new_statement_statement_list(struct mcc_ast_statement_list *statement_list,
                                                                 struct mcc_ast_statement *next_statement);
-struct mcc_ast_statement *mcc_ast_new_statemet_ret(struct mcc_ast_statement_ret *ret_stmt);
+
 
 
 
@@ -295,16 +283,61 @@ void mcc_ast_empty_node();
 
 // -------------------------------------------------------------------- Assignment
 
-struct mcc_ast_assignment {
-
-		struct mcc_ast_node *node;
-        struct mcc_ast_expression *expression;
-        struct mcc_ast_identifier *identifier;
 
 
+// -------------------------------------------------------------------- Function Definitions / calls
 
+struct mcc_ast_function_def {
+	struct mcc_ast_node node;
+
+	enum mcc_ast_data_type type;
+
+	struct mcc_ast_identifier *identifier;
+
+	struct mcc_ast_parameter *parameter;
+
+	struct mcc_ast_statement *compund_statement;
 };
 
+struct mcc_ast_function_def *mcc_ast_new_function_def( enum mcc_ast_data_type type,
+														struct mcc_ast_identifier *identifier,
+														struct mcc_ast_parameter *parameter,
+														struct mcc_ast_statement *compound_statement);
+
+
+
+struct mcc_ast_function *mcc_ast_function_to_def(struct mcc_ast_function *function,
+                                                 struct mcc_ast_function_def *function_def);
+
+
+struct mcc_ast_function *mcc_ast_function_def(struct mcc_ast_function_def *function_def);
+
+// -------------------------------------------------------------------- Parameter
+
+
+struct mcc_ast_parameter {
+	struct mcc_ast_node node;
+	struct mcc_ast_parameter *next;
+	struct mcc_ast_declaration *declaration;
+};
+
+struct mcc_ast_parameter *
+mcc_ast_new_parameter(struct mcc_ast_declaration *declaration);
+
+void mcc_ast_delete_parameter(struct mcc_ast_parameter *parameter);
+
+
+// -------------------------------------------------------------------- Program
+
+struct mcc_ast_program {
+	struct mcc_ast_node node;
+	struct mcc_ast_function_def *function_def;
+};
+
+struct mcc_ast_program *
+mcc_ast_new_program(struct mcc_ast_function_def *function_def);
+
+void mcc_ast_delete_program(struct mcc_ast_program *program);
 
 // -------------------------------------------------------------------- Utility
 

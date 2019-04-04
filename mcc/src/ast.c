@@ -184,14 +184,14 @@ void mcc_ast_delete_identifier(struct mcc_ast_identifier *identifier)
 
 // ------------------------------------------------------------------- Declaration
 
-struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type, struct mcc_ast_identifier *ident)
+struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type, struct mcc_ast_identifier *identifier)
 {
-    assert(ident);
+    assert(identifier);
 
     struct mcc_ast_declaration *decl= malloc(sizeof(*decl));
 
     decl -> type = type;
-    decl -> ident = ident;
+    decl -> identifier = identifier;
 
 
     return decl;
@@ -239,17 +239,6 @@ struct mcc_ast_statement *mcc_ast_new_statement_if(struct mcc_ast_expression *co
 
     return stmt;
 }
-struct mcc_ast_statement *mcc_ast_new_statement_ret(struct mcc_ast_statement *ret_stmt)
-{
-	assert(ret_stmt);
-
-	struct mcc_ast_statement *stmt= construct_statement();
-
-	stmt -> type = MCC_AST_STATEMENT_TYPE_RET;
-	stmt -> ret_stmt = ret_stmt;
-
-	return stmt;
-}
 
 struct mcc_ast_statement *mcc_ast_new_statement_declaration(enum mcc_ast_data_type data_type,
                                                             struct mcc_ast_identifier *identifier)
@@ -282,54 +271,6 @@ struct mcc_ast_statement *mcc_ast_new_statement_while(struct mcc_ast_expression 
     return stmt;
 }
 
-struct mcc_ast_statement_list *construct_new_statement_list(int size, int max)
-{
-    struct mcc_ast_statement_list *stmt_list = malloc(sizeof(*stmt_list) + max);
-    stmt_list -> size = size;
-    stmt_list -> max_size = max;
-
-    return stmt_list;
-}
-
-struct mcc_ast_statement *mcc_ast_new_statement_statement_list(struct mcc_ast_statement_list *statement_list,
-                                                               struct mcc_ast_statement *next_statement)
-{
-    assert(next_statement);
-
-    if (!statement_list) {
-        // create new statement - start with statement array of size 10
-        statement_list = construct_new_statement_list(0, 10);
-        statement_list -> list[0] = next_statement;
-    } else {
-        int max = statement_list -> max_size;
-        int current = statement_list -> size;
-        // struct mcc_ast_statement *stmt_list[] = statement_list -> list;
-
-        if (current < max) {
-            statement_list -> list[current] = next_statement;
-        } else {
-            // double size of statement list
-            statement_list = realloc(statement_list, sizeof(*statement_list) + (max * 2));
-
-            // in case realloc fails return NULL for now
-            // TODO create new statement list and free old one?
-            if (!statement_list) {
-                return NULL;
-            }
-
-            statement_list -> max_size = max * 2;
-            statement_list -> size = current + 1;
-            statement_list -> list[current] = next_statement;
-        }
-    }
-
-    struct mcc_ast_statement *stmt = construct_statement();
-
-    stmt -> type = MCC_AST_STATEMENT_TYPE_COMPOUND;
-    stmt -> compound_statement = statement_list;
-
-    return stmt;
-}
 
 struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_identifier *id_assgn,
                                                            struct mcc_ast_expression *lhs_assgn,
@@ -349,53 +290,92 @@ struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_identi
     return stmt;
 }
 
-//----------------------------------------------------------------------Parameters
-
-struct mcc_ast_parameters *mcc_ast_parameters_decl(struct mcc_ast_parameters *params,
-													struct mcc_ast_decleration *decl)
-{
-
-	assert(params);
-	assert(decl);
-
-	struct mcc_ast_parameters *par= malloc(sizeof(*par));
-     par -> declaration = decl;
-	 memcpy(params -> declaration, decl, sizeof(decl));
-	 free(decl);
-     par -> declaration++;
-
-
-	return params;
-
-}
-
-struct  mcc_ast_parameters *mcc_ast_empty_parameters()
-{
-   struct  mcc_ast_parameters *new_param;
-       malloc(sizeof(new_param));
-
-	return new_param;
-
-}
-
-
-struct mcc_ast_parameters *mcc_ast_single_parameters(struct mcc_ast_declaration * decl){
-
-	assert(decl);
-
-	struct mcc_ast_parameters *single_par = malloc(sizeof(single_par));
-
-	single_par ->declaration = decl;
-
-
-	return  single_par;
-
-}
-
-
-
-//---------------------------------------------------------------------
-
 void mcc_ast_empty_node() {
 }
 
+// ------------------------------------------------------------------- Function Definition / calls
+
+struct mcc_ast_function_def *mcc_ast_new_function_def( enum mcc_ast_data_type type, 
+														struct mcc_ast_identifier *identifier,
+														struct mcc_ast_parameter *parameter,
+														struct mcc_ast_statement *compound_statement)
+{
+	assert(type);
+	assert(identifier);
+	assert(parameter);
+	assert(compound_statement);
+
+
+
+	struct mcc_ast_function_def *type_function= malloc(sizeof(type_function));
+
+
+	switch (type_function -> type){
+
+		case (MCC_AST_LITERAL_TYPE_INT):
+		  type_function -> type = MCC_AST_LITERAL_TYPE_INT;
+		case (MCC_AST_LITERAL_TYPE_FLOAT):
+			type_function -> type = MCC_AST_LITERAL_TYPE_FLOAT;
+		case(MCC_AST_LITERAL_TYPE_BOOL):
+			type_function ->  type = MCC_AST_LITERAL_TYPE_BOOL;
+		case (MCC_AST_LITERAL_TYPE_STRING):
+			type_function ->  type = MCC_AST_LITERAL_TYPE_STRING;
+
+	};
+
+	type_function -> parameter = parameter;
+	type_function -> identifier = identifier;
+	type_function -> compund_statement = compound_statement;
+
+
+	return type_function;
+
+}
+
+
+struct mcc_ast_function *mcc_ast_function_to_def(struct mcc_ast_function *function, struct mcc_ast_function_def *function_def)
+{
+	assert(function);
+	assert(function_def);
+
+
+	memcpy(function , function_def, sizeof(function));
+	free(function);
+
+	return function;
+
+}
+
+struct mcc_ast_function *mcc_ast_new_function(struct mcc_ast_function *function)
+{
+	assert(function);
+
+
+	struct mcc_ast_function *func = malloc(sizeof(func));
+	return func;
+
+}
+
+// ------------------------------------------------------------------- Parameters
+
+struct mcc_ast_parameter *mcc_ast_new_parameter(struct mcc_ast_declaration *declaration)
+{
+	assert(declaration);
+
+	struct mcc_ast_parameter *param = malloc(sizeof(*param));
+	assert(param);
+
+	param->declaration = declaration;
+	param->next = NULL;
+	return param;
+}
+
+void mcc_ast_delete_parameter(struct mcc_ast_parameter *parameter)
+{
+	assert(parameter);
+	free(parameter->declaration);
+	if (parameter->next != NULL) {
+		mcc_ast_delete_parameter(parameter->next);
+	}
+	free(parameter);
+}

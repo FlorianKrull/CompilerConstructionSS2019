@@ -69,8 +69,7 @@ const char *mcc_ast_print_statement(enum mcc_ast_statement_type stmt_type)
 			return "ASSGN_STMT";
 		case MCC_AST_STATEMENT_TYPE_COMPOUND:
 			return "COMPOUND_STMT";
-		case MCC_AST_STATEMENT_TYPE_RET:
-			return "RET_STMT";
+
 	}
 
 	return "unknown statement";
@@ -195,7 +194,7 @@ static void print_dot_declaration(struct mcc_ast_declaration *declaration, void 
 	FILE *out = data;
 	print_dot_node(out, declaration, label);
 	print_dot_edge(out, declaration, &declaration -> type, "declaration type");
-	print_dot_edge(out, declaration, &declaration -> ident -> i_value, "declaration ident");
+	print_dot_edge(out, declaration, &declaration -> identifier -> i_value, "declaration ident");
 }
 
 // Setup an AST Visitor for printing.
