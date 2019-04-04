@@ -243,16 +243,9 @@ struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_identi
 struct mcc_ast_statement *mcc_ast_new_statement_declaration(enum mcc_ast_data_type data_type,
 															struct mcc_ast_identifier *identifier);
 
-struct mcc_ast_statement *mcc_ast_new_statement_statement_list(struct mcc_ast_statement_list *statement_list,
-                                                                struct mcc_ast_statement *next_statement);
+struct mcc_ast_statement *mcc_ast_new_statement_compound(struct mcc_ast_statement *prev_statement_block,
+                                                         struct mcc_ast_statement *next_statement);
 
-
-// TODO: ADD compound later
-/*
-struct mcc_ast_statement *mcc_ast_new_block_statement();
-
-struct mcc_ast_statene *mcc_ast_add_compound_statement();
-*/
 // ------------------------------------------------------------------- Literals
 
 enum mcc_ast_literal_type {
