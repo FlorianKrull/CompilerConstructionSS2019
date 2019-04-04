@@ -229,6 +229,21 @@ static void print_dot_declaration(struct mcc_ast_declaration *declaration, void 
 	print_dot_edge(out, declaration, &declaration -> identifier -> i_value, "declaration ident");
 }
 
+// ---------------------------------------------------------------- Identifier
+
+static void print_dot_identifier(struct mcc_ast_identifier *identifier,
+                                 void *data)
+{
+	assert(identifier);
+	assert(data);
+
+	char label[LABEL_SIZE] = { 0 };
+	snprintf(label, sizeof(label), "%s", identifier->i_value);
+
+	FILE *out = data;
+	print_dot_node(out, identifier, label);
+}
+
 // ---------------------------------------------------------------- Statement
 
 
