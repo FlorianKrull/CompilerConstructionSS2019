@@ -194,9 +194,8 @@ struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type,
 	}
 
     decl -> type = type;
-	decl->array_size = array_size ? array_size : NULL;
+	decl-> array_size = array_size ? array_size : NULL;
     decl -> identifier = identifier;
-
 
     return decl;
 }

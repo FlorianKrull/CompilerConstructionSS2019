@@ -12,6 +12,9 @@
 
 const char *mcc_ast_print_binary_op(enum mcc_ast_binary_op op);
 
+const char *mcc_ast_print_binary_op(enum mcc_ast_binary_op op);
+
+
 // ---------------------------------------------------------------- DOT Printer
 
 void mcc_ast_print_dot_expression(FILE *out, struct mcc_ast_expression *expression);

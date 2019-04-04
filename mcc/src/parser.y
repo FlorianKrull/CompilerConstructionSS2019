@@ -150,14 +150,15 @@ if_statement: IF LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statm
             | IF LPARENTH expression RPARENTH statement ELSE statement { $$ = mcc_ast_new_statment_if($3, $5, $7);  loc($$, @1); }
             ;
 
-declaration: type IDENTIFIER SEMICOLON { $$ = mcc_ast_new_declaration($1, $2); loc($$, @1); }
-		   ;
+declaration : type identifier { $$ = mcc_ast_new_declaration($1, NULL, $2); loc($$, @1); }
+            | type LBRACKET literal RBRACKET identifier { $$ = mcc_ast_new_declaration($1, $3 , $5);  loc($$, @1); }
+            ;
 
 while_statement: WHILE LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statement_while($3, $5); loc($$, @1); }
 			   ;
 
-compound_statement: statement { $$ = mcc_ast_new_statement_compound($1); loc($$, @1); }
-                   | compound_statement statement { $$ = mcc_ast_add_compound_statement($1, $2);loc($$, @1); }
+compound_statement:  statement { $$ = mcc_ast_new_statement_compound($1); loc($$, @1); }
+                   | compound_statement statement { $$ = mcc_ast_add_compound_statement($1, $2); loc($$, @1); }
                    ;
 
 /* Took this idea from : https://norasandler.com/2018/02/25/Write-a-Compiler-6.html */
