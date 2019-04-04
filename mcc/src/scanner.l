@@ -81,7 +81,7 @@ comment_multiline ("/*"([^*]|\*+[^*/])*\*+"/")
 [ \t\r\n]+        { /* ignore */ }
 
 {identifier}      {
-                    yylval->TK_IDENTIFIER = mcc_ast_new_identifier(yytext);
+                    yylval->TK_IDENTIFIER = strdup(yytext);
                     return TK_IDENTIFIER;
                   }
 

@@ -133,16 +133,6 @@ struct mcc_ast_expression *mcc_ast_new_expression_parenth(struct mcc_ast_express
 
 void mcc_ast_delete_expression(struct mcc_ast_expression *expression);
 
-// ------------------------------------------------------------------- Arguments
-
-// struct mcc_ast_arguments{
-
-// 	struct mcc_ast_node;
-// 	struct mcc_ast_arguments *next_arg;
-// 	struct mcc_ast_expression *expression;
-// }
-
-
 
 // ------------------------------------------------------------------- Identifier
 
