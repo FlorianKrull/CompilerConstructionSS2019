@@ -96,5 +96,5 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/CompilerConstructionSS2019_develop.dir/DependInfo.cmake"
+  "CMakeFiles/CompilerConstructionSS2019.dir/DependInfo.cmake"
   )

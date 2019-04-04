@@ -59,45 +59,45 @@ RM = /opt/clion-2018.3.4/bin/cmake/linux/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/sima_n/Desktop/flo/CompilerConstructionSS2019-develop
+CMAKE_SOURCE_DIR = /home/sima_n/Desktop/Clemen/CompilerConstructionSS2019
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/sima_n/Desktop/flo/CompilerConstructionSS2019-develop/cmake-build-debug
+CMAKE_BINARY_DIR = /home/sima_n/Desktop/Clemen/CompilerConstructionSS2019/cmake-build-debug
 
 #=============================================================================
-# Target rules for target CMakeFiles/CompilerConstructionSS2019_develop.dir
+# Target rules for target CMakeFiles/CompilerConstructionSS2019.dir
 
 # All Build rule for target.
-CMakeFiles/CompilerConstructionSS2019_develop.dir/all:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/depend
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/sima_n/Desktop/flo/CompilerConstructionSS2019-develop/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14 "Built target CompilerConstructionSS2019_develop"
-.PHONY : CMakeFiles/CompilerConstructionSS2019_develop.dir/all
+CMakeFiles/CompilerConstructionSS2019.dir/all:
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/depend
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/sima_n/Desktop/Clemen/CompilerConstructionSS2019/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14 "Built target CompilerConstructionSS2019"
+.PHONY : CMakeFiles/CompilerConstructionSS2019.dir/all
 
 # Include target in all.
-all: CMakeFiles/CompilerConstructionSS2019_develop.dir/all
+all: CMakeFiles/CompilerConstructionSS2019.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/CompilerConstructionSS2019_develop.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/sima_n/Desktop/flo/CompilerConstructionSS2019-develop/cmake-build-debug/CMakeFiles 14
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/CompilerConstructionSS2019_develop.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/sima_n/Desktop/flo/CompilerConstructionSS2019-develop/cmake-build-debug/CMakeFiles 0
-.PHONY : CMakeFiles/CompilerConstructionSS2019_develop.dir/rule
+CMakeFiles/CompilerConstructionSS2019.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/sima_n/Desktop/Clemen/CompilerConstructionSS2019/cmake-build-debug/CMakeFiles 14
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/CompilerConstructionSS2019.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/sima_n/Desktop/Clemen/CompilerConstructionSS2019/cmake-build-debug/CMakeFiles 0
+.PHONY : CMakeFiles/CompilerConstructionSS2019.dir/rule
 
 # Convenience name for target.
-CompilerConstructionSS2019_develop: CMakeFiles/CompilerConstructionSS2019_develop.dir/rule
+CompilerConstructionSS2019: CMakeFiles/CompilerConstructionSS2019.dir/rule
 
-.PHONY : CompilerConstructionSS2019_develop
-
-# clean rule for target.
-CMakeFiles/CompilerConstructionSS2019_develop.dir/clean:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/clean
-.PHONY : CMakeFiles/CompilerConstructionSS2019_develop.dir/clean
+.PHONY : CompilerConstructionSS2019
 
 # clean rule for target.
-clean: CMakeFiles/CompilerConstructionSS2019_develop.dir/clean
+CMakeFiles/CompilerConstructionSS2019.dir/clean:
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/clean
+.PHONY : CMakeFiles/CompilerConstructionSS2019.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/CompilerConstructionSS2019.dir/clean
 
 .PHONY : clean
 

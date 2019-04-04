@@ -48,10 +48,10 @@ RM = /opt/clion-2018.3.4/bin/cmake/linux/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/sima_n/Desktop/flo/CompilerConstructionSS2019-develop
+CMAKE_SOURCE_DIR = /home/sima_n/Desktop/Clemen/CompilerConstructionSS2019
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/sima_n/Desktop/flo/CompilerConstructionSS2019-develop/cmake-build-debug
+CMAKE_BINARY_DIR = /home/sima_n/Desktop/Clemen/CompilerConstructionSS2019/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/sima_n/Desktop/flo/CompilerConstructionSS2019-develop/cmake-build-debug/CMakeFiles /home/sima_n/Desktop/flo/CompilerConstructionSS2019-develop/cmake-build-debug/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/sima_n/Desktop/Clemen/CompilerConstructionSS2019/cmake-build-debug/CMakeFiles /home/sima_n/Desktop/Clemen/CompilerConstructionSS2019/cmake-build-debug/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/sima_n/Desktop/flo/CompilerConstructionSS2019-develop/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/sima_n/Desktop/Clemen/CompilerConstructionSS2019/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named CompilerConstructionSS2019_develop
+# Target rules for targets named CompilerConstructionSS2019
 
 # Build rule for target.
-CompilerConstructionSS2019_develop: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 CompilerConstructionSS2019_develop
-.PHONY : CompilerConstructionSS2019_develop
+CompilerConstructionSS2019: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 CompilerConstructionSS2019
+.PHONY : CompilerConstructionSS2019
 
 # fast build rule for target.
-CompilerConstructionSS2019_develop/fast:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/build
-.PHONY : CompilerConstructionSS2019_develop/fast
+CompilerConstructionSS2019/fast:
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/build
+.PHONY : CompilerConstructionSS2019/fast
 
 mcc/app/mc_ast_to_dot.o: mcc/app/mc_ast_to_dot.c.o
 
@@ -129,7 +129,7 @@ mcc/app/mc_ast_to_dot.o: mcc/app/mc_ast_to_dot.c.o
 
 # target to build an object file
 mcc/app/mc_ast_to_dot.c.o:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/app/mc_ast_to_dot.c.o
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/app/mc_ast_to_dot.c.o
 .PHONY : mcc/app/mc_ast_to_dot.c.o
 
 mcc/app/mc_ast_to_dot.i: mcc/app/mc_ast_to_dot.c.i
@@ -138,7 +138,7 @@ mcc/app/mc_ast_to_dot.i: mcc/app/mc_ast_to_dot.c.i
 
 # target to preprocess a source file
 mcc/app/mc_ast_to_dot.c.i:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/app/mc_ast_to_dot.c.i
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/app/mc_ast_to_dot.c.i
 .PHONY : mcc/app/mc_ast_to_dot.c.i
 
 mcc/app/mc_ast_to_dot.s: mcc/app/mc_ast_to_dot.c.s
@@ -147,7 +147,7 @@ mcc/app/mc_ast_to_dot.s: mcc/app/mc_ast_to_dot.c.s
 
 # target to generate assembly for a file
 mcc/app/mc_ast_to_dot.c.s:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/app/mc_ast_to_dot.c.s
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/app/mc_ast_to_dot.c.s
 .PHONY : mcc/app/mc_ast_to_dot.c.s
 
 mcc/app/mcc.o: mcc/app/mcc.c.o
@@ -156,7 +156,7 @@ mcc/app/mcc.o: mcc/app/mcc.c.o
 
 # target to build an object file
 mcc/app/mcc.c.o:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/app/mcc.c.o
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/app/mcc.c.o
 .PHONY : mcc/app/mcc.c.o
 
 mcc/app/mcc.i: mcc/app/mcc.c.i
@@ -165,7 +165,7 @@ mcc/app/mcc.i: mcc/app/mcc.c.i
 
 # target to preprocess a source file
 mcc/app/mcc.c.i:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/app/mcc.c.i
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/app/mcc.c.i
 .PHONY : mcc/app/mcc.c.i
 
 mcc/app/mcc.s: mcc/app/mcc.c.s
@@ -174,89 +174,89 @@ mcc/app/mcc.s: mcc/app/mcc.c.s
 
 # target to generate assembly for a file
 mcc/app/mcc.c.s:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/app/mcc.c.s
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/app/mcc.c.s
 .PHONY : mcc/app/mcc.c.s
 
-mcc/builddir/mcc@sha/parser.tab.o: mcc/builddir/mcc@sha/parser.tab.c.o
+mcc/build-project.sh/mcc@sha/parser.tab.o: mcc/build-project.sh/mcc@sha/parser.tab.c.o
 
-.PHONY : mcc/builddir/mcc@sha/parser.tab.o
-
-# target to build an object file
-mcc/builddir/mcc@sha/parser.tab.c.o:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/builddir/mcc@sha/parser.tab.c.o
-.PHONY : mcc/builddir/mcc@sha/parser.tab.c.o
-
-mcc/builddir/mcc@sha/parser.tab.i: mcc/builddir/mcc@sha/parser.tab.c.i
-
-.PHONY : mcc/builddir/mcc@sha/parser.tab.i
-
-# target to preprocess a source file
-mcc/builddir/mcc@sha/parser.tab.c.i:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/builddir/mcc@sha/parser.tab.c.i
-.PHONY : mcc/builddir/mcc@sha/parser.tab.c.i
-
-mcc/builddir/mcc@sha/parser.tab.s: mcc/builddir/mcc@sha/parser.tab.c.s
-
-.PHONY : mcc/builddir/mcc@sha/parser.tab.s
-
-# target to generate assembly for a file
-mcc/builddir/mcc@sha/parser.tab.c.s:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/builddir/mcc@sha/parser.tab.c.s
-.PHONY : mcc/builddir/mcc@sha/parser.tab.c.s
-
-mcc/builddir/mcc@sha/scanner.o: mcc/builddir/mcc@sha/scanner.c.o
-
-.PHONY : mcc/builddir/mcc@sha/scanner.o
+.PHONY : mcc/build-project.sh/mcc@sha/parser.tab.o
 
 # target to build an object file
-mcc/builddir/mcc@sha/scanner.c.o:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/builddir/mcc@sha/scanner.c.o
-.PHONY : mcc/builddir/mcc@sha/scanner.c.o
+mcc/build-project.sh/mcc@sha/parser.tab.c.o:
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/build-project.sh/mcc@sha/parser.tab.c.o
+.PHONY : mcc/build-project.sh/mcc@sha/parser.tab.c.o
 
-mcc/builddir/mcc@sha/scanner.i: mcc/builddir/mcc@sha/scanner.c.i
+mcc/build-project.sh/mcc@sha/parser.tab.i: mcc/build-project.sh/mcc@sha/parser.tab.c.i
 
-.PHONY : mcc/builddir/mcc@sha/scanner.i
+.PHONY : mcc/build-project.sh/mcc@sha/parser.tab.i
 
 # target to preprocess a source file
-mcc/builddir/mcc@sha/scanner.c.i:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/builddir/mcc@sha/scanner.c.i
-.PHONY : mcc/builddir/mcc@sha/scanner.c.i
+mcc/build-project.sh/mcc@sha/parser.tab.c.i:
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/build-project.sh/mcc@sha/parser.tab.c.i
+.PHONY : mcc/build-project.sh/mcc@sha/parser.tab.c.i
 
-mcc/builddir/mcc@sha/scanner.s: mcc/builddir/mcc@sha/scanner.c.s
+mcc/build-project.sh/mcc@sha/parser.tab.s: mcc/build-project.sh/mcc@sha/parser.tab.c.s
 
-.PHONY : mcc/builddir/mcc@sha/scanner.s
+.PHONY : mcc/build-project.sh/mcc@sha/parser.tab.s
 
 # target to generate assembly for a file
-mcc/builddir/mcc@sha/scanner.c.s:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/builddir/mcc@sha/scanner.c.s
-.PHONY : mcc/builddir/mcc@sha/scanner.c.s
+mcc/build-project.sh/mcc@sha/parser.tab.c.s:
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/build-project.sh/mcc@sha/parser.tab.c.s
+.PHONY : mcc/build-project.sh/mcc@sha/parser.tab.c.s
 
-mcc/builddir/meson-private/sanitycheckc.o: mcc/builddir/meson-private/sanitycheckc.c.o
+mcc/build-project.sh/mcc@sha/scanner.o: mcc/build-project.sh/mcc@sha/scanner.c.o
 
-.PHONY : mcc/builddir/meson-private/sanitycheckc.o
+.PHONY : mcc/build-project.sh/mcc@sha/scanner.o
 
 # target to build an object file
-mcc/builddir/meson-private/sanitycheckc.c.o:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/builddir/meson-private/sanitycheckc.c.o
-.PHONY : mcc/builddir/meson-private/sanitycheckc.c.o
+mcc/build-project.sh/mcc@sha/scanner.c.o:
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/build-project.sh/mcc@sha/scanner.c.o
+.PHONY : mcc/build-project.sh/mcc@sha/scanner.c.o
 
-mcc/builddir/meson-private/sanitycheckc.i: mcc/builddir/meson-private/sanitycheckc.c.i
+mcc/build-project.sh/mcc@sha/scanner.i: mcc/build-project.sh/mcc@sha/scanner.c.i
 
-.PHONY : mcc/builddir/meson-private/sanitycheckc.i
+.PHONY : mcc/build-project.sh/mcc@sha/scanner.i
 
 # target to preprocess a source file
-mcc/builddir/meson-private/sanitycheckc.c.i:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/builddir/meson-private/sanitycheckc.c.i
-.PHONY : mcc/builddir/meson-private/sanitycheckc.c.i
+mcc/build-project.sh/mcc@sha/scanner.c.i:
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/build-project.sh/mcc@sha/scanner.c.i
+.PHONY : mcc/build-project.sh/mcc@sha/scanner.c.i
 
-mcc/builddir/meson-private/sanitycheckc.s: mcc/builddir/meson-private/sanitycheckc.c.s
+mcc/build-project.sh/mcc@sha/scanner.s: mcc/build-project.sh/mcc@sha/scanner.c.s
 
-.PHONY : mcc/builddir/meson-private/sanitycheckc.s
+.PHONY : mcc/build-project.sh/mcc@sha/scanner.s
 
 # target to generate assembly for a file
-mcc/builddir/meson-private/sanitycheckc.c.s:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/builddir/meson-private/sanitycheckc.c.s
-.PHONY : mcc/builddir/meson-private/sanitycheckc.c.s
+mcc/build-project.sh/mcc@sha/scanner.c.s:
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/build-project.sh/mcc@sha/scanner.c.s
+.PHONY : mcc/build-project.sh/mcc@sha/scanner.c.s
+
+mcc/build-project.sh/meson-private/sanitycheckc.o: mcc/build-project.sh/meson-private/sanitycheckc.c.o
+
+.PHONY : mcc/build-project.sh/meson-private/sanitycheckc.o
+
+# target to build an object file
+mcc/build-project.sh/meson-private/sanitycheckc.c.o:
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/build-project.sh/meson-private/sanitycheckc.c.o
+.PHONY : mcc/build-project.sh/meson-private/sanitycheckc.c.o
+
+mcc/build-project.sh/meson-private/sanitycheckc.i: mcc/build-project.sh/meson-private/sanitycheckc.c.i
+
+.PHONY : mcc/build-project.sh/meson-private/sanitycheckc.i
+
+# target to preprocess a source file
+mcc/build-project.sh/meson-private/sanitycheckc.c.i:
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/build-project.sh/meson-private/sanitycheckc.c.i
+.PHONY : mcc/build-project.sh/meson-private/sanitycheckc.c.i
+
+mcc/build-project.sh/meson-private/sanitycheckc.s: mcc/build-project.sh/meson-private/sanitycheckc.c.s
+
+.PHONY : mcc/build-project.sh/meson-private/sanitycheckc.s
+
+# target to generate assembly for a file
+mcc/build-project.sh/meson-private/sanitycheckc.c.s:
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/build-project.sh/meson-private/sanitycheckc.c.s
+.PHONY : mcc/build-project.sh/meson-private/sanitycheckc.c.s
 
 mcc/resources/mc_builtins.o: mcc/resources/mc_builtins.c.o
 
@@ -264,7 +264,7 @@ mcc/resources/mc_builtins.o: mcc/resources/mc_builtins.c.o
 
 # target to build an object file
 mcc/resources/mc_builtins.c.o:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/resources/mc_builtins.c.o
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/resources/mc_builtins.c.o
 .PHONY : mcc/resources/mc_builtins.c.o
 
 mcc/resources/mc_builtins.i: mcc/resources/mc_builtins.c.i
@@ -273,7 +273,7 @@ mcc/resources/mc_builtins.i: mcc/resources/mc_builtins.c.i
 
 # target to preprocess a source file
 mcc/resources/mc_builtins.c.i:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/resources/mc_builtins.c.i
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/resources/mc_builtins.c.i
 .PHONY : mcc/resources/mc_builtins.c.i
 
 mcc/resources/mc_builtins.s: mcc/resources/mc_builtins.c.s
@@ -282,7 +282,7 @@ mcc/resources/mc_builtins.s: mcc/resources/mc_builtins.c.s
 
 # target to generate assembly for a file
 mcc/resources/mc_builtins.c.s:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/resources/mc_builtins.c.s
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/resources/mc_builtins.c.s
 .PHONY : mcc/resources/mc_builtins.c.s
 
 mcc/src/ast.o: mcc/src/ast.c.o
@@ -291,7 +291,7 @@ mcc/src/ast.o: mcc/src/ast.c.o
 
 # target to build an object file
 mcc/src/ast.c.o:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/src/ast.c.o
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/src/ast.c.o
 .PHONY : mcc/src/ast.c.o
 
 mcc/src/ast.i: mcc/src/ast.c.i
@@ -300,7 +300,7 @@ mcc/src/ast.i: mcc/src/ast.c.i
 
 # target to preprocess a source file
 mcc/src/ast.c.i:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/src/ast.c.i
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/src/ast.c.i
 .PHONY : mcc/src/ast.c.i
 
 mcc/src/ast.s: mcc/src/ast.c.s
@@ -309,7 +309,7 @@ mcc/src/ast.s: mcc/src/ast.c.s
 
 # target to generate assembly for a file
 mcc/src/ast.c.s:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/src/ast.c.s
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/src/ast.c.s
 .PHONY : mcc/src/ast.c.s
 
 mcc/src/ast_print.o: mcc/src/ast_print.c.o
@@ -318,7 +318,7 @@ mcc/src/ast_print.o: mcc/src/ast_print.c.o
 
 # target to build an object file
 mcc/src/ast_print.c.o:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/src/ast_print.c.o
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/src/ast_print.c.o
 .PHONY : mcc/src/ast_print.c.o
 
 mcc/src/ast_print.i: mcc/src/ast_print.c.i
@@ -327,7 +327,7 @@ mcc/src/ast_print.i: mcc/src/ast_print.c.i
 
 # target to preprocess a source file
 mcc/src/ast_print.c.i:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/src/ast_print.c.i
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/src/ast_print.c.i
 .PHONY : mcc/src/ast_print.c.i
 
 mcc/src/ast_print.s: mcc/src/ast_print.c.s
@@ -336,7 +336,7 @@ mcc/src/ast_print.s: mcc/src/ast_print.c.s
 
 # target to generate assembly for a file
 mcc/src/ast_print.c.s:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/src/ast_print.c.s
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/src/ast_print.c.s
 .PHONY : mcc/src/ast_print.c.s
 
 mcc/src/ast_visit.o: mcc/src/ast_visit.c.o
@@ -345,7 +345,7 @@ mcc/src/ast_visit.o: mcc/src/ast_visit.c.o
 
 # target to build an object file
 mcc/src/ast_visit.c.o:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/src/ast_visit.c.o
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/src/ast_visit.c.o
 .PHONY : mcc/src/ast_visit.c.o
 
 mcc/src/ast_visit.i: mcc/src/ast_visit.c.i
@@ -354,7 +354,7 @@ mcc/src/ast_visit.i: mcc/src/ast_visit.c.i
 
 # target to preprocess a source file
 mcc/src/ast_visit.c.i:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/src/ast_visit.c.i
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/src/ast_visit.c.i
 .PHONY : mcc/src/ast_visit.c.i
 
 mcc/src/ast_visit.s: mcc/src/ast_visit.c.s
@@ -363,7 +363,7 @@ mcc/src/ast_visit.s: mcc/src/ast_visit.c.s
 
 # target to generate assembly for a file
 mcc/src/ast_visit.c.s:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/src/ast_visit.c.s
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/src/ast_visit.c.s
 .PHONY : mcc/src/ast_visit.c.s
 
 mcc/test/unit/parser_test.o: mcc/test/unit/parser_test.c.o
@@ -372,7 +372,7 @@ mcc/test/unit/parser_test.o: mcc/test/unit/parser_test.c.o
 
 # target to build an object file
 mcc/test/unit/parser_test.c.o:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/test/unit/parser_test.c.o
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/test/unit/parser_test.c.o
 .PHONY : mcc/test/unit/parser_test.c.o
 
 mcc/test/unit/parser_test.i: mcc/test/unit/parser_test.c.i
@@ -381,7 +381,7 @@ mcc/test/unit/parser_test.i: mcc/test/unit/parser_test.c.i
 
 # target to preprocess a source file
 mcc/test/unit/parser_test.c.i:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/test/unit/parser_test.c.i
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/test/unit/parser_test.c.i
 .PHONY : mcc/test/unit/parser_test.c.i
 
 mcc/test/unit/parser_test.s: mcc/test/unit/parser_test.c.s
@@ -390,7 +390,7 @@ mcc/test/unit/parser_test.s: mcc/test/unit/parser_test.c.s
 
 # target to generate assembly for a file
 mcc/test/unit/parser_test.c.s:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/test/unit/parser_test.c.s
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/test/unit/parser_test.c.s
 .PHONY : mcc/test/unit/parser_test.c.s
 
 mcc/vendor/cutest/AllTests.o: mcc/vendor/cutest/AllTests.c.o
@@ -399,7 +399,7 @@ mcc/vendor/cutest/AllTests.o: mcc/vendor/cutest/AllTests.c.o
 
 # target to build an object file
 mcc/vendor/cutest/AllTests.c.o:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/vendor/cutest/AllTests.c.o
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/vendor/cutest/AllTests.c.o
 .PHONY : mcc/vendor/cutest/AllTests.c.o
 
 mcc/vendor/cutest/AllTests.i: mcc/vendor/cutest/AllTests.c.i
@@ -408,7 +408,7 @@ mcc/vendor/cutest/AllTests.i: mcc/vendor/cutest/AllTests.c.i
 
 # target to preprocess a source file
 mcc/vendor/cutest/AllTests.c.i:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/vendor/cutest/AllTests.c.i
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/vendor/cutest/AllTests.c.i
 .PHONY : mcc/vendor/cutest/AllTests.c.i
 
 mcc/vendor/cutest/AllTests.s: mcc/vendor/cutest/AllTests.c.s
@@ -417,7 +417,7 @@ mcc/vendor/cutest/AllTests.s: mcc/vendor/cutest/AllTests.c.s
 
 # target to generate assembly for a file
 mcc/vendor/cutest/AllTests.c.s:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/vendor/cutest/AllTests.c.s
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/vendor/cutest/AllTests.c.s
 .PHONY : mcc/vendor/cutest/AllTests.c.s
 
 mcc/vendor/cutest/CuTest.o: mcc/vendor/cutest/CuTest.c.o
@@ -426,7 +426,7 @@ mcc/vendor/cutest/CuTest.o: mcc/vendor/cutest/CuTest.c.o
 
 # target to build an object file
 mcc/vendor/cutest/CuTest.c.o:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/vendor/cutest/CuTest.c.o
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/vendor/cutest/CuTest.c.o
 .PHONY : mcc/vendor/cutest/CuTest.c.o
 
 mcc/vendor/cutest/CuTest.i: mcc/vendor/cutest/CuTest.c.i
@@ -435,7 +435,7 @@ mcc/vendor/cutest/CuTest.i: mcc/vendor/cutest/CuTest.c.i
 
 # target to preprocess a source file
 mcc/vendor/cutest/CuTest.c.i:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/vendor/cutest/CuTest.c.i
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/vendor/cutest/CuTest.c.i
 .PHONY : mcc/vendor/cutest/CuTest.c.i
 
 mcc/vendor/cutest/CuTest.s: mcc/vendor/cutest/CuTest.c.s
@@ -444,7 +444,7 @@ mcc/vendor/cutest/CuTest.s: mcc/vendor/cutest/CuTest.c.s
 
 # target to generate assembly for a file
 mcc/vendor/cutest/CuTest.c.s:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/vendor/cutest/CuTest.c.s
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/vendor/cutest/CuTest.c.s
 .PHONY : mcc/vendor/cutest/CuTest.c.s
 
 mcc/vendor/cutest/CuTestTest.o: mcc/vendor/cutest/CuTestTest.c.o
@@ -453,7 +453,7 @@ mcc/vendor/cutest/CuTestTest.o: mcc/vendor/cutest/CuTestTest.c.o
 
 # target to build an object file
 mcc/vendor/cutest/CuTestTest.c.o:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/vendor/cutest/CuTestTest.c.o
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/vendor/cutest/CuTestTest.c.o
 .PHONY : mcc/vendor/cutest/CuTestTest.c.o
 
 mcc/vendor/cutest/CuTestTest.i: mcc/vendor/cutest/CuTestTest.c.i
@@ -462,7 +462,7 @@ mcc/vendor/cutest/CuTestTest.i: mcc/vendor/cutest/CuTestTest.c.i
 
 # target to preprocess a source file
 mcc/vendor/cutest/CuTestTest.c.i:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/vendor/cutest/CuTestTest.c.i
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/vendor/cutest/CuTestTest.c.i
 .PHONY : mcc/vendor/cutest/CuTestTest.c.i
 
 mcc/vendor/cutest/CuTestTest.s: mcc/vendor/cutest/CuTestTest.c.s
@@ -471,7 +471,7 @@ mcc/vendor/cutest/CuTestTest.s: mcc/vendor/cutest/CuTestTest.c.s
 
 # target to generate assembly for a file
 mcc/vendor/cutest/CuTestTest.c.s:
-	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019_develop.dir/build.make CMakeFiles/CompilerConstructionSS2019_develop.dir/mcc/vendor/cutest/CuTestTest.c.s
+	$(MAKE) -f CMakeFiles/CompilerConstructionSS2019.dir/build.make CMakeFiles/CompilerConstructionSS2019.dir/mcc/vendor/cutest/CuTestTest.c.s
 .PHONY : mcc/vendor/cutest/CuTestTest.c.s
 
 # Help Target
@@ -481,7 +481,7 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... CompilerConstructionSS2019_develop"
+	@echo "... CompilerConstructionSS2019"
 	@echo "... edit_cache"
 	@echo "... mcc/app/mc_ast_to_dot.o"
 	@echo "... mcc/app/mc_ast_to_dot.i"
@@ -489,15 +489,15 @@ help:
 	@echo "... mcc/app/mcc.o"
 	@echo "... mcc/app/mcc.i"
 	@echo "... mcc/app/mcc.s"
-	@echo "... mcc/builddir/mcc@sha/parser.tab.o"
-	@echo "... mcc/builddir/mcc@sha/parser.tab.i"
-	@echo "... mcc/builddir/mcc@sha/parser.tab.s"
-	@echo "... mcc/builddir/mcc@sha/scanner.o"
-	@echo "... mcc/builddir/mcc@sha/scanner.i"
-	@echo "... mcc/builddir/mcc@sha/scanner.s"
-	@echo "... mcc/builddir/meson-private/sanitycheckc.o"
-	@echo "... mcc/builddir/meson-private/sanitycheckc.i"
-	@echo "... mcc/builddir/meson-private/sanitycheckc.s"
+	@echo "... mcc/build-project.sh/mcc@sha/parser.tab.o"
+	@echo "... mcc/build-project.sh/mcc@sha/parser.tab.i"
+	@echo "... mcc/build-project.sh/mcc@sha/parser.tab.s"
+	@echo "... mcc/build-project.sh/mcc@sha/scanner.o"
+	@echo "... mcc/build-project.sh/mcc@sha/scanner.i"
+	@echo "... mcc/build-project.sh/mcc@sha/scanner.s"
+	@echo "... mcc/build-project.sh/meson-private/sanitycheckc.o"
+	@echo "... mcc/build-project.sh/meson-private/sanitycheckc.i"
+	@echo "... mcc/build-project.sh/meson-private/sanitycheckc.s"
 	@echo "... mcc/resources/mc_builtins.o"
 	@echo "... mcc/resources/mc_builtins.i"
 	@echo "... mcc/resources/mc_builtins.s"

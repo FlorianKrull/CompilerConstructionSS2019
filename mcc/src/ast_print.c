@@ -189,7 +189,7 @@ static void print_dot_declaration(struct mcc_ast_declaration *declaration, void 
 	assert(data);
 
 	char label[LABEL_SIZE] = {0};
-	snprintf(label, sizeof(label), "%f", declaration->type);
+	snprintf(label, sizeof(label), "%d", declaration->type);
 
 	FILE *out = data;
 	print_dot_node(out, declaration, label);

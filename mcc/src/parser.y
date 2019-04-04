@@ -2,7 +2,7 @@
 
 %define api.pure full
 %lex-param   {void *scanner}
-%parse-param {void *scanner} {struct mcc_ast_literal** result_literal}{ struct mcc_ast_declaration** result_declaration}
+%parse-param {void *scanner} {struct mcc_ast_expression** result_expression}{ struct mcc_ast_function** result_function}{struct mcc_ast_declaration** result_declaration}
 
 %define parse.trace
 %define parse.error verbose
@@ -80,29 +80,34 @@ void mcc_parser_error();
 %token RETURN "return"
 
 %type <struct mcc_ast_literal *> literal
-%type <struct mcc_ast_expression *> expression binary_op unary_op
+%type <struct mcc_ast_expression *> expression
 %type <struct mcc_ast_identifier *> identifier
 %type <struct mcc_ast_declaration *> declaration
-%type <struct mcc_ast_statement *> statement if_statement while_statement compound_statement compound_block assignment
-%type <enum mcc_ast_data_type> type VOID_TYPE
+%type <struct mcc_ast_statement *> statement if_statement while_statement compound_statement assignment //compound_block 
+
+//%type <enum mcc_ast_data_type> type VOID_TYPE
+%type <enum mcc_ast_binary_op> binary_op
+//%type <enum mcc_ast_unary_op> unary_op
+%type <enum mcc_ast_literal_type> type VOID_TYPE
+
 %type <struct mcc_ast_function_def *> function_def
 %type <struct mcc_ast_function *> function
 %type <struct mcc_ast_parameter *> parameters
-%type <struct mcc_ast_program *> program
+//%type <struct mcc_ast_program *> program
 
 
-%start program
+%start toplevel
 
 %%
 
-toplevel : expression { *result_expression = $1; }
-         //| declaration { *result_declaration = $1; }
-          | function {*result_function = $1;}
+toplevel :  function { *result_function  = $1; }
+         | declaration { *result_declaration = $1; }
+          | expression {*result_expression = $1;}
          ;
 
-expression : literal                      		{ $$ = mcc_ast_new_expression_literal($1);              loc($$, @1); }
-           | LPARENTH expression RPARENTH	 	{ $$ = mcc_ast_new_expression_parenth($2);              loc($$, @1); }
-		   | expression binary_op expression  	{ $$ = mcc_ast_new_expression_binary_op($1, $2, $3);    loc($$, @1); }
+expression : literal                      		{ $$ = mcc_ast_new_expression_literal($1); loc($$, @1); }
+           | LPARENTH expression RPARENTH	 	{ $$ = mcc_ast_new_expression_parenth($2); loc($$, @1); }
+		   |expression binary_op expression  	{ $$ = mcc_ast_new_expression_binary_op($1, $2, $3); loc($$, @1); }
 		   | identifier 			{ $$ = mcc_ast_new_expression_identifier($1); loc($$, @1); }
 
            ;
@@ -113,16 +118,16 @@ literal : INT_LITERAL       { $$ = mcc_ast_new_literal_int($1);     loc($$, @1);
 		| BOOL_LITERAL      { $$ = mcc_ast_new_literal_bool($1);    loc($$,@1);  }
 		;
 
-unary_op : NOT { $$ = MCC_AST_UNARY_OP_NOT; }
+//unary_op : NOT { $$ = MCC_AST_UNARY_OP_NOT; }
 		 | MINUS  {$$ = MCC_AST_UNARY_OP_MINUS; }
 		 ;
 
 binary_op : PLUS { $$= MCC_AST_BINARY_OP_ADD; }
-			| MINUS { $$ = MCC_AST_BINARY_OP_SUB; }
+			//| MINUS { $$ = MCC_AST_BINARY_OP_SUB; }
 			| ASTER { $$ = MCC_AST_BINARY_OP_MUL; }
 			| SLASH { $$ = MCC_AST_BINARY_OP_DIV; }
 			| EQUALS { $$ = MCC_AST_BINARY_OP_EQUALS; }
-			| NOT_EQUALS { $$ = MCC_AST_BINARY_OP_NOT_EQUALS; }
+			//| NOT_EQUALS { $$ = MCC_AST_BINARY_OP_NOT_EQUALS; }
 			| LESS { $$ = MCC_AST_BINARY_OP_LESS; }
 			| GREATER { $$ = MCC_AST_BINARY_OP_GREATER; }
 			| LESS_EQ { $$ = MCC_AST_BINARY_OP_LESS_EQUALS; }
@@ -143,7 +148,7 @@ identifier : IDENTIFIER { $$ = mcc_ast_new_identifier($1); loc($$, @1); }
 statement : expression SEMICOLON    { $$ = mcc_ast_new_statement_expression($1); loc($$, @1); }
           | if_statement            { $$= $1;  loc($$, @1); }
 		  | while_statement         { $$ = $1; loc($$, @1); }
-		  | compound_statement      { $$ = $1; loc($$, @1); }
+		 | compound_statement      { $$ = $1; loc($$, @1); }
           | assignment SEMICOLON    { $$ = $1; loc($$, @1); }
           | declaration SEMICOLON   { $$ = $1; loc($$, @1); }
 		  ;
@@ -164,9 +169,9 @@ compound_statement: statement { $$ = mcc_ast_new_statement_compound($1); loc($$,
 
 /* Took this idea from : https://norasandler.com/2018/02/25/Write-a-Compiler-6.html */
 
-compound_block : statement { $$ = mcc_ast_new_statement_compound_block($1, $1); loc($$, @1); }
+/*compound_block : statement { $$ = mcc_ast_new_statement_compound_block($1, $1); loc($$, @1); }
 		   	  | compound_block statement { $$ = mcc_ast_add_compound_statement($1, $2); loc($$, @1); }
-		   	  ;
+		   	  ;*/
 
 
 assignment:  IDENTIFIER ASSIGNMENT expression 					            { $$ = mcc_ast_new_statement_assignment($1, 0, $3); 	loc($$, @1); };
@@ -177,15 +182,15 @@ parameters  : declaration COMMA parameters { $$ = mcc_ast_new_parameter($1); $$-
 			| declaration                  { $$ = mcc_ast_new_parameter($1);                loc($$, @1); }
 			;
 
-function_def : type IDENTIFIER LPARENTH parameters RPARENTH compound_statement { $$ = mcc_ast_new_function_def($1, $2, $4, $6);   loc($$, @1);}
-			 | type IDENTIFIER LPARENTH RPARENTH compound_statement { $$ = mcc_ast_new_function_def($1, $2, NULL, $5);            loc($$, @1);}
-			 ;
+
+function_def     :  VOID_TYPE identifier
+                    LPARENTH parameters RPARENTH LBRACKET compound_statement RBRACKET    { $$ = mcc_ast_void_function_def ($2, $4, $7); loc($$, @2); }
 
 function : function function_def  { $$ = mcc_ast_new_function($1, $2); }
          | function_def     { $$ = mCc_ast_new_function_def($1); }
 	 ;
 
-program : function_def { $$ = mcc_ast_new_program($1); loc($$, @1);}
+//program : function_def { $$ = mcc_ast_new_program($1); loc($$, @1);}
 		;
 
 %%
