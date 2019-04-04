@@ -42,6 +42,7 @@ struct mcc_ast_visitor {
 	mcc_ast_visit_expression_cb expression_unary_op;
 	mcc_ast_visit_expression_cb expression_parenth;
 
+	mcc_ast_visit_statement_cb statement;
 	mcc_ast_visit_statement_cb statement_if;
 	mcc_ast_visit_statement_cb statement_if_else;
 	mcc_ast_visit_statement_cb statement_assignment;
@@ -66,6 +67,8 @@ void mcc_ast_visit_literal(struct mcc_ast_literal *literal, struct mcc_ast_visit
 void mcc_ast_visit_declaration(struct mcc_ast_declaration *declaration, struct mcc_ast_visitor *visitor);
 
 void mcc_ast_visit_identifier(struct mcc_ast_identifier *identifier, struct mcc_ast_visitor *visitor);
+
+void mcc_ast_visit_statement(struct mcc_ast_statement *statement,struct mcc_ast_visitor *visitor);
 
 // clang-format off
 

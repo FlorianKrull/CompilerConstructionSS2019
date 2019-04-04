@@ -174,7 +174,7 @@ void mcc_ast_delete_declaration(struct mcc_ast_declaration *declaration);
 // ------------------------------------------------------------------- Statements
 
 enum mcc_ast_statement_type {
-    MMC_AST_STATEMENT_TYPE_EXPRESSION,
+    MCC_AST_STATEMENT_TYPE_EXPRESSION,
     MCC_AST_STATEMENT_TYPE_IF,
 	MCC_AST_STATEMENT_TYPE_WHILE,
 	MCC_AST_STATEMENT_TYPE_DECL,
@@ -198,6 +198,8 @@ struct mcc_ast_statement {
 
     union {
         struct mcc_ast_expression *expression;
+
+		struct mcc_ast_declaration *declaration;
 
 		struct {
             enum mcc_ast_data_type data_type;

@@ -194,9 +194,8 @@ struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type,
 	}
 
     decl -> type = type;
-	decl->array_size = array_size ? array_size : NULL;
+	decl-> array_size = array_size ? array_size : NULL;
     decl -> identifier = identifier;
-
 
     return decl;
 }
@@ -219,7 +218,7 @@ struct mcc_ast_statement *mcc_ast_new_statement_expression(struct mcc_ast_expres
 
 	struct mcc_ast_statement *stmt = construct_statement();
 
-	stmt -> type = MMC_AST_STATEMENT_TYPE_EXPRESSION;
+	stmt -> type = MCC_AST_STATEMENT_TYPE_EXPRESSION;
 	stmt -> expression = expression;
 	return stmt;
 }

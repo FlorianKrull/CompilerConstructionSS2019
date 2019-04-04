@@ -159,7 +159,7 @@ while_statement: WHILE LPARENTH expression RPARENTH statement { $$ = mcc_ast_new
 
 compound_statement: statement                     { $$ = mcc_ast_new_statement_compound(NULL, $1);  loc($$, @1); }
                    | compound_statement statement { $$ = mcc_ast_new_statement_compound($1, $2);    loc($$, @1); }
-                   ;
+
 
 /* Took this idea from : https://norasandler.com/2018/02/25/Write-a-Compiler-6.html */
 
