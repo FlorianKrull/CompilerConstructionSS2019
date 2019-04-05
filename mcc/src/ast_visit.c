@@ -56,9 +56,9 @@ void mcc_ast_visit_expression(struct mcc_ast_expression *expression, struct mcc_
 		break;
 
 	case MCC_AST_EXPRESSION_TYPE_IDENTIFIER:
-		visit_if_pre_order(expression, visitor->identifier, visitor);
+		visit_if_pre_order(expression, visitor->expression_identifier, visitor);
 		mcc_ast_visit_identifier(expression->identifier, visitor);
-		visit_if_post_order(expression, visitor->identifier,
+		visit_if_post_order(expression, visitor->expression_identifier,
 		                    visitor);
 		break;
 	
@@ -167,10 +167,10 @@ void mcc_ast_visit_statement(struct mcc_ast_statement *statement , struct mcc_as
 			break;
 
 		case MCC_AST_STATEMENT_TYPE_EXPRESSION:
-			visit_if_pre_order(statement, visitor->expression,
+			visit_if_pre_order(statement, visitor->statement_expression,
 			                   visitor);
 			mcc_ast_visit_expression(statement->expression, visitor);
-			visit_if_post_order(statement, visitor->expression,
+			visit_if_post_order(statement, visitor->statement_expression,
 			                    visitor);
 			break;
 
@@ -182,7 +182,7 @@ void mcc_ast_visit_statement(struct mcc_ast_statement *statement , struct mcc_as
 			break;
 		}
 
-
+		visit_if_post_order(statement, visitor->statement, visitor);
 
 	}
 }

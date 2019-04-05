@@ -80,7 +80,7 @@ void mcc_parser_error();
 %token RETURN "return"
 
 %type <struct mcc_ast_literal *> literal
-%type <struct mcc_ast_expression *> expression binary_op unary_op
+%type <struct mcc_ast_expression *> expression single_expression binary_op 
 %type <struct mcc_ast_identifier *> identifier
 %type <struct mcc_ast_declaration *> declaration
 %type <struct mcc_ast_statement *> statement if_statement while_statement compound_statement assignment
@@ -96,24 +96,24 @@ void mcc_parser_error();
 
 toplevel : %empty   { result->program = mCc_ast_new_empty_program(); }
          | program  { result->program = $1; }
+		 | expression { result->expression = $1; }
          ;
 
-expression : literal                      		{ $$ = mcc_ast_new_expression_literal($1);              loc($$, @1); }
-           | LPARENTH expression RPARENTH	 	{ $$ = mcc_ast_new_expression_parenth($2);              loc($$, @1); }
-		   | binary_op							{ $$ = $1; }
-		   | identifier 						{ $$ = $1; 			                                    loc($$, @1); }
- 		   | unary_op expression               { $$ = mcc_ast_new_expression_unary_op($1, $2);    		loc($$, @1); }
-           ;
+single_expression : literal                      		{ $$ = mcc_ast_new_expression_literal($1);              loc($$, @1); }
+           		  | LPARENTH expression RPARENTH	 	{ $$ = mcc_ast_new_expression_parenth($2);              loc($$, @1); }
+		   		  | identifier 							{ $$ = mcc_ast_new_expression_identifier($1);  			                                    loc($$, @1); }
+				  | MINUS expression 					{ $$ = mcc_ast_new_expression_unary_op(MCC_AST_UNARY_OP_MINUS, $2); loc($$, @1);}
+				  | NOT expression 						{ $$ = mcc_ast_new_expression_unary_op(MCC_AST_UNARY_OP_NOT, $2); loc($$, @1);}
+           		  ;
+
+expression : binary_op { $$ = $1; }
+		   | single_expression { $$ = $1; }
 
 literal : INT_LITERAL       { $$ = mcc_ast_new_literal_int($1);     loc($$, @1); }
         | FLOAT_LITERAL     { $$ = mcc_ast_new_literal_float($1);   loc($$, @1); }
 		| STRING_LITERAL    { $$ = mcc_ast_new_literal_string($1);  loc($$,@1);  }
 		| BOOL_LITERAL      { $$ = mcc_ast_new_literal_bool($1);    loc($$,@1);  }
 		;
-
-unary_op : NOT { $$ = MCC_AST_UNARY_OP_NOT; }
-		 | MINUS  {$$ = MCC_AST_UNARY_OP_MINUS; }
-		 ;
 
 
 binary_op : expression PLUS expression       { $$ = mcc_ast_new_expression_binary_op(MCC_AST_BINARY_OP_ADD, $1, $3); loc($$, @1); }
@@ -156,8 +156,8 @@ if_statement: IF LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_state
             | IF LPARENTH expression RPARENTH statement ELSE statement { $$ = mcc_ast_new_statement_if($3, $5, $7);  loc($$, @1); }
             ;
 
-declaration: type identifier SEMICOLON 					{ $$ = mcc_ast_new_declaration($1, $2, NULL); 	loc($$, @1); }
-	   | type identifier LBRACKET INT_LITERAL RBRACKET SEMICOLON 	{ $$ = mcc_ast_new_declaration($1, $2, $4); 	loc($$, @1); };
+declaration: type identifier  								{ $$ = mcc_ast_new_declaration($1, $2, NULL); 	loc($$, @1); }
+	   		| type  LBRACKET literal RBRACKET identifier 	{ $$ = mcc_ast_new_declaration($1, $5, $3); 	loc($$, @1); };
 
 while_statement: WHILE LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statement_while($3, $5); loc($$, @1); }
 			   ;

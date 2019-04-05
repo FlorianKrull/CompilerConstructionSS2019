@@ -76,12 +76,12 @@ enum mcc_ast_unary_op {
 // ---------------------------------------------------------------- Expressions
 
 enum mcc_ast_expression_type {
-    MCC_AST_STATEMENT_TYPE_EXPR,
 	MCC_AST_EXPRESSION_TYPE_LITERAL,
 	MCC_AST_EXPRESSION_TYPE_BINARY_OP,
 	MCC_AST_EXPRESSION_TYPE_UNARY_OP,
 	MCC_AST_EXPRESSION_TYPE_PARENTH,
 	MCC_AST_EXPRESSION_TYPE_IDENTIFIER,
+	MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION,
 
 };
 
@@ -123,7 +123,7 @@ struct mcc_ast_expression *mcc_ast_new_expression_binary_op(enum mcc_ast_binary_
                                                             struct mcc_ast_expression *lhs,
                                                             struct mcc_ast_expression *rhs);
 
-struct mcc_ast_expression *mcc_ast_new_exprssion_unary_op( enum mcc_ast_unary_op op,
+struct mcc_ast_expression *mcc_ast_new_expression_unary_op( enum mcc_ast_unary_op op,
 														   struct mcc_ast_expression *rhs);
 
 struct mcc_ast_expression *mcc_ast_new_expression_parenth(struct mcc_ast_expression *expression);
@@ -144,7 +144,7 @@ struct mcc_ast_identifier {
 
 struct mcc_ast_identifier *mcc_ast_new_identifier(char *value);
 
-
+void mcc_ast_delete_identifier(struct mcc_ast_identifier *identifier);
 // ------------------------------------------------------------------- Declaration
 
 struct mcc_ast_declaration {

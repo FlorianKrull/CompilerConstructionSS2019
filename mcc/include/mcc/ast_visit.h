@@ -41,6 +41,7 @@ struct mcc_ast_visitor {
 	mcc_ast_visit_expression_cb expression_binary_op;
 	mcc_ast_visit_expression_cb expression_unary_op;
 	mcc_ast_visit_expression_cb expression_parenth;
+	mcc_ast_visit_expression_cb expression_identifier;
 
 	mcc_ast_visit_statement_cb statement;
 	mcc_ast_visit_statement_cb statement_if;
@@ -49,6 +50,8 @@ struct mcc_ast_visitor {
 	mcc_ast_visit_statement_cb statement_while;
 	mcc_ast_visit_statement_cb statement_compound;
 	mcc_ast_visit_statement_cb statement_declaration;
+	mcc_ast_visit_statement_cb statement_expression;
+
 
 	mcc_ast_visit_literal_cb literal;
 	mcc_ast_visit_literal_cb literal_int;
@@ -70,13 +73,16 @@ void mcc_ast_visit_identifier(struct mcc_ast_identifier *identifier, struct mcc_
 
 void mcc_ast_visit_statement(struct mcc_ast_statement *statement,struct mcc_ast_visitor *visitor);
 
+void mcc_ast_visit_identifier(struct mcc_ast_identifier *identifier,struct mcc_ast_visitor *visitor);
+
 // clang-format off
 
 #define mcc_ast_visit(x, visitor) _Generic((x), \
 		struct mcc_ast_expression *: 	mcc_ast_visit_expression, \
 		struct mcc_ast_literal *:    	mcc_ast_visit_literal, \
 		struct mcc_ast_declaration *:   mcc_ast_visit_declaration, \
-		struct mcc_ast_identifier *:	mcc_ast_visit_identifier \
+		struct mcc_ast_identifier *:	mcc_ast_visit_identifier, \
+		struct mcc_ast_statement *:	mcc_ast_visit_statement \
 	)(x, visitor)
 
 // clang-format on

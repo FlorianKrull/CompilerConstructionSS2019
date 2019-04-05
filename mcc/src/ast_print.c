@@ -60,31 +60,35 @@ const char *mcc_ast_print_data_type(enum mcc_ast_data_type dt)
 			return "BOOL";
 		case MCC_AST_DATA_TYPE_FLOAT:
 			return "FLOAT";
+		case MCC_AST_DATA_TYPE_VOID:
+			return "VOID";
 	}
 
 	return "unknown data type";
 }
 
-const char *mcc_ast_print_statement(enum mcc_ast_statement_type stmt_type)
-{
-	switch (stmt_type) {
-		case MCC_AST_STATEMENT_TYPE_EXPRESSION:
-			return "EXPR_STMT";
-		case MCC_AST_STATEMENT_TYPE_IF:
-			return "IF_STMT";
-		case MCC_AST_STATEMENT_TYPE_WHILE:
-			return "WHILE_STMT";
-		case MCC_AST_STATEMENT_TYPE_DECL:
-			return "DECL_STMT";
-		case MCC_AST_STATEMENT_TYPE_ASSGN:
-			return "ASSGN_STMT";
-		case MCC_AST_STATEMENT_TYPE_COMPOUND:
-			return "COMPOUND_STMT";
+// const char *mcc_ast_print_statement(enum mcc_ast_statement_type stmt_type)
+// {
+// 	switch (stmt_type) {
+// 		case MCC_AST_STATEMENT_TYPE_EXPRESSION:
+// 			return "EXPR_STMT";
+// 		case MCC_AST_STATEMENT_TYPE_IF:
+// 			return "IF_STMT";
+// 		case MCC_AST_STATEMENT_TYPE_WHILE:
+// 			return "WHILE_STMT";
+// 		case MCC_AST_STATEMENT_TYPE_DECL:
+// 			return "DECL_STMT";
+// 		case MCC_AST_STATEMENT_TYPE_ASSGN:
+// 			return "ASSGN_STMT";
+// 		case MCC_AST_STATEMENT_TYPE_COMPOUND:
+// 			return "COMPOUND_STMT";
+// 		case MCC_AST_DATA_TYPE_VOID:
+// 			return ""
 
-	}
+// 	}
 
-	return "unknown statement";
-}
+// 	return "unknown statement";
+// }
 
 
 // ---------------------------------------------------------------- DOT Printer
@@ -221,7 +225,7 @@ static void print_dot_declaration(struct mcc_ast_declaration *declaration, void 
 	assert(data);
 
 	char label[LABEL_SIZE] = {0};
-	snprintf(label, sizeof(label), "%f", declaration->type);
+	snprintf(label, sizeof(label), "%d", declaration->type);
 
 	FILE *out = data;
 	print_dot_node(out, declaration, label);
@@ -243,6 +247,77 @@ static void print_dot_statement_if(struct mcc_ast_statement *statement, void *da
 
 }
 
+static void print_dot_statement_if_else(struct mcc_ast_statement *statement,
+                                        void *data)
+{
+	assert(statement);
+	assert(data);
+
+	FILE *out = data;
+	print_dot_node(out, statement, "stmt: if_else");
+	print_dot_edge(out, statement, statement->if_condition, "expression");
+	print_dot_edge(out, statement, statement->if_stmt, "if_statement");
+	print_dot_edge(out, statement, statement->else_stmt, "else_statement");
+}
+
+static void print_dot_statement_while(struct mcc_ast_statement *statement,
+                                      void *data)
+{
+	assert(statement);
+	assert(data);
+
+	FILE *out = data;
+	print_dot_node(out, statement, "stmt: while");
+	print_dot_edge(out, statement, statement->while_condition, "expression");
+	print_dot_edge(out, statement, statement->while_stmt, "statement");
+}
+
+static void print_dot_statement_declaration(struct mcc_ast_statement *statement,
+                                            void *data)
+{
+	assert(statement);
+	assert(data);
+
+	FILE *out = data;
+	print_dot_node(out, statement, "stmt: decl");
+	print_dot_edge(out, statement, statement->declaration, "declaration");
+}
+
+static void print_dot_statement_assignment(struct mcc_ast_statement *statement,
+                                           void *data)
+{
+	assert(statement);
+	assert(data);
+
+	FILE *out = data;
+	print_dot_node(out, statement, "stmt: assgn");
+	print_dot_edge(out, statement, statement->id_assgn,
+	               "identifier");
+	print_dot_edge(out, statement, statement->rhs_assgn, "rhs");
+}
+
+
+static void print_dot_statement_expression(struct mcc_ast_statement *statement,
+                                           void *data)
+{
+	assert(statement);
+	assert(data);
+
+	FILE *out = data;
+	print_dot_node(out, statement, "stmt: expr");
+	print_dot_edge(out, statement, statement->expression, "expression");
+}
+
+static void print_dot_statement_compound(struct mcc_ast_statement *statement, void *data)
+
+{
+	assert(statement);
+	assert(data);
+
+	FILE *out = data;
+
+	print_dot_node(out,statement,"stmt: compund");
+}
 
 // Setup an AST Visitor for printing.
 static struct mcc_ast_visitor print_dot_visitor(FILE *out)
@@ -258,9 +333,18 @@ static struct mcc_ast_visitor print_dot_visitor(FILE *out)
 	    .expression_literal = print_dot_expression_literal,
 	    .expression_binary_op = print_dot_expression_binary_op,
 	    .expression_parenth = print_dot_expression_parenth,
+		.expression_unary_op = print_dot_expression_unary_op,
+
+		.statement_if = print_dot_statement_if,
+		.statement_while = print_dot_statement_while,
+		.statement_compound = print_dot_statement_compound,
+		.statement_assignment = print_dot_statement_assignment,
+		.statement_declaration = print_dot_statement_declaration,
+		.declaration = print_dot_declaration,
 
 	    .literal_int = print_dot_literal_int,
 	    .literal_float = print_dot_literal_float,
+	
 
 		.declaration = print_dot_declaration
 	};
