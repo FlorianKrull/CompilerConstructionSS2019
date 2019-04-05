@@ -84,7 +84,7 @@ void NestedExpression_1(CuTest *tc)
 
 void MissingClosingParenthesis_1(CuTest *tc)
 {
-	// TODO: fix memory leak
+	//TODO: fix memory leak
 
 	const char input[] = "(42";
 	struct mcc_parser_result result = mcc_parse_string(input);
@@ -92,6 +92,138 @@ void MissingClosingParenthesis_1(CuTest *tc)
 	CuAssertTrue(tc, MCC_PARSER_STATUS_OK != result.status);
 	CuAssertTrue(tc, NULL == result.expression);
 }
+
+void StatementWhile (CuTest *tc)
+{
+
+	  const char input[] = "while (i <= 2) { i = i + 1}" ;
+
+	struct mcc_parser_result result = mcc_parse_string(input);
+
+	CuAssertIntEquals(tc, MCC_PARSER_STATUS_OK, result.status);
+
+	struct mcc_ast_statement *stmt = result.statement;
+
+     CuAssertIntEquals(tc, MCC_AST_STATEMENT_TYPE_WHILE, stmt -> type );
+	 CuAssertTrue(tc, NULL == result.statement);
+
+}
+void StatementIf (CuTest *tc)
+{
+
+	const char input[] = "if (i == 2) { i = i + 1}" ;
+
+	struct mcc_parser_result result = mcc_parse_string(input);
+
+	CuAssertIntEquals(tc, MCC_PARSER_STATUS_OK, result.status);
+
+	struct mcc_ast_statement *stmt = result.statement;
+
+	CuAssertIntEquals(tc, MCC_AST_STATEMENT_TYPE_IF, stmt -> type );
+	CuAssertTrue(tc, NULL == result.statement);
+
+	struct mcc_ast_statement *expr = result.expression;
+
+	CuAssertIntEquals(tc, MCC_AST_STATEMENT_TYPE_IF, expr -> type );
+	CuAssertTrue(tc, NULL == result.expression);
+}
+
+
+void StatementIfElse(CuTest *tc){
+
+
+	const char input[] = "if (i != 2) i = i + 1; else i==0;" ;
+
+	struct mcc_parser_result result = mcc_parse_string(input);
+
+	struct mcc_ast_statement *stmt = result.statement;
+
+	CuAssertIntEquals(tc, MCC_AST_STATEMENT_TYPE_IF, stmt -> type );
+
+	CuAssertTrue(tc, NULL == result.statement);
+
+}
+
+void StatementDeclarationInt(CuTest *tc){
+
+	const char input[] = "int name" ;
+
+	struct mcc_parser_result result = mcc_parse_string(input);
+
+	CuAssertIntEquals(tc, MCC_PARSER_STATUS_OK, result.status);
+
+	struct mcc_ast_declaration *decl = result.declaration;
+
+	CuAssertIntEquals(tc, MCC_AST_STATEMENT_TYPE_DECL, decl -> type );
+	CuAssertIntEquals(tc, decl -> type, MCC_AST_LITERAL_TYPE_INT );
+	CuAssertIntEquals(tc, decl ->identifier , "name");
+
+}
+
+void StatementDeclarationFloat(CuTest *tc){
+
+	const char input[] = "float bar" ;
+
+	struct mcc_parser_result result = mcc_parse_string(input);
+
+	CuAssertIntEquals(tc, MCC_PARSER_STATUS_OK, result.status);
+
+	struct mcc_ast_declaration *decl = result.declaration;
+
+	CuAssertIntEquals(tc, MCC_AST_STATEMENT_TYPE_DECL, decl -> type );
+	CuAssertIntEquals(tc, decl -> type, MCC_AST_LITERAL_TYPE_FLOAT);
+	CuAssertIntEquals(tc, decl ->identifier , "bar");
+
+}
+void StatementDeclarationString(CuTest *tc){
+
+	const char input[] = "string hello" ;
+
+	struct mcc_parser_result result = mcc_parse_string(input);
+
+	CuAssertIntEquals(tc, MCC_PARSER_STATUS_OK, result.status);
+
+	struct mcc_ast_declaration *decl = result.declaration;
+
+	CuAssertIntEquals(tc, MCC_AST_STATEMENT_TYPE_DECL, decl -> type );
+	CuAssertIntEquals(tc, decl -> type, MCC_AST_LITERAL_TYPE_STRING);
+	CuAssertIntEquals(tc, decl ->identifier , "string");
+
+}
+
+void StatementRet(CuTest *tc){
+
+	const char input[] = "return 1" ;
+
+	struct mcc_parser_result result = mcc_parse_string(input);
+
+	CuAssertIntEquals(tc, MCC_PARSER_STATUS_OK, result.status);
+
+	struct mcc_ast_statement *stmt = result.statement;
+
+	CuAssertIntEquals(tc, MCC_AST_STATEMENT_TYPE_DECL, stmt -> type );
+	CuAssertIntEquals(tc, stmt -> type, MCC_AST_LITERAL_TYPE_INT);
+	CuAssertTrue(tc, NULL == result.statement);
+
+}
+
+void StatementAssignment(CuTest *tc){
+
+	const char input[] = " a = 12" ;
+
+	struct mcc_parser_result result = mcc_parse_string(input);
+
+	CuAssertIntEquals(tc, MCC_PARSER_STATUS_OK, result.status);
+
+	struct mcc_ast_statement *stmt = result.statement;
+
+	CuAssertIntEquals(tc, MCC_AST_STATEMENT_TYPE_ASSGN, stmt -> type );
+
+	CuAssertTrue(tc, NULL == result.statement);
+
+}
+
+
 
 void SourceLocation_SingleLineColumn(CuTest *tc)
 {
@@ -121,7 +253,15 @@ void SourceLocation_SingleLineColumn(CuTest *tc)
 	TEST(BinaryOp_1) \
 	TEST(NestedExpression_1) \
 	TEST(MissingClosingParenthesis_1) \
-	TEST(SourceLocation_SingleLineColumn)
+	TEST(SourceLocation_SingleLineColumn)\
+	TEST(StatementWhile)\
+	TEST(StatementIf)\
+	TEST(StatementIfElse)\
+    TEST(StatementAssignment)\
+    TEST(StatementRet)\
+    TEST(StatementDeclarationString)\
+    TEST(StatementDeclarationFloat)\
+    TEST(StatementDeclarationInt)\
 
 #include "main_stub.inc"
 #undef TESTS
