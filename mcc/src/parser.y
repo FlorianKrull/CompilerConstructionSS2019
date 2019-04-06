@@ -87,6 +87,7 @@ void mcc_parser_error();
 %type <enum mcc_ast_data_type> type VOID_TYPE
 %type <struct mcc_ast_function_def *> function_def
 %type <struct mcc_ast_parameter *> parameters
+%type <struct mcc_ast_arguments *> argument
 %type <struct mcc_ast_program *> program
 
 
@@ -171,13 +172,17 @@ assignment:  IDENTIFIER ASSIGNMENT expression 					            { $$ = mcc_ast_ne
           ;
 
 parameters  : declaration COMMA parameters { $$ = mcc_ast_new_parameter($1); $$->next = $3; loc($$, @1); }
-			| declaration      { $$ = mcc_ast_new_parameter($1);                loc($$, @1); }
+			| declaration      			   { $$ = mcc_ast_new_parameter($1);             	loc($$, @1); }
 			;
+
+argument : expression 					{mcc_ast_new_argument($1); loc($$,@1);}
+		 | argument COMMA expression 	{$$ = mccc_ast_argument($1); $$->next = $3; loc($$, @1);}
+		 ;
 
 function_def : type identifier LPARENTH parameters RPARENTH LBRACE compound_statement RBRACE
                     { $$ = mcc_ast_new_function_def($1, $2, $4, $7); loc($$, @1);}
-	     | type identifier LPARENTH RPARENTH LBRACE compound_statement RBRACE
-                    { $$ = mcc_ast_new_function_def($1, $2, NULL, $6); loc($$, @1); }
+	     	 | type identifier LPARENTH RPARENTH LBRACE compound_statement RBRACE
+        	        { $$ = mcc_ast_new_function_def($1, $2, NULL, $6); loc($$, @1); }
              | type identifier LPARENTH RPARENTH LBRACE RBRACE
                     { $$ = mcc_ast_new_function_def($1, $2, NULL, NULL); loc($$, @1);}
 			 ;

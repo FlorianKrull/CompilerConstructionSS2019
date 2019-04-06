@@ -99,10 +99,20 @@ void mcc_ast_delete_expression(struct mcc_ast_expression *expression)
 		mcc_ast_delete_literal(expression->literal);
 		break;
 
+	case MCC_AST_EXPRESSION_TYPE_IDENTIFIER:
+		mcc_ast_delete_expression(expression->identifier);
+
 	case MCC_AST_EXPRESSION_TYPE_BINARY_OP:
 		mcc_ast_delete_expression(expression->lhs);
 		mcc_ast_delete_expression(expression->rhs);
 		break;
+	
+	case MCC_AST_EXPRESSION_TYPE_UNARY_OP:
+		mcc_ast_delete_expression(expression->unary_expression);
+
+	case MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION:
+		mcc_ast_delete_identifier(expression->func_name);
+		mcc_ast_delete_argument(expression->argument);
 
 	case MCC_AST_EXPRESSION_TYPE_PARENTH:
 		mcc_ast_delete_expression(expression->expression);
@@ -433,4 +443,21 @@ void mcc_ast_delete_parameter(struct mcc_ast_parameter *parameter)
 		mcc_ast_delete_parameter(parameter->next);
 	}
 	free(parameter);
+}
+
+// ------------------------------------------------------------------- Argument
+
+void mcc_ast_delete_argument(struct mcc_ast_argument *argument){
+
+	if (argument) {
+		for (unsigned int i = 0; i < argument->argument_count; i++) {
+			mcc_ast_delete_expression(argument->arguments[i]);
+		}
+
+		if (argument->arguments) {
+			free(argument->arguments);
+		}
+
+		free(argument);
+	}
 }

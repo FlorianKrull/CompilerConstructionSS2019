@@ -81,7 +81,7 @@ enum mcc_ast_expression_type {
 	MCC_AST_EXPRESSION_TYPE_UNARY_OP,
 	MCC_AST_EXPRESSION_TYPE_PARENTH,
 	MCC_AST_EXPRESSION_TYPE_IDENTIFIER,
-	MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION,
+	MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION
 
 };
 
@@ -99,6 +99,13 @@ struct mcc_ast_expression {
 			enum mcc_ast_binary_op op;
 			struct mcc_ast_expression *lhs;
 			struct mcc_ast_expression *rhs;
+		};
+
+		// MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION
+		struct {
+			struct mcc_ast_identifier *func_name;
+			struct mcc_ast_argument *argument;
+
 		};
 
 		struct {
@@ -312,6 +319,25 @@ struct mcc_ast_parameter *
 mcc_ast_new_parameter(struct mcc_ast_declaration *declaration);
 
 void mcc_ast_delete_parameter(struct mcc_ast_parameter *parameter);
+
+// -------------------------------------------------------------------- Parameter
+
+struct mcc_ast_argument {
+
+	struct mcc_ast_node node;
+
+	unsigned int argument_size;            
+	unsigned int argument_count;           
+	struct mcc_ast_expression **arguments; 
+
+};
+
+struct mcc_ast_argument *mcc_ast_new_argument(struct mcc_ast_expression *expression);
+
+struct mCc_ast_argument *mcc_ast_add_argument(struct mcc_ast_argument *argument,
+                     						  struct mcc_ast_expression *subargument);
+
+void mcc_ast_delete_argument(struct mcc_ast_argument *argument);
 
 
 // -------------------------------------------------------------------- Program
