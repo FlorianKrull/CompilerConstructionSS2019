@@ -245,6 +245,20 @@ static void print_dot_literal_bool(struct mcc_ast_literal *literal, void *data)
 	print_dot_node(out, literal, label);
 }
 
+// ---------------------------------------------------------------- Identifier
+
+static void print_dot_identifier(struct mcc_ast_identifier *identifier,
+                                 void *data)
+{
+	assert(identifier);
+	assert(data);
+
+	char label[LABEL_SIZE] = { 0 };
+	snprintf(label, sizeof(label), "%s", identifier->i_value);
+
+	FILE *out = data;
+	print_dot_node(out, identifier, label);
+}
 
 // ---------------------------------------------------------------- Declaration
 
@@ -346,6 +360,10 @@ static void print_dot_statement_compound(struct mcc_ast_statement *statement, vo
 	FILE *out = data;
 
 	print_dot_node(out,statement,"stmt: compund");
+
+	for(int i = 0; i < statement->compound_statement->size; i++){
+		print_dot_edge(out, statement,statement->compound_statement->list[i],"substatement");
+	}
 }
 
 // Setup an AST Visitor for printing.
@@ -375,7 +393,8 @@ static struct mcc_ast_visitor print_dot_visitor(FILE *out)
 	    .literal_float = print_dot_literal_float,
 		.literal_string = print_dot_literal_string,
 		.literal_bool = print_dot_literal_bool,
-	
+
+		.identifier = print_dot_identifier,
 
 		.declaration = print_dot_declaration
 	};

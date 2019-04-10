@@ -41,6 +41,7 @@ struct mcc_ast_visitor {
 	mcc_ast_visit_expression_cb expression_binary_op;
 	mcc_ast_visit_expression_cb expression_unary_op;
 	mcc_ast_visit_expression_cb expression_parenth;
+	mcc_ast_visit_expression_cb expression_call_expression;
 	mcc_ast_visit_expression_cb expression_identifier;
 
 	mcc_ast_visit_statement_cb statement;
@@ -52,12 +53,16 @@ struct mcc_ast_visitor {
 	mcc_ast_visit_statement_cb statement_declaration;
 	mcc_ast_visit_statement_cb statement_expression;
 
-
 	mcc_ast_visit_literal_cb literal;
 	mcc_ast_visit_literal_cb literal_int;
 	mcc_ast_visit_literal_cb literal_float;
 	mcc_ast_visit_literal_cb literal_string;
 	mcc_ast_visit_literal_cb literal_bool;
+
+	// mcc_ast_visit_function_definition_cb function_definition;
+	// mcc_ast_visit_parameter_cb parameter;
+	// mcc_ast_visit_argument_cb argument;
+	// mcc_ast_visit_program_cb program;
 
 	mcc_ast_visit_declaration_cb declaration;
 	mcc_ast_visit_identifier_cb identifier;

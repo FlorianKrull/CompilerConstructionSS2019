@@ -447,6 +447,29 @@ void mcc_ast_delete_parameter(struct mcc_ast_parameter *parameter)
 
 // ------------------------------------------------------------------- Argument
 
+struct mcc_ast_argument *mcc_ast_new_argument(struct mcc_ast_expression *expression)
+{
+	assert(expression);
+
+	struct mcc_ast_argument *arg = malloc(sizeof(*arg));
+
+	if(!arg){
+		return NULL;
+	}
+
+	arg->argument_count = 0;
+	arg->arguments = NULL;
+
+	if ((arg->arguments = malloc(10 * sizeof(expression))) !=
+	    NULL) {
+		arg->argument_size = 10;
+		arg->argument_count = 1;
+		arg->arguments[0] = expression;
+	}
+	return arg;
+
+}
+
 void mcc_ast_delete_argument(struct mcc_ast_argument *argument){
 
 	if (argument) {
