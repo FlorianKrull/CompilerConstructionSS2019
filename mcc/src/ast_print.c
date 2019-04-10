@@ -83,7 +83,7 @@ const char *mcc_ast_print_data_type(enum mcc_ast_data_type dt)
 // 		case MCC_AST_STATEMENT_TYPE_COMPOUND:
 // 			return "COMPOUND_STMT";
 // 		case MCC_AST_DATA_TYPE_VOID:
-// 			return ""
+// 			return "";
 
 // 	}
 
@@ -193,6 +193,9 @@ static void print_dot_expression_parenth(struct mcc_ast_expression *expression, 
 	print_dot_edge(out, expression, expression->expression, "expression");
 }
 
+// ---------------------------------------------------------------- Literal
+
+
 static void print_dot_literal_int(struct mcc_ast_literal *literal, void *data)
 {
 	assert(literal);
@@ -216,6 +219,32 @@ static void print_dot_literal_float(struct mcc_ast_literal *literal, void *data)
 	FILE *out = data;
 	print_dot_node(out, literal, label);
 }
+
+static void print_dot_literal_string(struct mcc_ast_literal *literal,
+                                     void *data)
+{
+	assert(literal);
+	assert(data);
+
+	char label[LABEL_SIZE] = { 0 };
+	snprintf(label, sizeof(label), "%s", literal->s_value);
+
+	FILE *out = data;
+	print_dot_node(out, literal, label);
+}
+
+static void print_dot_literal_bool(struct mcc_ast_literal *literal, void *data)
+{
+	assert(literal);
+	assert(data);
+
+	char label[LABEL_SIZE] = { 0 };
+	snprintf(label, sizeof(label), "%s", literal->b_value ? "true" : "false");
+
+	FILE *out = data;
+	print_dot_node(out, literal, label);
+}
+
 
 // ---------------------------------------------------------------- Declaration
 
@@ -344,6 +373,8 @@ static struct mcc_ast_visitor print_dot_visitor(FILE *out)
 
 	    .literal_int = print_dot_literal_int,
 	    .literal_float = print_dot_literal_float,
+		.literal_string = print_dot_literal_string,
+		.literal_bool = print_dot_literal_bool,
 	
 
 		.declaration = print_dot_declaration

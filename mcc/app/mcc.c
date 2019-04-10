@@ -37,6 +37,7 @@ int main(int argc, char *argv[])
 		struct mcc_parser_result result = mcc_parse_file(in);
 		fclose(in);
 		if (result.status != MCC_PARSER_STATUS_OK) {
+			 printf("NOT OK");
 			return EXIT_FAILURE;
 		}
 		expr = result.expression;
