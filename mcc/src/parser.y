@@ -31,10 +31,9 @@ void mcc_parser_error();
 %token <long>   INT_LITERAL   "integer literal"
 %token <double> FLOAT_LITERAL "float literal"
 %token <char*>   STRING_LITERAL   "string literal"
-%token <char*> IDENTIFIER "identifier"
+%token <const char*> IDENTIFIER "identifier"
 %token <bool> BOOL_LITERAL "bool literal"
 
-%token <char*>  TYPE            "type"
 
 %token LPARENTH "("
 %token RPARENTH ")"
@@ -103,15 +102,13 @@ void mcc_parser_error();
 
 %%
 
-toplevel : %empty   { result->program = mCc_ast_new_empty_program(); }
-         | program  { result->program = $1; }
+toplevel : literal { *result_literal = $1; }
+         | declaration { *result_declaration = $1; }
          ;
 
 expression : literal                      		{ $$ = mcc_ast_new_expression_literal($1);              loc($$, @1); }
            | LPARENTH expression RPARENTH	 	{ $$ = mcc_ast_new_expression_parenth($2);              loc($$, @1); }
-		   | expression binary_op expression  	{ $$ = mcc_ast_new_expression_binary_op($1, $2, $3);    loc($$, @1); }
-		   | identifier 						{ $$ = mcc_ast_new_expression_identifier($1); 			loc($$, @1); }
-
+		   | expression binary_op expression  	{ $$ = mcc_ast_new_expression_binary_op($2, $1, $3);    loc($$, @1); }
            ;
 
 literal : INT_LITERAL       { $$ = mcc_ast_new_literal_int($1);     loc($$, @1); }
@@ -126,7 +123,7 @@ unary_op : NOT { $$ = MCC_AST_UNARY_OP_NOT; }
 		 | MINUS  {$$ = MCC_AST_UNARY_OP_MINUS; }
 		 ;
 
-binary_op :   PLUS { $$= MCC_AST_BINARY_OP_ADD; }
+binary_op : PLUS { $$= MCC_AST_BINARY_OP_ADD; }
 			| MINUS { $$ = MCC_AST_BINARY_OP_SUB; }
 			| ASTER { $$ = MCC_AST_BINARY_OP_MUL; }
 			| SLASH { $$ = MCC_AST_BINARY_OP_DIV; }
@@ -145,10 +142,6 @@ type : INT_TYPE { $$ = MCC_AST_DATA_TYPE_INT; }
      | VOID { $$ = MCC_AST_DATA_TYPE_VOID; }
      ;
 
-
-identifier : IDENTIFIER { $$ = mcc_ast_new_identifier($1); loc($$, @1); }
-           ;
-
 statement : expression SEMICOLON    { $$ = mcc_ast_new_statement_expression($1); loc($$, @1); }
           | if_statement            { $$= $1;  loc($$, @1); }
 	  | while_statement         { $$ = $1; loc($$, @1); }
@@ -166,16 +159,12 @@ declaration: type identifier SEMICOLON { $$ = mcc_ast_new_declaration($1, $2); l
 while_statement: WHILE LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statement_while($3, $5); loc($$, @1); }
 			   ;
 
-compound_statement:  statement { $$ = mcc_ast_new_statement_compound($1); loc($$, @1); }
-                   | compound_statement statement { $$ = mcc_ast_add_compound_statement($1, $2); loc($$, @1); }
-                   ;
+compound_statement: LBRACE statement_list LBRACE { $$ = $2; loc($$; @1); }
+				  ;
 
-/* Took this idea from : https://norasandler.com/2018/02/25/Write-a-Compiler-6.html */
-
-compound_block : statement { $$ = mcc_ast_new_statement_compound_block($1, $1); loc($$, @1); }
-		   	  | compound_block statement { $$ = mcc_ast_add_compound_statement($1, $2); loc($$, @1); }
-		   	  ;
-
+statement_list: %empty { $$ = mcc_ast_empty_node() }
+			  | statement_list statement { $$ = mcc_ast_new_statement_list($1, $2); loc($$, @1); }
+			  ;
 
 assignment:  IDENTIFIER ASSIGNMENT expression
 		{ $$ = mcc_ast_new_statement_assignment($1, 0, $3); 	loc($$, @1); };
@@ -193,17 +182,13 @@ function_def : type identifier LPARENTH parameters RPARENTH compound_statement
 	     	{ $$ = mcc_ast_new_function($1, $2, NULL, $5); loc($$, @1);}
 	     ;
 /*
-
 // program : function_def { $$ = mcc_ast_new_program($1); loc($$, @1);}
 	;
 */
 %%
-
 #include <assert.h>
-
 #include "scanner.h"
 #include "utils/unused.h"
-
 void mcc_parser_error(struct MCC_PARSER_LTYPE *yylloc, yyscan_t *scanner, const char *msg)
 {
 	// TODO
@@ -211,43 +196,32 @@ void mcc_parser_error(struct MCC_PARSER_LTYPE *yylloc, yyscan_t *scanner, const 
 	UNUSED(scanner);
 	UNUSED(msg);
 }
-
 struct mcc_parser_result mcc_parse_string(const char *input)
 {
 	assert(input);
-
 	FILE *in = fmemopen((void *)input, strlen(input), "r");
 	if (!in) {
 		return (struct mcc_parser_result){
 		    .status = MCC_PARSER_STATUS_UNABLE_TO_OPEN_STREAM,
 		};
 	}
-
 	struct mcc_parser_result result = mcc_parse_file(in);
-
 	fclose(in);
-
 	return result;
 }
-
 struct mcc_parser_result mcc_parse_file(FILE *input)
 {
     printf("Parse file \n");
 	assert(input);
-
 	yyscan_t scanner;
 	mcc_parser_lex_init(&scanner);
 	mcc_parser_set_in(input, scanner);
-
 	struct mcc_parser_result result = {
 	    .status = MCC_PARSER_STATUS_OK,
 	};
-
 	if (yyparse(scanner, &result.literal, &result.declaration) != 0) {
 		result.status = MCC_PARSER_STATUS_UNKNOWN_ERROR;
 	}
-
 	mcc_parser_lex_destroy(scanner);
-
 	return result;
 }

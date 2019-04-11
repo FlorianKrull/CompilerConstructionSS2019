@@ -21,7 +21,6 @@ struct mcc_ast_expression;
 struct mcc_ast_literal;
 struct mcc_ast_statement;
 struct mcc_ast_identifier;
-struct mcc_ast_parameter;
 
 
 // ------------------------------------------------------------------- AST Node
@@ -97,31 +96,22 @@ struct mcc_ast_expression {
 		// MCC_AST_EXPRESSION_TYPE_BINARY_OP
 		struct {
 			enum mcc_ast_binary_op op;
+            enum mcc_ast_unary_op up;
 			struct mcc_ast_expression *lhs;
 			struct mcc_ast_expression *rhs;
-		};
-
-		struct {
-			enum mcc_ast_unary_op unary_op;
-			struct mcc_ast_expression *unary_expression;
 		};
 
         // MCC_AST_EXPRESSION_TYPE_UNARY_OP
 		// MCC_AST_EXPRESSION_TYPE_PARENTH
 		struct mcc_ast_expression *expression;
-
-		struct mcc_ast_identifier *identifier;
 	};
 };
 
 
 struct mcc_ast_expression *mcc_ast_new_expression_literal(struct mcc_ast_literal *literal);
 
-struct mcc_ast_expression *mcc_ast_new_expression_identifier(struct mcc_ast_identifier *identifier);
-
-struct mcc_ast_expression *mcc_ast_new_expression_binary_op(
+struct mcc_ast_expression *mcc_ast_new_expression_binary_op(enum mcc_ast_binary_op op,
                                                             struct mcc_ast_expression *lhs,
-															enum mcc_ast_binary_op op,
                                                             struct mcc_ast_expression *rhs);
 
 struct mcc_ast_expression *mcc_ast_new_exprssion_unary_op( enum mcc_ast_unary_op op,
@@ -136,12 +126,12 @@ void mcc_ast_delete_expression(struct mcc_ast_expression *expression);
 
 // ------------------------------------------------------------------- Arguments
 
-struct mcc_ast_arguments{
+// struct mcc_ast_arguments{
 
-	struct mcc_ast_node;
-	struct mcc_ast_arguments *next_arg;
-	struct mcc_ast_expression *expression;
-};
+// 	struct mcc_ast_node;
+// 	struct mcc_ast_arguments *next_arg;
+// 	struct mcc_ast_expression *expression;
+// }
 
 
 
@@ -162,20 +152,18 @@ struct mcc_ast_declaration {
 	struct mcc_ast_node node;
 
 	enum mcc_ast_data_type type;
-	struct mcc_ast_literal *array_size;
-	struct mcc_ast_identifier *identifier;
+
+	struct mcc_ast_identifier *ident;
 
 };
 
-struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type,struct mcc_ast_literal *array_size, struct mcc_ast_identifier *identifier);
-
-void mcc_ast_delete_declaration(struct mcc_ast_declaration *declaration);
+struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type, struct mcc_ast_identifier *ident);
 
 
 // ------------------------------------------------------------------- Statements
 
 enum mcc_ast_statement_type {
-    MCC_AST_STATEMENT_TYPE_EXPRESSION,
+    MMC_AST_STATEMENT_TYPE_EXPRESSION,
     MCC_AST_STATEMENT_TYPE_IF,
 	MCC_AST_STATEMENT_TYPE_WHILE,
 	MCC_AST_STATEMENT_TYPE_DECL,
@@ -185,10 +173,9 @@ enum mcc_ast_statement_type {
 };
 
 struct mcc_ast_statement_list {
-   	struct mcc_ast_node node;
-	struct mcc_ast_statement *statement;
-	struct mcc_ast_statement_list *next;
-	
+    int size;
+    int max_size;
+    struct mcc_ast_statement *list[];
 };
 
 struct mcc_ast_statement {
@@ -198,8 +185,6 @@ struct mcc_ast_statement {
 
     union {
         struct mcc_ast_expression *expression;
-
-		struct mcc_ast_declaration *declaration;
 
 		struct {
             enum mcc_ast_data_type data_type;
@@ -292,24 +277,7 @@ void mcc_ast_delete_literal(struct mcc_ast_literal *literal);
 void mcc_ast_empty_node();
 
 
-// -------------------------------------------------------------------- Function Definitions
-
-struct mcc_ast_function_def {
-	struct mcc_ast_node node;
-
-	enum mcc_ast_data_type type;
-
-	struct mcc_ast_identifier *identifier;
-
-	struct mcc_ast_parameter *parameter;
-
-	struct mcc_ast_statement *compund_statement;
-};
-
-struct mcc_ast_function_def *mcc_ast_new_function_def( enum mcc_ast_data_type type,
-														struct mcc_ast_identifier *identifier,
-														struct mcc_ast_parameter *parameter,
-														struct mcc_ast_statement *compund_statement);
+// -------------------------------------------------------------------- Assignment
 
 
 
@@ -357,7 +325,7 @@ struct mcc_ast_program {
 };
 
 struct mcc_ast_program *
-mcc_ast_new_program(struct mcc_ast_function_def *function_def);
+mcc_ast_new_program(struct mcc_ast_function_def_list *function_def_list);
 
 void mcc_ast_delete_program(struct mcc_ast_program *program);
 

@@ -6,17 +6,6 @@
 #include "mcc/ast_visit.h"
 #include "../include/mcc/ast.h"
 
-const char *mcc_ast_print_unary_op(enum mcc_ast_unary_op op)
-{
-	switch (op) {
-	case MCC_AST_UNARY_OP_MINUS: return "-";
-	case MCC_AST_UNARY_OP_NOT: return "!";
-	}
-
-	return "unknown op";
-}
-
-
 const char *mcc_ast_print_binary_op(enum mcc_ast_binary_op op)
 {
 	switch (op) {
@@ -68,7 +57,7 @@ const char *mcc_ast_print_data_type(enum mcc_ast_data_type dt)
 const char *mcc_ast_print_statement(enum mcc_ast_statement_type stmt_type)
 {
 	switch (stmt_type) {
-		case MCC_AST_STATEMENT_TYPE_EXPRESSION:
+		case MMC_AST_STATEMENT_TYPE_EXPRESSION:
 			return "EXPR_STMT";
 		case MCC_AST_STATEMENT_TYPE_IF:
 			return "IF_STMT";
@@ -125,8 +114,6 @@ static void print_dot_edge(FILE *out, const void *src_node, const void *dst_node
 	fprintf(out, "\t\"%p\" -> \"%p\" [label=\"%s\"];\n", src_node, dst_node, label);
 }
 
-// ---------------------------------------------------------------- Expressions
-
 static void print_dot_expression_literal(struct mcc_ast_expression *expression, void *data)
 {
 	assert(expression);
@@ -151,33 +138,16 @@ static void print_dot_expression_binary_op(struct mcc_ast_expression *expression
 	print_dot_edge(out, expression, expression->rhs, "rhs");
 }
 
-static void print_dot_expression_unary_op(struct mcc_ast_expression *expression,
-                                          void *data)
+static void print_dot_statement_if(struct mcc_ast_statement *statement, void *data)
 {
-	assert(expression);
-	assert(data);
-
-	char label[LABEL_SIZE] = { 0 };
-	snprintf(label, sizeof(label), "expr: %s",
-	         mcc_ast_print_unary_op(expression->unary_op));
-
-	FILE *out = data;
-	print_dot_node(out, expression, label);
-	print_dot_edge(out, expression, expression->unary_expression, "expr");
-}
-
-static void
-print_dot_expression_identifier(struct mcc_ast_expression *expression,
-                                void *data)
-{
-	assert(expression);
+	assert(statement);
 	assert(data);
 
 	FILE *out = data;
-	print_dot_node(out, expression, "expr: id");
-	print_dot_edge(out, expression, expression->identifier, "identifier");
-}
+	print_dot_edge(out, statement, statement -> if_condition, "if_condition");
+	print_dot_edge(out, statement, statement -> if_stmt, "if_statement");
 
+}
 
 static void print_dot_expression_parenth(struct mcc_ast_expression *expression, void *data)
 {
@@ -213,8 +183,6 @@ static void print_dot_literal_float(struct mcc_ast_literal *literal, void *data)
 	print_dot_node(out, literal, label);
 }
 
-// ---------------------------------------------------------------- Declaration
-
 static void print_dot_declaration(struct mcc_ast_declaration *declaration, void *data)
 {
 	assert(declaration);
@@ -226,67 +194,8 @@ static void print_dot_declaration(struct mcc_ast_declaration *declaration, void 
 	FILE *out = data;
 	print_dot_node(out, declaration, label);
 	print_dot_edge(out, declaration, &declaration -> type, "declaration type");
-	print_dot_edge(out, declaration, &declaration -> identifier -> i_value, "declaration ident");
+	print_dot_edge(out, declaration, &declaration -> ident -> i_value, "declaration ident");
 }
-
-// ---------------------------------------------------------------- Identifier
-
-static void print_dot_identifier(struct mcc_ast_identifier *identifier,
-                                 void *data)
-{
-	assert(identifier);
-	assert(data);
-
-	char label[LABEL_SIZE] = { 0 };
-	snprintf(label, sizeof(label), "%s", identifier->i_value);
-
-	FILE *out = data;
-	print_dot_node(out, identifier, label);
-}
-
-// ---------------------------------------------------------------- Statement
-
-
-static void print_dot_statement_if(struct mcc_ast_statement *statement, void *data)
-{
-	assert(statement);
-	assert(data);
-
-	FILE *out = data;
-	print_dot_node(out, statement, "stmt: if_else");
-	print_dot_edge(out, statement, statement -> if_condition, "if_condition");
-	print_dot_edge(out, statement, statement -> if_stmt, "if_statement");
-
-}
-
-
-static void print_dot_statement_while(struct mcc_ast_statement *statement, void *data)
-{
-	assert(statement);
-	assert(data);
-
-	FILE *out = data;
-	print_dot_node(out, statement, "stmt: while");
-	print_dot_edge(out, statement, statement -> while_condition, "if_condition");
-	print_dot_edge(out, statement, statement -> while_stmt, "if_statement");
-
-}
-
-static void print_dot_statement_assignment(struct mcc_ast_statement *statement,
-                                           void *data)
-{
-	assert(statement);
-	assert(data);
-
-	FILE *out = data;
-	print_dot_node(out, statement, "stmt: assgn");
-	print_dot_edge(out, statement, statement->id_assgn,
-	               "identifier");
-	
-	print_dot_edge(out, statement, statement->rhs_assgn, "rhs");
-}
-
-
 
 // Setup an AST Visitor for printing.
 static struct mcc_ast_visitor print_dot_visitor(FILE *out)
@@ -310,9 +219,6 @@ static struct mcc_ast_visitor print_dot_visitor(FILE *out)
 	};
 }
 
-// ---------------------------------------------------------------- Expression
-
-
 void mcc_ast_print_dot_expression(FILE *out, struct mcc_ast_expression *expression)
 {
 	assert(out);
@@ -326,9 +232,18 @@ void mcc_ast_print_dot_expression(FILE *out, struct mcc_ast_expression *expressi
 	print_dot_end(out);
 }
 
-// ---------------------------------------------------------------- Literal
+void mcc_ast_print_dot_literal(FILE *out, struct mcc_ast_literal *literal)
+{
+	assert(out);
+	assert(literal);
 
+	print_dot_begin(out);
 
+	struct mcc_ast_visitor visitor = print_dot_visitor(out);
+	mcc_ast_visit(literal, &visitor);
+
+	print_dot_end(out);
+}
 
 void mcc_ast_print_dot_declaration(FILE *out, struct mcc_ast_declaration *declaration)
 {
