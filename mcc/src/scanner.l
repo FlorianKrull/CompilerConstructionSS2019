@@ -69,7 +69,7 @@ comment_multiline ("/*"([^*]|\*+[^*/])*\*+"/")
 "int"             { return TK_INT_TYPE; }
 "float"           { return TK_FLOAT_TYPE; }
 "string"          { return TK_STRING_TYPE; }
-"void"            { return TK_VOID_TYPE; }
+"void"            { return TK_VOID; }
 
 "if"              { return TK_IF; }
 "else"            { return TK_ELSE; }

@@ -45,7 +45,8 @@ enum mcc_ast_data_type {
     MCC_AST_DATA_TYPE_INT,
     MCC_AST_DATA_TYPE_STRING,
     MCC_AST_DATA_TYPE_BOOL,
-    MCC_AST_DATA_TYPE_FLOAT
+    MCC_AST_DATA_TYPE_FLOAT,
+    MCC_AST_DATA_TYPE_VOID
 };
 
 // ------------------------------------------------------------------ Operators
@@ -299,19 +300,21 @@ void mcc_ast_delete_parameter(struct mcc_ast_parameter *parameter);
 
 // -------------------------------------------------------------------- Function
 
-//int PARAMETER_BLOCK_SIZE = 4;
-//struct mcc_ast_parameter {
-//    struct mcc_ast_node node;
-//    int max;
-//    int size;
-//    struct mcc_ast_declaration *parameters[];
-//};
-//
-//struct mcc_ast_parameter *
-//mcc_ast_new_parameter(struct mcc_ast_declaration *declaration, struct mcc_ast_parameter *params);
-//
-//void mcc_ast_delete_parameter(struct mcc_ast_parameter *parameter);
+struct mcc_ast_function {
+    struct mcc_ast_node node;
 
+    enum mcc_ast_data_type return_type;
+    struct mcc_ast_identifier *identifier;
+    struct mcc_ast_parameter *parameter;
+    struct mcc_ast_statement *statement;
+};
+
+struct mcc_ast_function * mcc_ast_new_function(
+        enum mcc_ast_data_type return_type,
+        struct mcc_ast_identifier *identifier,
+        struct mcc_ast_parameter *parameter,
+        struct mcc_ast_statement *statement
+);
 
 
 // -------------------------------------------------------------------- Program

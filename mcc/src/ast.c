@@ -341,7 +341,7 @@ void mcc_ast_empty_node() {
 
 // ------------------------------------------------------------------- Parameters
 
-struct mcc_ast_parameter * mcc_ast_new_parameter(struct mcc_ast_declaration *declaration, struct mcc_ast_parameter *params)
+struct mcc_ast_parameter *mcc_ast_new_parameter(struct mcc_ast_declaration *declaration, struct mcc_ast_parameter *params)
 {
 	assert(declaration);
     assert(params);
@@ -371,4 +371,27 @@ struct mcc_ast_parameter * mcc_ast_new_parameter(struct mcc_ast_declaration *dec
     return params;
 }
 
-// ------------------------------------------------------------------- Functions
+// ------------------------------------------------------------------- Function
+
+struct mcc_ast_function *mcc_ast_new_function(
+        enum mcc_ast_data_type return_type,
+        struct mcc_ast_identifier *identifier,
+        struct mcc_ast_parameter *parameter,
+        struct mcc_ast_statement *statement
+)
+{
+    assert(identifier);
+    assert(parameter);
+    assert(statement);
+
+    struct mcc_ast_function *func = malloc(sizeof(*func));
+
+    func -> return_type = return_type;
+    func -> identifier = identifier;
+    func -> parameter = parameter;
+    func -> statement = statement;
+
+    return func;
+}
+
+// ------------------------------------------------------------------- Program

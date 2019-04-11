@@ -70,7 +70,7 @@ void mcc_parser_error();
 %token INT_TYPE "int"
 %token FLOAT_TYPE "float"
 %token STRING_TYPE "string"
-%token VOID_TYPE "void"
+%token VOID "void"
 
 %token IF "if"
 %token ELSE "else"
@@ -92,7 +92,7 @@ void mcc_parser_error();
 %type <struct mcc_ast_statement *> statement if_statement while_statement compound_statement assignment
 %type <enum mcc_ast_data_type> type
 %type <struct mcc_ast_statement_list *> statement_list
-// %type <struct mcc_ast_function_def *> function_def
+%type <struct mcc_ast_function_def *> function_def
 %type <struct mcc_ast_declaration *> declaration
 %type <struct mcc_ast_parameter *> parameters
 // %type <struct mcc_ast_program *> program
@@ -139,6 +139,7 @@ type : INT_TYPE { $$ = MCC_AST_DATA_TYPE_INT; }
      | FLOAT_TYPE { $$ = MCC_AST_DATA_TYPE_FLOAT; }
      | STRING_TYPE { $$ = MCC_AST_DATA_TYPE_STRING; }
      | BOOL_TYPE { $$ = MCC_AST_DATA_TYPE_BOOL; }
+     | VOID { $$ = MCC_AST_DATA_TYPE_VOID; }
      ;
 
 statement : expression SEMICOLON    { $$ = mcc_ast_new_statement_expression($1); loc($$, @1); }
@@ -174,17 +175,16 @@ assignment:  IDENTIFIER ASSIGNMENT expression
 parameters  : declaration COMMA parameters 	{ $$ = mcc_ast_new_parameter($1, $3); loc($$, @1); }
 	    | declaration 			{ $$ = mcc_ast_new_parameter($1, NULL); loc($$, @1); }
             ;
-/*
-function_def : type IDENTIFIER LPARENTH parameters RPARENTH compound_statement
-		{ $$ = mcc_ast_new_function_def($1, $2, $4, $6);   loc($$, @1);}
-	     | type IDENTIFIER LPARENTH RPARENTH compound_statement
-	     	{ $$ = mcc_ast_new_function_def($1, $2, NULL, $5); loc($$, @1);}
-	     | VOID_TYPE IDENTIFIER LPARENTH RPARENTH compound_statement
-	     	{ $$ = mcc_ast_new_function_def($1, $2, NULL, $5); loc($$, @1);}
-	     ;
 
-program : function_def { $$ = mcc_ast_new_program($1); loc($$, @1);}
-		;
+function_def : type identifier LPARENTH parameters RPARENTH compound_statement
+		{ $$ = mcc_ast_new_function($1, $2, $4, $6);   loc($$, @1);}
+	     | type identifier LPARENTH RPARENTH compound_statement
+	     	{ $$ = mcc_ast_new_function($1, $2, NULL, $5); loc($$, @1);}
+	     ;
+/*
+
+// program : function_def { $$ = mcc_ast_new_program($1); loc($$, @1);}
+	;
 */
 %%
 
