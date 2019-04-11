@@ -148,7 +148,7 @@ struct mcc_ast_identifier *mcc_ast_new_identifier(char *value);
 // ------------------------------------------------------------------- Declaration
 
 struct mcc_ast_declaration {
-	struct mcc_ast_node *node;
+	struct mcc_ast_node node;
 
 	enum mcc_ast_data_type type;
 
@@ -283,17 +283,35 @@ void mcc_ast_empty_node();
 
 // -------------------------------------------------------------------- Parameter
 
-
+// int PARAMETER_BLOCK_SIZE = 4;
 struct mcc_ast_parameter {
 	struct mcc_ast_node node;
-	struct mcc_ast_parameter *next;
-	struct mcc_ast_declaration *declaration;
+    int max;
+    int size;
+	struct mcc_ast_declaration *parameters[];
 };
 
 struct mcc_ast_parameter *
-mcc_ast_new_parameter(struct mcc_ast_declaration *declaration);
+mcc_ast_new_parameter(struct mcc_ast_declaration *declaration, struct mcc_ast_parameter *params);
 
 void mcc_ast_delete_parameter(struct mcc_ast_parameter *parameter);
+
+
+// -------------------------------------------------------------------- Function
+
+//int PARAMETER_BLOCK_SIZE = 4;
+//struct mcc_ast_parameter {
+//    struct mcc_ast_node node;
+//    int max;
+//    int size;
+//    struct mcc_ast_declaration *parameters[];
+//};
+//
+//struct mcc_ast_parameter *
+//mcc_ast_new_parameter(struct mcc_ast_declaration *declaration, struct mcc_ast_parameter *params);
+//
+//void mcc_ast_delete_parameter(struct mcc_ast_parameter *parameter);
+
 
 
 // -------------------------------------------------------------------- Program

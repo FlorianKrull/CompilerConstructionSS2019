@@ -245,8 +245,6 @@ struct mcc_ast_statement *mcc_ast_new_statement_declaration(enum mcc_ast_data_ty
 {
     assert(identifier);
 
-    printf("Parse declaration");
-
     struct mcc_ast_statement *stmt = construct_statement();
 
     stmt -> type = MCC_AST_STATEMENT_TYPE_DECL;
@@ -343,25 +341,34 @@ void mcc_ast_empty_node() {
 
 // ------------------------------------------------------------------- Parameters
 
-struct mcc_ast_parameter *
-mcc_ast_new_parameter(struct mcc_ast_declaration *declaration)
+struct mcc_ast_parameter * mcc_ast_new_parameter(struct mcc_ast_declaration *declaration, struct mcc_ast_parameter *params)
 {
 	assert(declaration);
+    assert(params);
 
-	struct mcc_ast_parameter *param = malloc(sizeof(*param));
-	assert(param);
+    if (params == NULL) {
+        struct mcc_ast_parameter *param = malloc(sizeof(*param) + sizeof(struct mcc_ast_declaration*) * 4);
+        param -> size = 1;
+        param -> max = 4;
+        param -> parameters[0] = declaration;
 
-	param->declaration = declaration;
-	param->next = NULL;
-	return param;
+        return param;
+    }
+
+    // add to previous params list
+    if ((params -> size) == (params -> max)) {
+        int next_max = params -> size + 4;
+        int size = params -> size;
+        struct mcc_ast_parameter *new_params = realloc(params, sizeof(*params) + sizeof(struct mcc_ast_declaration*) * next_max);
+        new_params -> parameters[size -1] = declaration;
+        new_params -> size += 1;
+        new_params -> max = next_max;
+    } else {
+        params -> parameters[(params -> size) - 1] = declaration;
+        params -> size += 1;
+    }
+
+    return params;
 }
 
-void mcc_ast_delete_parameter(struct mcc_ast_parameter *parameter)
-{
-	assert(parameter);
-	mcc_ast_delete_declaration(parameter->declaration);
-	if (parameter->next != NULL) {
-		mcc_ast_delete_parameter(parameter->next);
-	}
-	free(parameter);
-}
+// ------------------------------------------------------------------- Functions
