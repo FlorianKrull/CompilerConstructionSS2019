@@ -95,7 +95,7 @@ void mcc_parser_error();
 
 %%
 
-toplevel : %empty   { result->program = mCc_ast_new_empty_program(); }
+toplevel : %empty   { result->program = mcc_ast_new_empty_program(); }
          | program  { result->program = $1; }
 		 | expression { result->expression = $1; }
          ;

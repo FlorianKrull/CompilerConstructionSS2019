@@ -421,6 +421,19 @@ struct mcc_ast_program *mcc_ast_new_program(struct mcc_ast_program *program, str
     }
 }
 
+struct mcc_ast_program *mcc_ast_new_empty_program()
+{
+	struct mcc_ast_program *prog = malloc(sizeof(*prog));
+	if(!prog) {
+		return NULL;
+	}
+
+	prog->functions_count = 0;
+	prog->function_def[0] = NULL;
+
+	return prog;
+}
+
 
 // ------------------------------------------------------------------- Parameters
 
