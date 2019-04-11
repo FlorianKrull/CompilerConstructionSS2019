@@ -71,7 +71,7 @@ void mcc_parser_error();
 %token INT_TYPE "int"
 %token FLOAT_TYPE "float"
 %token STRING_TYPE "string"
-%token VOID_TYPE "void"
+%token VOID "void"
 
 %token IF "if"
 %token ELSE "else"
@@ -79,18 +79,27 @@ void mcc_parser_error();
 %token FOR "for"
 %token RETURN "return"
 
-%type <struct mcc_ast_literal *> literal
-%type <struct mcc_ast_expression *> expression binary_op unary_op
+%left PLUS MINUS
+%left ASTER SLASH
+%left OR AND
+%left EQUALS NOT_EQUALS
+%left LESS GREATER LESS_EQ GREATER_EQ
+
+%type <enum mcc_ast_binary_op> binary_op
+%type <enum mcc_ast_unary_op> unary_op
 %type <struct mcc_ast_identifier *> identifier
-%type <struct mcc_ast_declaration *> declaration
-%type <struct mcc_ast_statement *> statement if_statement while_statement compound_statement compound_block assignment
-%type <enum mcc_ast_data_type> type VOID_TYPE
+%type <struct mcc_ast_literal *> literal
+%type <struct mcc_ast_expression *> expression
+%type <struct mcc_ast_statement *> statement if_statement while_statement compound_statement assignment
+%type <enum mcc_ast_data_type> type
+%type <struct mcc_ast_statement_list *> statement_list
 %type <struct mcc_ast_function_def *> function_def
+%type <struct mcc_ast_declaration *> declaration
 %type <struct mcc_ast_parameter *> parameters
-%type <struct mcc_ast_program *> program
+// %type <struct mcc_ast_program *> program
 
 
-%start program
+%start toplevel
 
 %%
 
@@ -107,9 +116,11 @@ expression : literal                      		{ $$ = mcc_ast_new_expression_litera
 
 literal : INT_LITERAL       { $$ = mcc_ast_new_literal_int($1);     loc($$, @1); }
         | FLOAT_LITERAL     { $$ = mcc_ast_new_literal_float($1);   loc($$, @1); }
-		| STRING_LITERAL    { $$ = mcc_ast_new_literal_string($1);  loc($$,@1);  }
-		| BOOL_LITERAL      { $$ = mcc_ast_new_literal_bool($1);    loc($$,@1);  }
-		;
+	| STRING_LITERAL    { $$ = mcc_ast_new_literal_string($1);  loc($$,@1);  }
+	| BOOL_LITERAL      { $$ = mcc_ast_new_literal_bool($1);    loc($$,@1);  }
+	;
+
+identifier : IDENTIFIER { $$ = mcc_ast_new_identifier($1); loc($$, @1); }
 
 unary_op : NOT { $$ = MCC_AST_UNARY_OP_NOT; }
 		 | MINUS  {$$ = MCC_AST_UNARY_OP_MINUS; }
@@ -130,8 +141,8 @@ binary_op :   PLUS { $$= MCC_AST_BINARY_OP_ADD; }
 type : INT_TYPE { $$ = MCC_AST_DATA_TYPE_INT; }
      | FLOAT_TYPE { $$ = MCC_AST_DATA_TYPE_FLOAT; }
      | STRING_TYPE { $$ = MCC_AST_DATA_TYPE_STRING; }
-	 | BOOL_TYPE { $$ = MCC_AST_DATA_TYPE_BOOL; }
-	 | VOID_TYPE { $$ = MCC_AST_DATA_TYPE_VOID;}
+     | BOOL_TYPE { $$ = MCC_AST_DATA_TYPE_BOOL; }
+     | VOID { $$ = MCC_AST_DATA_TYPE_VOID; }
      ;
 
 
@@ -140,19 +151,17 @@ identifier : IDENTIFIER { $$ = mcc_ast_new_identifier($1); loc($$, @1); }
 
 statement : expression SEMICOLON    { $$ = mcc_ast_new_statement_expression($1); loc($$, @1); }
           | if_statement            { $$= $1;  loc($$, @1); }
-		  | while_statement         { $$ = $1; loc($$, @1); }
-		  | compound_statement      { $$ = $1; loc($$, @1); }
+	  | while_statement         { $$ = $1; loc($$, @1); }
+	  | compound_statement      { $$ = $1; loc($$, @1); }
           | assignment SEMICOLON    { $$ = $1; loc($$, @1); }
-          | declaration SEMICOLON   { $$ = $1; loc($$, @1); }
-		  ;
+          | declaration SEMICOLON { $$ = $1; loc($$, @1); }
 
 if_statement: IF LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statment_if($3, $5);                     loc($$, @1); }
             | IF LPARENTH expression RPARENTH statement ELSE statement { $$ = mcc_ast_new_statment_if($3, $5, $7);  loc($$, @1); }
             ;
 
-declaration : type identifier { $$ = mcc_ast_new_declaration($1, NULL, $2); loc($$, @1); }
-            | type LBRACKET literal RBRACKET identifier { $$ = mcc_ast_new_declaration($1, $3 , $5);  loc($$, @1); }
-            ;
+declaration: type identifier SEMICOLON { $$ = mcc_ast_new_declaration($1, $2); loc($$, @1); }
+	   ;
 
 while_statement: WHILE LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statement_while($3, $5); loc($$, @1); }
 			   ;
@@ -168,21 +177,26 @@ compound_block : statement { $$ = mcc_ast_new_statement_compound_block($1, $1); 
 		   	  ;
 
 
-assignment:  IDENTIFIER ASSIGNMENT expression 					            { $$ = mcc_ast_new_statement_assignment($1, 0, $3); 	loc($$, @1); };
-          |  IDENTIFIER LBRACKET expression RBRACKET ASSIGNMENT expression  { $$ = mcc_ast_new_statement_assignment($1, $3, $6); 	loc($$, @1); };
+assignment:  IDENTIFIER ASSIGNMENT expression
+		{ $$ = mcc_ast_new_statement_assignment($1, 0, $3); 	loc($$, @1); };
+          |  IDENTIFIER LBRACKET expression RBRACKET ASSIGNMENT expression
+          	{ $$ = mcc_ast_new_statement_assignment($1, $3, $6); 	loc($$, @1); };
           ;
 
-parameters  : declaration COMMA parameters { $$ = mcc_ast_new_parameter($1); $$->next = $3; loc($$, @1); }
-			| declaration                  { $$ = mcc_ast_new_parameter($1);                loc($$, @1); }
-			;
+parameters  : declaration COMMA parameters 	{ $$ = mcc_ast_new_parameter($1, $3); loc($$, @1); }
+	    | declaration 			{ $$ = mcc_ast_new_parameter($1, NULL); loc($$, @1); }
+            ;
 
-function_def : type IDENTIFIER LPARENTH parameters RPARENTH compound_statement { $$ = mcc_ast_new_function_def($1, $2, $4, $6);   loc($$, @1);}
-			 | type IDENTIFIER LPARENTH RPARENTH compound_statement { $$ = mcc_ast_new_function_def($1, $2, NULL, $5);            loc($$, @1);}
-			 ;
+function_def : type identifier LPARENTH parameters RPARENTH compound_statement
+		{ $$ = mcc_ast_new_function($1, $2, $4, $6);   loc($$, @1);}
+	     | type identifier LPARENTH RPARENTH compound_statement
+	     	{ $$ = mcc_ast_new_function($1, $2, NULL, $5); loc($$, @1);}
+	     ;
+/*
 
-program : function_def { $$ = mcc_ast_new_program($1); loc($$, @1);}
-		;
-
+// program : function_def { $$ = mcc_ast_new_program($1); loc($$, @1);}
+	;
+*/
 %%
 
 #include <assert.h>
