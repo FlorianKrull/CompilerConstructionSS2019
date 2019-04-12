@@ -24,13 +24,19 @@
 	yylloc->last_column += yyleng;
 %}
 
-int_literal   [0-9]+
-float_literal [0-9]+\.[0-9]+
+alpha         [a-zA-Z_]
+alpha_num     [a-zA-Z0-9_]
+digit         [0-9]
+
+int_literal   {digit}+
+float_literal {digit}+\.{digit}+
 bool_literal true|false
-identifier [a-zA-Z_][a-zA-Z0-9_]*
-string_literal ["][^"]*["]|(\".*\")|('.*')
+identifier {alpha}{alpha_num}*
+string_literal \"(\\.|[^"\\])*\"
 comment (\/\*.*\*\/)
 comment_multiline ("/*"([^*]|\*+[^*/])*\*+"/")
+
+
 %%
 
 
@@ -84,6 +90,16 @@ comment_multiline ("/*"([^*]|\*+[^*/])*\*+"/")
                     yylval->TK_IDENTIFIER = mcc_ast_new_identifier(yytext);
                     return TK_IDENTIFIER;
                   }
+{bool_literal}    { yylval->TK_BOOL_LITERAL = strdup(yytext);
+                    return TK_BOOL_LITERAL; }
+
+{int_literal}     { yylval->TK_INT_LITERAL = strdup(yytext);
+                    return TK_INT_LITERAL; }
+
+{float_literal}   { yylval->TK_FLOAT_LITERAL = strdup(yytext);
+                    return TK_FLOAT_LITERAL; }
+
+
 
 <<EOF>>           { return TK_END; }
 
