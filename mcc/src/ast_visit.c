@@ -101,6 +101,54 @@ void mcc_ast_visit_declaration(struct mcc_ast_declaration *declaration, struct m
 	visit_if_post_order(declaration, visitor->declaration, visitor);
 }
 
+void mcc_ast_visit_statement(struct mcc_ast_statement *statement, struct mcc_ast_visitor *visitor)
+{
+	assert(statement);
+	assert(visitor);
+
+	visit_if_pre_order(statement, visitor->statement, visitor);
+
+	switch(statement->type){
+		case MMC_AST_STATEMENT_TYPE_EXPRESSION:
+			visit_if_pre_order(statement, visitor->statement_expression, visitor);
+			mcc_ast_visit_expression(statement->expression, visitor);
+			visit_if_post_order(statement, visitor->statement_expression, visitor);
+			break;
+    	case MCC_AST_STATEMENT_TYPE_IF:
+			visit_if_pre_order(statement, visitor->statement_if, visitor);
+			mcc_ast_visit_expression(statement->if_condition, visitor);
+			mcc_ast_visit_statement(statement->if_stmt, visitor);
+			visit_if_post_order(statement, visitor->statement_if, visitor);
+			break;
+		case MCC_AST_STATEMENT_TYPE_WHILE:
+		case MCC_AST_STATEMENT_TYPE_DECL:
+		case MCC_AST_STATEMENT_TYPE_ASSGN:
+		case MCC_AST_STATEMENT_TYPE_ASSGN_ARR:
+		case MCC_AST_STATEMENT_TYPE_COMPOUND:
+		default: break;
+	}
+}
+
+void mcc_ast_visit_assignment(struct mcc_ast_assignment *assignment,
+                              struct mcc_ast_visitor *visitor)
+{
+	assert(assignment);
+	assert(visitor);
+	visit_if_pre_order(assignment, visitor->assignment, visitor);
+	switch (assignment->type) {
+	case MCC_AST_ASSIGNMENT_TYPE_NORMAL:
+		mcc_ast_visit_identifier(assignment->identifier, visitor);
+		mcc_ast_visit_expression(assignment->normal_ass.rhs, visitor);
+		break;
+	case MCC_AST_ASSIGNMENT_TYPE_ARRAY:
+		mcc_ast_visit_identifier(assignment->identifier, visitor);
+		mcc_ast_visit_expression(assignment->array_ass.index, visitor);
+		mcc_ast_visit_expression(assignment->array_ass.rhs, visitor);
+		break;
+	}
+	visit_if_post_order(assignment, visitor->assignment, visitor);
+}
+
 void mcc_ast_visit_identifier(struct mcc_ast_identifier *identifier, struct mcc_ast_visitor *visitor)
 {
 	assert(identifier);

@@ -74,6 +74,21 @@ struct mcc_ast_expression *mcc_ast_new_expression_parenth(struct mcc_ast_express
 	return expr;
 }
 
+struct mcc_ast_expression *mcc_ast_new_expression_array_identifier(struct mcc_ast_identifier *identifier,
+                                                                   struct mcc_ast_expression *expression)
+{
+	assert(identifier);
+	assert(expression);
+
+	struct mcc_ast_expression *expr = malloc(sizeof(*expr));
+	assert(expr);
+
+	expr->type = MCC_AST_EXPRESSION_TYPE_ARRAY_IDENTIFIER;
+	expr->array_identifier.identifier = identifier;
+	expr->array_identifier.expression = expression;
+	return expr;
+}
+
 void mcc_ast_delete_expression(struct mcc_ast_expression *expression)
 {
 	assert(expression);
@@ -147,6 +162,7 @@ struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type,
     assert(ident);
 
     struct mcc_ast_declaration *decl= malloc(sizeof(*decl));
+    assert(decl);
 
     decl -> type = type;
     decl -> ident = ident;
@@ -155,6 +171,68 @@ struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type,
     return decl;
 }
 
+void mcc_ast_delete_declaration(struct mcc_ast_declaration *declaration)
+{
+    assert(declaration);
+    if (declaration->declaration_type ==
+	    MCC_AST_DECLARATION_TYPE_ARRAY_DECLARATION) {
+		mcc_ast_delete_literal(declaration->arr_literal);
+		mcc_ast_delete_identifier(declaration->ident);
+	} else {
+		mcc_ast_delete_identifier(declaration->ident);
+	}
+	free(declaration);
+}
+
+// ------------------------------------------------------------------- Assignment
+
+struct mcc_ast_assignment *
+mcc_ast_new_assignment(struct mcc_ast_identifier *identifier,
+                       struct mcc_ast_expression *rhs)
+{
+	assert(identifier);
+	assert(rhs);
+
+	struct mcc_ast_assignment *ass = malloc(sizeof(*ass));
+	assert(ass);
+
+	ass->type = MCC_AST_ASSIGNMENT_TYPE_NORMAL;
+	ass->identifier = identifier;
+	ass->normal_ass.rhs = rhs;
+	return ass;
+}
+
+struct mcc_ast_assignment *
+mcc_ast_new_array_assignment(struct mcc_ast_identifier *identifier,
+                             struct mcc_ast_expression *index,
+                             struct mcc_ast_expression *rhs)
+{
+	assert(identifier);
+	assert(index);
+	assert(rhs);
+
+	struct mcc_ast_assignment *ass = malloc(sizeof(*ass));
+	assert(ass);
+
+	ass->type = MCC_AST_ASSIGNMENT_TYPE_ARRAY;
+	ass->identifier = identifier;
+	ass->array_ass.index = index;
+	ass->array_ass.rhs = rhs;
+	return ass;
+}
+
+void mcc_ast_delete_assignment(struct mcc_ast_assignment *assignment)
+{
+	assert(assignment);
+	mcc_ast_delete_identifier(assignment->identifier);
+	if (assignment->type == MCC_AST_ASSIGNMENT_TYPE_NORMAL) {
+		mcc_ast_delete_expression(assignment->normal_ass.rhs);
+	} else {
+		mcc_ast_delete_expression(assignment->array_ass.index);
+		mcc_ast_delete_expression(assignment->array_ass.rhs);
+	}
+	free(assignment);
+}
 
 // ------------------------------------------------------------------- Statements
 
@@ -185,16 +263,16 @@ struct mcc_ast_statement *mcc_ast_new_statement_if(struct mcc_ast_expression *co
 {
     assert(condition);
     assert(if_stmt);
-    assert(else_stmt);
+    
 
     struct mcc_ast_statement *stmt = construct_statement();
 
     stmt -> type = MCC_AST_STATEMENT_TYPE_IF;
     stmt -> if_stmt = if_stmt;
-    if (else_stmt) {
+    if (else_stmt != NULL) {
         stmt -> else_stmt = else_stmt;
+        assert(else_stmt);
     }
-
     return stmt;
 }
 
@@ -227,6 +305,15 @@ struct mcc_ast_statement *mcc_ast_new_statement_while(struct mcc_ast_expression 
     return stmt;
 }
 
+struct mcc_ast_statement *mcc_ast_new_statement(struct mcc_ast_statement *statement){
+
+    assert(statement);
+
+    struct mcc_ast_statement *stmt = construct_statement();
+
+    return statement;
+}
+
 struct mcc_ast_statement_list *construct_new_statement_list(int size, int max)
 {
     struct mcc_ast_statement_list *stmt_list = malloc(sizeof(*stmt_list) + max);
@@ -236,7 +323,7 @@ struct mcc_ast_statement_list *construct_new_statement_list(int size, int max)
     return stmt_list;
 }
 
-struct mcc_ast_statement *mcc_ast_new_statement_statement_list(struct mcc_ast_statement_list *statement_list,
+struct mcc_ast_statement *mcc_ast_new_statement_list(struct mcc_ast_statement_list *statement_list,
                                                                struct mcc_ast_statement *next_statement)
 {
     assert(next_statement);
@@ -276,22 +363,52 @@ struct mcc_ast_statement *mcc_ast_new_statement_statement_list(struct mcc_ast_st
     return stmt;
 }
 
-struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_identifier *id_assgn,
-                                                           struct mcc_ast_expression *lhs_assgn,
-                                                           struct mcc_ast_expression *rhs_assgn)
+struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_assignment *assignment)
 {
-    assert(id_assgn);
-    assert(lhs_assgn);
-    assert(rhs_assgn);
-
+    assert(assignment);
+    
     struct mcc_ast_statement *stmt = construct_statement();
 
-    stmt -> type = MCC_AST_STATEMENT_TYPE_ASSGN;
-    stmt -> id_assgn = id_assgn;
-    stmt -> lhs_assgn = lhs_assgn;
-    stmt -> rhs_assgn = rhs_assgn;
-
+   stmt->type = assignment->type == MCC_AST_ASSIGNMENT_TYPE_NORMAL
+	                 ? MCC_AST_STATEMENT_TYPE_ASSGN
+	                 : MCC_AST_STATEMENT_TYPE_ASSGN_ARR;
+	stmt->assignment = assignment;
     return stmt;
+}
+
+void mcc_ast_delete_statement(struct mcc_ast_statement *statement)
+{
+    assert(statement);
+
+    switch(statement->type){
+        case MMC_AST_STATEMENT_TYPE_EXPRESSION:
+            mcc_ast_delete_expression(statement->expression);
+            break;
+        case MCC_AST_STATEMENT_TYPE_IF:
+            mcc_ast_delete_expression(statement->if_condition);
+            mcc_ast_delete_statement(statement->if_stmt);
+            if(statement->else_stmt != NULL){
+                mcc_ast_delete_statement(statement->else_stmt);
+            }
+            break;
+	    case MCC_AST_STATEMENT_TYPE_WHILE:
+            mcc_ast_delete_expression(statement->while_condition);
+            mcc_ast_delete_statement(statement->while_stmt);
+            break;
+	    case MCC_AST_STATEMENT_TYPE_DECL:
+            mcc_ast_delete_declaration(statement->declaration);
+            break;
+	    case MCC_AST_STATEMENT_TYPE_ASSGN:
+	    case MCC_AST_STATEMENT_TYPE_ASSGN_ARR:
+            mcc_ast_delete_assignment(statement->assignment);
+            break;
+	    case MCC_AST_STATEMENT_TYPE_COMPOUND:
+            if(statement->compound_statement != NULL){
+                mcc_ast_delete_statement(statement->compound_statement);
+            }
+            break;
+        default : break;
+    }
 }
 
 void mcc_ast_empty_node() {

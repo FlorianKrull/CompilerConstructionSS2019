@@ -81,6 +81,7 @@ enum mcc_ast_expression_type {
 	MCC_AST_EXPRESSION_TYPE_UNARY_OP,
 	MCC_AST_EXPRESSION_TYPE_PARENTH,
 	MCC_AST_EXPRESSION_TYPE_IDENTIFIER,
+	MCC_AST_EXPRESSION_TYPE_ARRAY_IDENTIFIER,
 
 };
 
@@ -104,6 +105,11 @@ struct mcc_ast_expression {
         // MCC_AST_EXPRESSION_TYPE_UNARY_OP
 		// MCC_AST_EXPRESSION_TYPE_PARENTH
 		struct mcc_ast_expression *expression;
+
+		struct {
+			struct mcc_ast_identifier *identifier;
+			struct mcc_ast_expression *expression;
+		} array_identifier;
 	};
 };
 
@@ -147,18 +153,61 @@ struct mcc_ast_identifier *mcc_ast_new_identifier(char *value);
 
 
 // ------------------------------------------------------------------- Declaration
+enum mcc_ast_declaration_type {
+	MCC_AST_DECLARATION_TYPE_DECLARATION,
+	MCC_AST_DECLARATION_TYPE_ARRAY_DECLARATION
+};
 
 struct mcc_ast_declaration {
+	
 	struct mcc_ast_node node;
+
+	enum mcc_ast_declaration_type declaration_type;
 
 	enum mcc_ast_data_type type;
 
 	struct mcc_ast_identifier *ident;
 
+	struct mcc_ast_literal *arr_literal;
+
 };
 
 struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type, struct mcc_ast_identifier *ident);
 
+
+// ------------------------------------------------------------------- Assignments
+
+enum mcc_ast_assignment_type {
+	MCC_AST_ASSIGNMENT_TYPE_NORMAL,
+	MCC_AST_ASSIGNMENT_TYPE_ARRAY,
+};
+
+struct mcc_ast_assignment {
+	struct mcc_ast_node node;
+	enum mcc_ast_assignment_type type;
+	struct mcc_ast_identifier *identifier;
+	union {
+		struct {
+			struct mcc_ast_expression *rhs;
+		} normal_ass;
+
+		struct {
+			struct mcc_ast_expression *index;
+			struct mcc_ast_expression *rhs;
+		} array_ass;
+	};
+};
+
+struct mcc_ast_assignment *
+mcc_ast_new_assignment(struct mcc_ast_identifier *identifier,
+                       struct mcc_ast_expression *rhs);
+
+struct mcc_ast_assignment *
+mcc_ast_new_array_assignment(struct mcc_ast_identifier *identifier,
+                             struct mcc_ast_expression *index,
+                             struct mcc_ast_expression *rhs);
+
+void mcc_ast_delete_assignment(struct mcc_ast_assignment *assignment);
 
 // ------------------------------------------------------------------- Statements
 
@@ -168,11 +217,14 @@ enum mcc_ast_statement_type {
 	MCC_AST_STATEMENT_TYPE_WHILE,
 	MCC_AST_STATEMENT_TYPE_DECL,
 	MCC_AST_STATEMENT_TYPE_ASSGN,
+	MCC_AST_STATEMENT_TYPE_ASSGN_ARR,
 	MCC_AST_STATEMENT_TYPE_COMPOUND,
 	// MCC_AST_STATEMENT_TYPE_BLOCK
 };
 
 struct mcc_ast_statement_list {
+
+	struct mcc_ast_node node;
     int size;
     int max_size;
     struct mcc_ast_statement *list[];
@@ -202,11 +254,9 @@ struct mcc_ast_statement {
 			struct mcc_ast_statement *while_stmt;
 		};
 
-		struct {
-			struct mcc_ast_identifier *id_assgn;
-			struct mcc_ast_expression *lhs_assgn;
-			struct mcc_ast_expression *rhs_assgn;
-		};
+		struct mcc_ast_assignment *assignment;
+
+		struct mcc_ast_declaration *declaration;
 
         struct mcc_ast_statement_list *compound_statement;
     };
@@ -221,9 +271,7 @@ struct mcc_ast_statement *mcc_ast_new_statement_if(struct mcc_ast_expression *co
 struct mcc_ast_statement *mcc_ast_new_statement_while(struct mcc_ast_expression *condition,
 												   	  struct mcc_ast_statement *while_stmt);
 
-struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_identifier *id_assgn,
-														   struct mcc_ast_expression *lhs_assgn,
-														   struct mcc_ast_expression *rhs_assgn );
+struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_assignment *assignment);
 
 struct mcc_ast_statement *mcc_ast_new_statement_declaration(enum mcc_ast_data_type data_type,
 															struct mcc_ast_identifier *identifier);
@@ -232,7 +280,7 @@ struct mcc_ast_statement *mcc_ast_new_statement_statement_list(struct mcc_ast_st
                                                                 struct mcc_ast_statement *next_statement);
 
 
-
+void mcc_ast_delete_statement(struct mcc_ast_statement *statement);
 
 struct mcc_ast_statement mcc_ast_new_block_statement();
 
@@ -292,7 +340,7 @@ struct mcc_ast_function {
     struct mcc_ast_statement *statement;
 };
 
-struct mcc_ast_function * mcc_ast_new_function(
+struct mcc_ast_function *mcc_ast_new_function(
         enum mcc_ast_data_type return_type,
         struct mcc_ast_identifier *identifier,
         struct mcc_ast_parameter *parameter,
@@ -307,8 +355,7 @@ struct mcc_ast_program {
 	struct mcc_ast_function_def *function_def;
 };
 
-struct mcc_ast_program *
-mcc_ast_new_program(struct mcc_ast_function_def_list *function_def_list);
+struct mcc_ast_program *mcc_ast_new_program(struct mcc_ast_function_def_list *function_def_list);
 
 void mcc_ast_delete_program(struct mcc_ast_program *program);
 
@@ -318,7 +365,8 @@ void mcc_ast_delete_program(struct mcc_ast_program *program);
 
 #define mcc_ast_delete(x) _Generic((x), \
 		struct mcc_ast_expression *: mcc_ast_delete_expression, \
-		struct mcc_ast_literal *:    mcc_ast_delete_literal \
+		struct mcc_ast_literal *:    mcc_ast_delete_literal, \
+		struct mcc_ast_statement *: mcc_ast_delete_statement \
 	)(x)
 
 // clang-format on

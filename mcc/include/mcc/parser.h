@@ -25,6 +25,8 @@ struct mcc_parser_result {
 	struct mcc_ast_literal *literal;
 	struct mcc_ast_declaration *declaration;
 	struct mcc_ast_statement *statement;
+	struct mCc_ast_function_def *function_def;
+	struct mCc_ast_program *program;
 
 	
 };

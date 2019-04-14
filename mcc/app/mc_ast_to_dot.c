@@ -29,8 +29,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    struct mcc_ast_expression *expr = NULL;
-    struct mcc_ast_declaration *decl = NULL;
+   struct mcc_ast_statement *stat = NULL;
 
     // parsing phase
     {
@@ -40,15 +39,15 @@ int main(int argc, char *argv[]) {
             printf("NOT OK");
             return EXIT_FAILURE;
         }
+        stat = result.statement;
         printf("OK");
-        decl = result.declaration;
-        result.expression = expr;
+    
     }
 
-    mcc_ast_print_dot(stdout, decl);
+    mcc_ast_print_dot(stdout, stat);
 
     // cleanup
-    mcc_ast_delete(expr);
+    mcc_ast_delete(stat);
 
     return EXIT_SUCCESS;
 }

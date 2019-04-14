@@ -27,6 +27,7 @@ typedef void (*mcc_ast_visit_literal_cb)(struct mcc_ast_literal *, void *userdat
 typedef void (*mcc_ast_visit_declaration_cb)(struct mcc_ast_declaration *, void *userdata);
 typedef void (*mcc_ast_visit_identifier_cb)(struct mcc_ast_identifier *, void *userdata);
 typedef void (*mcc_ast_visit_statement_cb)(struct mcc_ast_statement *, void *userdata);
+typedef void (*mcc_ast_visit_assignment_cb)(struct mcc_ast_assignment *, void *userdata);
 
 struct mcc_ast_visitor {
 	enum mcc_ast_visit_traversal traversal;
@@ -46,6 +47,7 @@ struct mcc_ast_visitor {
 	mcc_ast_visit_statement_cb statement_if;
 	mcc_ast_visit_statement_cb statement_if_else;
 	mcc_ast_visit_statement_cb statement_assignment;
+	mcc_ast_visit_statement_cb statement_expression;
 	mcc_ast_visit_statement_cb statement_while;
 	mcc_ast_visit_statement_cb statement_compound;
 	mcc_ast_visit_statement_cb statement_declaration;
@@ -57,6 +59,7 @@ struct mcc_ast_visitor {
 	mcc_ast_visit_literal_cb literal_bool;
 
 	mcc_ast_visit_declaration_cb declaration;
+	mcc_ast_visit_assignment_cb assignment;
 	mcc_ast_visit_identifier_cb identifier;
 };
 
@@ -65,6 +68,8 @@ void mcc_ast_visit_expression(struct mcc_ast_expression *expression, struct mcc_
 void mcc_ast_visit_literal(struct mcc_ast_literal *literal, struct mcc_ast_visitor *visitor);
 
 void mcc_ast_visit_declaration(struct mcc_ast_declaration *declaration, struct mcc_ast_visitor *visitor);
+
+void mcc_ast_visit_assignment(struct mcc_ast_assignment *assignment, struct mcc_ast_visitor *visitor);
 
 void mcc_ast_visit_identifier(struct mcc_ast_identifier *identifier, struct mcc_ast_visitor *visitor);
 
