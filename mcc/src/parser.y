@@ -97,7 +97,14 @@ void mcc_parser_error();
 %type <struct mcc_ast_assignment *> assignment
 %type <struct mcc_ast_parameter *> parameters
 %type <struct mcc_ast_program *> program
-// %type <struct mcc_ast_program *> program
+
+
+%destructor { mcc_ast_delete_identifier($$); }         	identifier
+%destructor { mCc_ast_delete_declaration($$); }        	declaration
+
+%destructor { mcc_ast_delete_function($$); } 		function_def
+%destructor { mCc_ast_delete_parameter($$); }           parameter
+%destructor { mCc_ast_delete_program($$); }             program
 
 
 %start toplevel
@@ -107,11 +114,9 @@ void mcc_parser_error();
 toplevel : program { result -> program = $1; }
          ;
 
-expression : literal                      				{ $$ = mcc_ast_new_expression_literal($1);              loc($$, @1); }
-           | LPARENTH expression RPARENTH	 			{ $$ = mcc_ast_new_expression_parenth($2);              loc($$, @1); }
-		   | expression binary_op expression  			{ $$ = mcc_ast_new_expression_binary_op($2, $1, $3);    loc($$, @1); }
-		   | identifier									{ $$= $1;  loc($$, @1);}
-		   | identifier LBRACKET expression RBRACKET 	{ $$ = mcc_ast_new_expression_array_identifier($1, $3); loc($$, @1); }
+expression : literal                      		{ $$ = mcc_ast_new_expression_literal($1);              loc($$, @1); }
+           | LPARENTH expression RPARENTH	 	{ $$ = mcc_ast_new_expression_parenth($2);              loc($$, @1); }
+	   | expression binary_op expression  		{ $$ = mcc_ast_new_expression_binary_op($2, $1, $3);    loc($$, @1); }
            ;
 
 call_expr :  identifier LPARENTH RPARENTH               { $$ = mcc_ast_new_expression_call_expr($1, NULL);              loc($$, @1); }
@@ -182,11 +187,11 @@ parameters  : declaration COMMA parameters 	{ $$ = mcc_ast_new_parameter($1, $3)
 	    | declaration 			{ $$ = mcc_ast_new_parameter($1, NULL); loc($$, @1); }
             ;
 
-/*function_def : type identifier LPARENTH parameters RPARENTH compound_statement
-		{ $$ = mcc_ast_new_function($1, $2, $4, $6);   loc($$, @1);}
-	     | type identifier LPARENTH RPARENTH compound_statement
-	     	{ $$ = mcc_ast_new_function($1, $2, NULL, $5); loc($$, @1);}
-	     ;*/
+/*
+call_expr        = identifier , "(" , [ arguments ] , ")"
+
+arguments        = expression , [ { "," expression } ]
+*/
 
 function_def: type identifier LPARENTH RPARENTH LBRACE RBRACE
 		{ $$ = mcc_ast_new_function($1, $2, NULL, NULL);   loc($$, @1);};
