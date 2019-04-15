@@ -2,7 +2,6 @@
 
 %define api.pure full
 %lex-param   {void *scanner}
-
 %parse-param {void *scanner} {struct mcc_parser_result* result}
 
 %define parse.trace
@@ -120,7 +119,6 @@ expression : literal                      				{ $$ = mcc_ast_new_expression_lite
 	   | expression binary_op expression  				{ $$ = mcc_ast_new_expression_binary_op($2, $1, $3);    loc($$, @1); }
            | identifier							{ $$= $1;  loc($$, @1);}
            | identifier LBRACKET expression RBRACKET 			{ $$ = mcc_ast_new_expression_array_identifier($1, $3); loc($$, @1); }
-           ;
 
 call_expr :  identifier LPARENTH RPARENTH   { $$ = mcc_ast_new_expression_call_expr($1, NULL); loc($$, @1); }
 	  ;
@@ -138,16 +136,16 @@ unary_op: NOT { $$ = MCC_AST_UNARY_OP_NOT; }
         ;
 
 binary_op : PLUS { $$= MCC_AST_BINARY_OP_ADD; }
-			| MINUS { $$ = MCC_AST_BINARY_OP_SUB; }
-			| ASTER { $$ = MCC_AST_BINARY_OP_MUL; }
-			| SLASH { $$ = MCC_AST_BINARY_OP_DIV; }
-			| EQUALS { $$ = MCC_AST_BINARY_OP_EQUALS; }
-			| NOT_EQUALS { $$ = MCC_AST_BINARY_OP_NOT_EQUALS; }
-			| LESS { $$ = MCC_AST_BINARY_OP_LESS; }
-			| GREATER { $$ = MCC_AST_BINARY_OP_GREATER; }
-			| LESS_EQ { $$ = MCC_AST_BINARY_OP_LESS_EQUALS; }
-			| GREATER_EQ { $$ = MCC_AST_BINARY_OP_GREATER_EQUALS; }
-			;
+	| MINUS { $$ = MCC_AST_BINARY_OP_SUB; }
+	| ASTER { $$ = MCC_AST_BINARY_OP_MUL; }
+	| SLASH { $$ = MCC_AST_BINARY_OP_DIV; }
+	| EQUALS { $$ = MCC_AST_BINARY_OP_EQUALS; }
+	| NOT_EQUALS { $$ = MCC_AST_BINARY_OP_NOT_EQUALS; }
+	| LESS { $$ = MCC_AST_BINARY_OP_LESS; }
+	| GREATER { $$ = MCC_AST_BINARY_OP_GREATER; }
+	| LESS_EQ { $$ = MCC_AST_BINARY_OP_LESS_EQUALS; }
+	| GREATER_EQ { $$ = MCC_AST_BINARY_OP_GREATER_EQUALS; }
+	;
 
 type : INT_TYPE { $$ = MCC_AST_DATA_TYPE_INT; }
      | FLOAT_TYPE { $$ = MCC_AST_DATA_TYPE_FLOAT; }

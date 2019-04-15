@@ -268,6 +268,7 @@ struct mcc_ast_statement *mcc_ast_new_statement_declaration(enum mcc_ast_data_ty
 															struct mcc_ast_identifier *identifier);
 struct mcc_ast_statement *mcc_ast_new_statement_list(struct mcc_ast_statement_list *statement_list,
                                                                 struct mcc_ast_statement *next_statement);
+
 void mcc_ast_delete_statement(struct mcc_ast_statement *statement);
 
 struct mcc_ast_statement mcc_ast_new_block_statement();

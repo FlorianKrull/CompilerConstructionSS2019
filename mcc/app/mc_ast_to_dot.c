@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-   struct mcc_ast_statement *stat = NULL;
+   struct mcc_ast_statement *prog = NULL;
 
     // parsing phase
     {
@@ -42,14 +42,13 @@ int main(int argc, char *argv[]) {
         }
         printf("Parsing ok \n");
         printf("---- Printing tree ----\n");
-        // decl = result.declaration;
-        // result.expression = expr;
+        prog = result.program;
     }
 
-    mcc_ast_print_dot(stdout, stat);
+    mcc_ast_print_dot(stdout, prog);
 
     // cleanup
-    mcc_ast_delete(stat);
+    mcc_ast_delete(prog);
 
     return EXIT_SUCCESS;
 }
