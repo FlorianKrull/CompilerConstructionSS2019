@@ -1,2 +1,8 @@
-if(a)
-    b;
+void a(int c) {
+}
+
+void c(int c) {
+}
+
+void b(int c) {
+}

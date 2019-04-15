@@ -34,14 +34,16 @@ int main(int argc, char *argv[]) {
     // parsing phase
     {
         printf("Start parsing \n");
+
         struct mcc_parser_result result = mcc_parse_file(in);
         if (result.status != MCC_PARSER_STATUS_OK) {
-            printf("NOT OK");
+            printf("NOT OK \n");
             return EXIT_FAILURE;
         }
-        stat = result.statement;
-        printf("OK");
-    
+        printf("Parsing ok \n");
+        printf("---- Printing tree ----\n");
+        decl = result.declaration;
+        result.expression = expr;
     }
 
     mcc_ast_print_dot(stdout, stat);

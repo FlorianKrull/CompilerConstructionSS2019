@@ -159,6 +159,7 @@ void mcc_ast_delete_identifier(struct mcc_ast_identifier *identifier)
 
 struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type, struct mcc_ast_identifier *ident)
 {
+    printf("Declaration \n");
     assert(ident);
 
     struct mcc_ast_declaration *decl= malloc(sizeof(*decl));
@@ -166,7 +167,6 @@ struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type,
 
     decl -> type = type;
     decl -> ident = ident;
-
 
     return decl;
 }
@@ -263,7 +263,7 @@ struct mcc_ast_statement *mcc_ast_new_statement_if(struct mcc_ast_expression *co
 {
     assert(condition);
     assert(if_stmt);
-    
+    // assert(else_stmt);
 
     struct mcc_ast_statement *stmt = construct_statement();
 
@@ -419,19 +419,23 @@ void mcc_ast_empty_node() {
 struct mcc_ast_parameter *mcc_ast_new_parameter(struct mcc_ast_declaration *declaration, struct mcc_ast_parameter *params)
 {
 	assert(declaration);
-    assert(params);
+    // assert(params);
 
     if (params == NULL) {
         struct mcc_ast_parameter *param = malloc(sizeof(*param) + sizeof(struct mcc_ast_declaration*) * 4);
         param -> size = 1;
         param -> max = 4;
         param -> parameters[0] = declaration;
-
+        printf("decl %s \n", declaration->ident->i_value);
+        printf("Return parameter %s \n", param -> parameters[0] ->ident ->i_value);
         return param;
     }
 
+	printf("Parameter here 1\n");
+
     // add to previous params list
     if ((params -> size) == (params -> max)) {
+		printf("Parameter here 2\n");
         int next_max = params -> size + 4;
         int size = params -> size;
         struct mcc_ast_parameter *new_params = realloc(params, sizeof(*params) + sizeof(struct mcc_ast_declaration*) * next_max);
@@ -439,6 +443,7 @@ struct mcc_ast_parameter *mcc_ast_new_parameter(struct mcc_ast_declaration *decl
         new_params -> size += 1;
         new_params -> max = next_max;
     } else {
+		printf("Parameter here 3\n");
         params -> parameters[(params -> size) - 1] = declaration;
         params -> size += 1;
     }
@@ -456,17 +461,54 @@ struct mcc_ast_function *mcc_ast_new_function(
 )
 {
     assert(identifier);
-    assert(parameter);
-    assert(statement);
 
     struct mcc_ast_function *func = malloc(sizeof(*func));
 
     func -> return_type = return_type;
     func -> identifier = identifier;
-    func -> parameter = parameter;
+    // func -> parameter = parameter;
     func -> statement = statement;
 
+    printf("Function \n");
     return func;
 }
 
 // ------------------------------------------------------------------- Program
+
+struct mcc_ast_program *mcc_ast_new_program(struct mcc_ast_function *function_def) {
+    assert(function_def);
+
+    printf("Single func in program \n");
+
+    struct mcc_ast_program *p = malloc(sizeof(*p) + sizeof(struct mcc_ast_function) * 4);
+
+    p -> size = 1;
+    p -> max = 4;
+    p -> function_def[0] = function_def;
+
+    return p;
+}
+
+struct mcc_ast_program *mcc_ast_add_function(struct mcc_ast_function *function_def, struct mcc_ast_program *program)
+{
+    assert(program);
+    assert(function_def);
+
+    printf("Add func to program\n");
+
+    int size = program -> size;
+    int max = program -> max;
+    if (program -> size < program -> max) {
+        program -> function_def[size] = function_def;
+        program -> size += 1;
+    } else {
+        int next_max = max + max;
+
+        program = realloc(program, sizeof(*program) + sizeof(struct mcc_ast_function) * next_max);
+        program -> max = next_max;
+        program -> function_def[size] = function_def;
+        program -> size += 1;
+    }
+
+    return program;
+}
