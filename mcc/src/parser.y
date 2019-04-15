@@ -2,7 +2,7 @@
 
 %define api.pure full
 %lex-param   {void *scanner}
-%parse-param {void *scanner} {struct mcc_ast_literal** result_literal}{ struct mcc_ast_declaration** result_declaration}
+%parse-param {void *scanner} {struct mcc_parser_result* result}
 
 %define parse.trace
 %define parse.error verbose
@@ -92,9 +92,10 @@ void mcc_parser_error();
 %type <struct mcc_ast_statement *> statement if_statement while_statement compound_statement assignment
 %type <enum mcc_ast_data_type> type
 %type <struct mcc_ast_statement_list *> statement_list
-%type <struct mcc_ast_function_def *> function_def
+%type <struct mcc_ast_function *> function_def
 %type <struct mcc_ast_declaration *> declaration
 %type <struct mcc_ast_parameter *> parameters
+%type <struct mcc_ast_program *> program
 // %type <struct mcc_ast_program *> program
 
 
@@ -102,8 +103,7 @@ void mcc_parser_error();
 
 %%
 
-toplevel : literal { *result_literal = $1; }
-         | declaration { *result_declaration = $1; }
+toplevel : program { result -> program = $1; }
          ;
 
 expression : literal                      		{ $$ = mcc_ast_new_expression_literal($1);              loc($$, @1); }
@@ -143,28 +143,27 @@ type : INT_TYPE { $$ = MCC_AST_DATA_TYPE_INT; }
      ;
 
 statement : expression SEMICOLON    { $$ = mcc_ast_new_statement_expression($1); loc($$, @1); }
-          | if_statement            { $$= $1;  loc($$, @1); }
+          | if_statement            { $$ = $1;  loc($$, @1); }
 	  | while_statement         { $$ = $1; loc($$, @1); }
 	  | compound_statement      { $$ = $1; loc($$, @1); }
           | assignment SEMICOLON    { $$ = $1; loc($$, @1); }
-          | declaration SEMICOLON { $$ = $1; loc($$, @1); }
+          | declaration SEMICOLON   { $$ = $1; loc($$, @1); }
 
 if_statement: IF LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statment_if($3, $5);                     loc($$, @1); }
             | IF LPARENTH expression RPARENTH statement ELSE statement { $$ = mcc_ast_new_statment_if($3, $5, $7);  loc($$, @1); }
             ;
 
-declaration: type identifier SEMICOLON { $$ = mcc_ast_new_declaration($1, $2); loc($$, @1); }
+declaration: type identifier { $$ = mcc_ast_new_declaration($1, $2); loc($$, @1); }
 	   ;
 
 while_statement: WHILE LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statement_while($3, $5); loc($$, @1); }
-			   ;
+		;
 
 compound_statement: LBRACE statement_list LBRACE { $$ = $2; loc($$; @1); }
-				  ;
+		  ;
 
-statement_list: %empty { $$ = mcc_ast_empty_node() }
-			  | statement_list statement { $$ = mcc_ast_new_statement_list($1, $2); loc($$, @1); }
-			  ;
+statement_list: statement_list statement { $$ = mcc_ast_new_statement_list($1, $2); loc($$, @1); }
+	      ;
 
 assignment:  IDENTIFIER ASSIGNMENT expression
 		{ $$ = mcc_ast_new_statement_assignment($1, 0, $3); 	loc($$, @1); };
@@ -176,16 +175,24 @@ parameters  : declaration COMMA parameters 	{ $$ = mcc_ast_new_parameter($1, $3)
 	    | declaration 			{ $$ = mcc_ast_new_parameter($1, NULL); loc($$, @1); }
             ;
 
-function_def : type identifier LPARENTH parameters RPARENTH compound_statement
+/*function_def : type identifier LPARENTH parameters RPARENTH compound_statement
 		{ $$ = mcc_ast_new_function($1, $2, $4, $6);   loc($$, @1);}
 	     | type identifier LPARENTH RPARENTH compound_statement
 	     	{ $$ = mcc_ast_new_function($1, $2, NULL, $5); loc($$, @1);}
-	     ;
-/*
+	     ;*/
 
-// program : function_def { $$ = mcc_ast_new_program($1); loc($$, @1);}
+function_def: type identifier LPARENTH RPARENTH LBRACE RBRACE
+		{ $$ = mcc_ast_new_function($1, $2, NULL, NULL);   loc($$, @1);};
+	    /*| type identifier LPARENTH declaration RPARENTH compound_statement
+	    	{ $$ = mcc_ast_new_function($1, $2, $4, $6);   loc($$, @1);}*/
+	    | type identifier LPARENTH parameters RPARENTH LBRACE RBRACE
+	    	{ $$ = mcc_ast_new_function($1, $2, $4, NULL);   loc($$, @1);}
+	    ;
+
+program : function_def { $$ = mcc_ast_new_program($1); loc($$, @1);}
+	| function_def program { $$ = mcc_ast_add_function($1, $2); loc($$, @1); }
 	;
-*/
+
 %%
 
 #include <assert.h>
@@ -232,7 +239,7 @@ struct mcc_parser_result mcc_parse_file(FILE *input)
 	    .status = MCC_PARSER_STATUS_OK,
 	};
 
-	if (yyparse(scanner, &result.literal, &result.declaration) != 0) {
+	if (yyparse(scanner, &result) != 0) {
 		result.status = MCC_PARSER_STATUS_UNKNOWN_ERROR;
 	}
 

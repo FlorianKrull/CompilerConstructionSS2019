@@ -1,2 +1,8 @@
+void a(int c) {
+}
 
-int my_file;
+void c(int c) {
+}
+
+void b(int c) {
+}

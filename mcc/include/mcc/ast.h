@@ -228,7 +228,7 @@ struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_identi
 struct mcc_ast_statement *mcc_ast_new_statement_declaration(enum mcc_ast_data_type data_type,
 															struct mcc_ast_identifier *identifier);
 
-struct mcc_ast_statement *mcc_ast_new_statement_statement_list(struct mcc_ast_statement_list *statement_list,
+struct mcc_ast_statement *mcc_ast_new_statement_list(struct mcc_ast_statement_list *statement_list,
                                                                 struct mcc_ast_statement *next_statement);
 
 
@@ -292,8 +292,7 @@ struct mcc_ast_parameter {
 	struct mcc_ast_declaration *parameters[];
 };
 
-struct mcc_ast_parameter *
-mcc_ast_new_parameter(struct mcc_ast_declaration *declaration, struct mcc_ast_parameter *params);
+struct mcc_ast_parameter *mcc_ast_new_parameter(struct mcc_ast_declaration *declaration, struct mcc_ast_parameter *params);
 
 void mcc_ast_delete_parameter(struct mcc_ast_parameter *parameter);
 
@@ -305,11 +304,11 @@ struct mcc_ast_function {
 
     enum mcc_ast_data_type return_type;
     struct mcc_ast_identifier *identifier;
-    struct mcc_ast_parameter *parameter;
-    struct mcc_ast_statement *statement;
+   	struct mcc_ast_parameter *parameter;
+	struct mcc_ast_statement *statement;
 };
 
-struct mcc_ast_function * mcc_ast_new_function(
+struct mcc_ast_function *mcc_ast_new_function(
         enum mcc_ast_data_type return_type,
         struct mcc_ast_identifier *identifier,
         struct mcc_ast_parameter *parameter,
@@ -321,11 +320,14 @@ struct mcc_ast_function * mcc_ast_new_function(
 
 struct mcc_ast_program {
 	struct mcc_ast_node node;
-	struct mcc_ast_function_def *function_def;
+    int max;
+    int size;
+	struct mcc_ast_function *function_def[];
 };
 
-struct mcc_ast_program *
-mcc_ast_new_program(struct mcc_ast_function_def_list *function_def_list);
+struct mcc_ast_program *mcc_ast_new_program(struct mcc_ast_function *function_def);
+
+struct mcc_ast_program *mcc_ast_add_function(struct mcc_ast_function *function_def, struct mcc_ast_program *program);
 
 void mcc_ast_delete_program(struct mcc_ast_program *program);
 
