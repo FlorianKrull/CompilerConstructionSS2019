@@ -2,16 +2,8 @@
 
 %define api.pure full
 %lex-param   {void *scanner}
-<<<<<<< HEAD
-%parse-param 	{void *scanner} {struct mcc_ast_expression** result_expression}
-			 	{struct mcc_ast_literal** result_literal} {struct mcc_ast_statement** result_statement}
-				{struct mcc_ast_function_def** result_function_def} {struct mcc_ast_declaration** result_declaration} 
-				
-				
-=======
 %parse-param {void *scanner} {struct mcc_parser_result* result}
 
->>>>>>> d69a8212fba56a48cc06bfc3ee9cdac30a47faf9
 %define parse.trace
 %define parse.error verbose
 

@@ -356,13 +356,9 @@ struct mcc_ast_program {
 	struct mcc_ast_function *function_def[];
 };
 
-<<<<<<< HEAD
-struct mcc_ast_program *mcc_ast_new_program(struct mcc_ast_function_def_list *function_def_list);
-=======
 struct mcc_ast_program *mcc_ast_new_program(struct mcc_ast_function *function_def);
 
 struct mcc_ast_program *mcc_ast_add_function(struct mcc_ast_function *function_def, struct mcc_ast_program *program);
->>>>>>> d69a8212fba56a48cc06bfc3ee9cdac30a47faf9
 
 void mcc_ast_delete_program(struct mcc_ast_program *program);
 
