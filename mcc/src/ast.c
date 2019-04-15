@@ -447,13 +447,15 @@ struct mcc_ast_parameter *mcc_ast_new_parameter(struct mcc_ast_declaration *decl
 }
 
 void mcc_ast_delete_parameter(struct mcc_ast_parameter *parameter) {
-    assert(parameter);
 
-    for (int i = 0; i < parameter -> size; i++) {
-        mcc_ast_delete_declaration(parameter -> parameters[i]);
+    if (parameter != NULL) {
+        for (int i = 0; i < parameter -> size; i++) {
+            mcc_ast_delete_declaration(parameter -> parameters[i]);
+        }
+
+        free(parameter);
     }
 
-    free(parameter);
 }
 
 // ------------------------------------------------------------------- Function
@@ -471,7 +473,11 @@ struct mcc_ast_function *mcc_ast_new_function(
 
     func -> return_type = return_type;
     func -> identifier = identifier;
-    // func -> parameter = parameter;
+
+    if (parameter != NULL) {
+        func -> parameter = parameter;
+    }
+
     func -> statement = statement;
 
     printf("Function \n");
