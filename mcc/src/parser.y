@@ -2,16 +2,9 @@
 
 %define api.pure full
 %lex-param   {void *scanner}
-<<<<<<< HEAD
-%parse-param 	{void *scanner} {struct mcc_ast_expression** result_expression}
-			 	{struct mcc_ast_literal** result_literal} {struct mcc_ast_statement** result_statement}
-				{struct mcc_ast_function_def** result_function_def} {struct mcc_ast_declaration** result_declaration} 
-				
-				
-=======
+
 %parse-param {void *scanner} {struct mcc_parser_result* result}
 
->>>>>>> d69a8212fba56a48cc06bfc3ee9cdac30a47faf9
 %define parse.trace
 %define parse.error verbose
 
@@ -105,7 +98,14 @@ void mcc_parser_error();
 %type <struct mcc_ast_assignment *> assignment
 %type <struct mcc_ast_parameter *> parameters
 %type <struct mcc_ast_program *> program
-// %type <struct mcc_ast_program *> program
+
+
+%destructor { mcc_ast_delete_identifier($$); }         	identifier
+%destructor { mCc_ast_delete_declaration($$); }        	declaration
+
+%destructor { mcc_ast_delete_function($$); } 		function_def
+%destructor { mCc_ast_delete_parameter($$); }           parameter
+%destructor { mCc_ast_delete_program($$); }             program
 
 
 %start toplevel
@@ -117,25 +117,25 @@ toplevel : program { result -> program = $1; }
 
 expression : literal                      				{ $$ = mcc_ast_new_expression_literal($1);              loc($$, @1); }
            | LPARENTH expression RPARENTH	 			{ $$ = mcc_ast_new_expression_parenth($2);              loc($$, @1); }
-		   | expression binary_op expression  			{ $$ = mcc_ast_new_expression_binary_op($2, $1, $3);    loc($$, @1); }
-		   | identifier									{ $$= $1;  loc($$, @1);}
-		   | identifier LBRACKET expression RBRACKET 	{ $$ = mcc_ast_new_expression_array_identifier($1, $3); loc($$, @1); }
+	   | expression binary_op expression  				{ $$ = mcc_ast_new_expression_binary_op($2, $1, $3);    loc($$, @1); }
+           | identifier							{ $$= $1;  loc($$, @1);}
+           | identifier LBRACKET expression RBRACKET 			{ $$ = mcc_ast_new_expression_array_identifier($1, $3); loc($$, @1); }
            ;
 
-call_expr :  identifier LPARENTH RPARENTH               { $$ = mcc_ast_new_expression_call_expr($1, NULL);              loc($$, @1); }
-		  ;
+call_expr :  identifier LPARENTH RPARENTH   { $$ = mcc_ast_new_expression_call_expr($1, NULL); loc($$, @1); }
+	  ;
 
 literal : INT_LITERAL       { $$ = mcc_ast_new_literal(MCC_AST_LITERAL_TYPE_INT,$1);     loc($$, @1); }
         | FLOAT_LITERAL     { $$ = mcc_ast_new_literal(MCC_AST_LITERAL_TYPE_FLOAT,$1);   loc($$, @1); }
-		| STRING_LITERAL    { $$ = mcc_ast_new_literal(MCC_AST_LITERAL_TYPE_STRING,$1);  loc($$,@1);  }
-		| BOOL_LITERAL      { $$ = mcc_ast_new_literal(MCC_AST_LITERAL_TYPE_BOOL,$1);    loc($$,@1);  }
-		;
+	| STRING_LITERAL    { $$ = mcc_ast_new_literal(MCC_AST_LITERAL_TYPE_STRING,$1);  loc($$,@1);  }
+	| BOOL_LITERAL      { $$ = mcc_ast_new_literal(MCC_AST_LITERAL_TYPE_BOOL,$1);    loc($$,@1);  }
+	;
 
 identifier : IDENTIFIER { $$ = mcc_ast_new_identifier($1); loc($$, @1); }
 
-unary_op : NOT { $$ = MCC_AST_UNARY_OP_NOT; }
-		 | MINUS  {$$ = MCC_AST_UNARY_OP_MINUS; }
-		 ;
+unary_op: NOT { $$ = MCC_AST_UNARY_OP_NOT; }
+	| MINUS  {$$ = MCC_AST_UNARY_OP_MINUS; }
+        ;
 
 binary_op : PLUS { $$= MCC_AST_BINARY_OP_ADD; }
 			| MINUS { $$ = MCC_AST_BINARY_OP_SUB; }
@@ -190,11 +190,6 @@ parameters  : declaration COMMA parameters 	{ $$ = mcc_ast_new_parameter($1, $3)
 	    | declaration 			{ $$ = mcc_ast_new_parameter($1, NULL); loc($$, @1); }
             ;
 
-/*function_def : type identifier LPARENTH parameters RPARENTH compound_statement
-		{ $$ = mcc_ast_new_function($1, $2, $4, $6);   loc($$, @1);}
-	     | type identifier LPARENTH RPARENTH compound_statement
-	     	{ $$ = mcc_ast_new_function($1, $2, NULL, $5); loc($$, @1);}
-	     ;*/
 
 function_def: type identifier LPARENTH RPARENTH LBRACE RBRACE
 		{ $$ = mcc_ast_new_function($1, $2, NULL, NULL);   loc($$, @1);};

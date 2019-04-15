@@ -159,7 +159,6 @@ void mcc_ast_delete_identifier(struct mcc_ast_identifier *identifier)
 
 struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type, struct mcc_ast_identifier *ident)
 {
-    printf("Declaration \n");
     assert(ident);
 
     struct mcc_ast_declaration *decl= malloc(sizeof(*decl));
@@ -323,6 +322,7 @@ struct mcc_ast_statement_list *construct_new_statement_list(int size, int max)
     return stmt_list;
 }
 
+// TODO: refactor (like program list)
 struct mcc_ast_statement *mcc_ast_new_statement_list(struct mcc_ast_statement_list *statement_list,
                                                                struct mcc_ast_statement *next_statement)
 {
@@ -416,6 +416,7 @@ void mcc_ast_empty_node() {
 
 // ------------------------------------------------------------------- Parameters
 
+// TODO: refactor (like program list)
 struct mcc_ast_parameter *mcc_ast_new_parameter(struct mcc_ast_declaration *declaration, struct mcc_ast_parameter *params)
 {
 	assert(declaration);
@@ -426,16 +427,11 @@ struct mcc_ast_parameter *mcc_ast_new_parameter(struct mcc_ast_declaration *decl
         param -> size = 1;
         param -> max = 4;
         param -> parameters[0] = declaration;
-        printf("decl %s \n", declaration->ident->i_value);
-        printf("Return parameter %s \n", param -> parameters[0] ->ident ->i_value);
         return param;
     }
 
-	printf("Parameter here 1\n");
-
     // add to previous params list
     if ((params -> size) == (params -> max)) {
-		printf("Parameter here 2\n");
         int next_max = params -> size + 4;
         int size = params -> size;
         struct mcc_ast_parameter *new_params = realloc(params, sizeof(*params) + sizeof(struct mcc_ast_declaration*) * next_max);
@@ -443,12 +439,21 @@ struct mcc_ast_parameter *mcc_ast_new_parameter(struct mcc_ast_declaration *decl
         new_params -> size += 1;
         new_params -> max = next_max;
     } else {
-		printf("Parameter here 3\n");
         params -> parameters[(params -> size) - 1] = declaration;
         params -> size += 1;
     }
 
     return params;
+}
+
+void mcc_ast_delete_parameter(struct mcc_ast_parameter *parameter) {
+    assert(parameter);
+
+    for (int i = 0; i < parameter -> size; i++) {
+        mcc_ast_delete_declaration(parameter -> parameters[i]);
+    }
+
+    free(parameter);
 }
 
 // ------------------------------------------------------------------- Function
@@ -473,6 +478,16 @@ struct mcc_ast_function *mcc_ast_new_function(
     return func;
 }
 
+void mcc_ast_delete_function(struct mcc_ast_function *function) {
+    assert(function);
+
+    mcc_ast_delete_identifier(function -> identifier);
+    mcc_ast_delete_parameter(function -> parameter);
+    // TODO delete statement
+
+    free(function);
+}
+
 // ------------------------------------------------------------------- Program
 
 struct mcc_ast_program *mcc_ast_new_program(struct mcc_ast_function *function_def) {
@@ -494,8 +509,6 @@ struct mcc_ast_program *mcc_ast_add_function(struct mcc_ast_function *function_d
     assert(program);
     assert(function_def);
 
-    printf("Add func to program\n");
-
     int size = program -> size;
     int max = program -> max;
     if (program -> size < program -> max) {
@@ -511,4 +524,16 @@ struct mcc_ast_program *mcc_ast_add_function(struct mcc_ast_function *function_d
     }
 
     return program;
+}
+
+void mcc_ast_delete_program(struct mcc_ast_program *program)
+{
+    assert(program);
+
+    for (int i = 0; i < program -> size; i++) {
+        mcc_ast_delete_function(program -> function_def[i]);
+    }
+
+    free(program -> function_def);
+    free(program);
 }
