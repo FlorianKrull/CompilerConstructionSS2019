@@ -124,17 +124,6 @@ struct mcc_ast_expression *mcc_ast_new_expression_parenth(struct mcc_ast_express
 
 void mcc_ast_delete_expression(struct mcc_ast_expression *expression);
 
-// ------------------------------------------------------------------- Arguments
-
-// struct mcc_ast_arguments{
-
-// 	struct mcc_ast_node;
-// 	struct mcc_ast_arguments *next_arg;
-// 	struct mcc_ast_expression *expression;
-// }
-
-
-
 // ------------------------------------------------------------------- Identifier
 
 struct mcc_ast_identifier {
@@ -145,6 +134,7 @@ struct mcc_ast_identifier {
 
 struct mcc_ast_identifier *mcc_ast_new_identifier(char *value);
 
+void mcc_ast_delete_identifier(struct mcc_ast_identifier *identifier);
 
 // ------------------------------------------------------------------- Declaration
 
@@ -159,6 +149,7 @@ struct mcc_ast_declaration {
 
 struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type, struct mcc_ast_identifier *ident);
 
+void mcc_ast_delete_declaration(struct mcc_ast_declaration *declaration);
 
 // ------------------------------------------------------------------- Statements
 
@@ -227,12 +218,8 @@ struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_identi
 
 struct mcc_ast_statement *mcc_ast_new_statement_declaration(enum mcc_ast_data_type data_type,
 															struct mcc_ast_identifier *identifier);
-
 struct mcc_ast_statement *mcc_ast_new_statement_list(struct mcc_ast_statement_list *statement_list,
                                                                 struct mcc_ast_statement *next_statement);
-
-
-
 
 struct mcc_ast_statement mcc_ast_new_block_statement();
 
@@ -277,11 +264,6 @@ void mcc_ast_delete_literal(struct mcc_ast_literal *literal);
 void mcc_ast_empty_node();
 
 
-// -------------------------------------------------------------------- Assignment
-
-
-
-
 // -------------------------------------------------------------------- Parameter
 
 // int PARAMETER_BLOCK_SIZE = 4;
@@ -315,6 +297,7 @@ struct mcc_ast_function *mcc_ast_new_function(
         struct mcc_ast_statement *statement
 );
 
+void mcc_ast_delete_function(struct mcc_ast_function *function);
 
 // -------------------------------------------------------------------- Program
 
