@@ -42,8 +42,8 @@ int main(int argc, char *argv[]) {
         }
         printf("Parsing ok \n");
         printf("---- Printing tree ----\n");
-        decl = result.declaration;
-        result.expression = expr;
+        // decl = result.declaration;
+        // result.expression = expr;
     }
 
     mcc_ast_print_dot(stdout, stat);

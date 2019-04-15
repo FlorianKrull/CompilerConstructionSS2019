@@ -101,11 +101,11 @@ void mcc_parser_error();
 
 
 %destructor { mcc_ast_delete_identifier($$); }         	identifier
-%destructor { mCc_ast_delete_declaration($$); }        	declaration
+%destructor { mcc_ast_delete_declaration($$); }        	declaration
 
 %destructor { mcc_ast_delete_function($$); } 		function_def
-%destructor { mCc_ast_delete_parameter($$); }           parameter
-%destructor { mCc_ast_delete_program($$); }             program
+%destructor { mcc_ast_delete_parameter($$); }           parameter
+%destructor { mcc_ast_delete_program($$); }             program
 
 
 %start toplevel
