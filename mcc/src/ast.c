@@ -8,7 +8,8 @@
 
 // ---------------------------------------------------------------- Expressions
 
-struct mcc_ast_expression *mcc_ast_new_expression_literal(struct mcc_ast_literal *literal)
+struct mcc_ast_expression *
+mcc_ast_new_expression_literal(struct mcc_ast_literal *literal)
 {
 	assert(literal);
 
@@ -22,9 +23,43 @@ struct mcc_ast_expression *mcc_ast_new_expression_literal(struct mcc_ast_literal
 	return expr;
 }
 
-struct mcc_ast_expression *mcc_ast_new_expression_binary_op(enum mcc_ast_binary_op op,
-                                                            struct mcc_ast_expression *lhs,
-                                                            struct mcc_ast_expression *rhs)
+struct mcc_ast_expression *
+mcc_ast_new_expression_identifier(struct mcc_ast_identifier *identifier)
+{
+	assert(identifier);
+
+	struct mcc_ast_expression *expr = malloc(sizeof(*expr));
+	if (!expr) {
+		return NULL;
+	}
+
+	expr->type = MCC_AST_EXPRESSION_TYPE_IDENTIFIER;
+	expr->identifier = identifier;
+	return expr;
+}
+
+
+struct mCc_ast_expression *
+mcc_ast_new_expression_unary_op(enum mcc_ast_unary_op op,
+                                struct mcc_ast_expression *expression)
+{
+	assert(expression);
+
+	struct mcc_ast_expression *expr = malloc(sizeof(*expr));
+	if (!expr) {
+		return NULL;
+	}
+
+	expr->type = MCC_AST_EXPRESSION_TYPE_UNARY_OP;
+	expr->unary_op = op;
+	expr->unary_expression = expression;
+	return expr;
+}
+
+struct mcc_ast_expression *
+mcc_ast_new_expression_binary_op(enum mcc_ast_binary_op op,
+                                 struct mcc_ast_expression *lhs,
+                                 struct mcc_ast_expression *rhs)
 {
 	assert(lhs);
 	assert(rhs);
@@ -41,26 +76,8 @@ struct mcc_ast_expression *mcc_ast_new_expression_binary_op(enum mcc_ast_binary_
 	return expr;
 }
 
-struct mcc_ast_expression *mcc_ast_new_expression_unary_op(enum mcc_ast_unary_op op,
-														   struct mcc_ast_expression *rhs)
-{
-
-	assert(rhs);
-
-	struct mcc_ast_expression *expr = malloc(sizeof(*expr));
-	if(!expr) {
-		return NULL;
-	}
-
-	expr -> type = MCC_AST_EXPRESSION_TYPE_UNARY_OP;
-	expr -> up = op;
-	expr -> rhs = rhs;
-	return expr;
-
-
-}
-
-struct mcc_ast_expression *mcc_ast_new_expression_parenth(struct mcc_ast_expression *expression)
+struct mcc_ast_expression *
+mcc_ast_new_expression_parenth(struct mcc_ast_expression *expression)
 {
 	assert(expression);
 
@@ -74,18 +91,21 @@ struct mcc_ast_expression *mcc_ast_new_expression_parenth(struct mcc_ast_express
 	return expr;
 }
 
-struct mcc_ast_expression *mcc_ast_new_expression_array_identifier(struct mcc_ast_identifier *identifier,
-                                                                   struct mcc_ast_expression *expression)
+struct mcc_ast_expression *
+mcc_ast_new_expression_bracket(struct mcc_ast_identifier *identifier,
+                               struct mcc_ast_expression *expression)
 {
 	assert(identifier);
 	assert(expression);
 
 	struct mcc_ast_expression *expr = malloc(sizeof(*expr));
-	assert(expr);
+	if (!expr) {
+		return NULL;
+	}
 
-	expr->type = MCC_AST_EXPRESSION_TYPE_ARRAY_IDENTIFIER;
-	expr->array_identifier.identifier = identifier;
-	expr->array_identifier.expression = expression;
+	expr->type = MCC_AST_EXPRESSION_TYPE_BRACKET;
+	expr->bracket_identifier = identifier;
+	expr->bracket_expression = expression;
 	return expr;
 }
 
@@ -98,6 +118,14 @@ void mcc_ast_delete_expression(struct mcc_ast_expression *expression)
 		mcc_ast_delete_literal(expression->literal);
 		break;
 
+	case MCC_AST_EXPRESSION_TYPE_IDENTIFIER:
+		mcc_ast_delete_identifier(expression->identifier);
+		break;
+
+	case MCC_AST_EXPRESSION_TYPE_UNARY_OP:
+		mcc_ast_delete_expression(expression->unary_expression);
+		break;
+
 	case MCC_AST_EXPRESSION_TYPE_BINARY_OP:
 		mcc_ast_delete_expression(expression->lhs);
 		mcc_ast_delete_expression(expression->rhs);
@@ -105,6 +133,11 @@ void mcc_ast_delete_expression(struct mcc_ast_expression *expression)
 
 	case MCC_AST_EXPRESSION_TYPE_PARENTH:
 		mcc_ast_delete_expression(expression->expression);
+		break;
+
+	case MCC_AST_EXPRESSION_TYPE_BRACKET:
+		mcc_ast_delete_identifier(expression->bracket_identifier);
+		mcc_ast_delete_expression(expression->bracket_expression);
 		break;
 	}
 
@@ -313,55 +346,89 @@ struct mcc_ast_statement *mcc_ast_new_statement(struct mcc_ast_statement *statem
     return statement;
 }
 
-struct mcc_ast_statement_list *construct_new_statement_list(int size, int max)
+struct mcc_ast_statement_list *
+mcc_ast_new_statement_list(struct mcc_ast_statement *statement)
 {
-    struct mcc_ast_statement_list *stmt_list = malloc(sizeof(*stmt_list) + max);
-    stmt_list -> size = size;
-    stmt_list -> max_size = max;
+	assert(statement);
+	struct mcc_ast_statement_list *list = malloc(sizeof(*list));
+	assert(list);
 
-    return stmt_list;
+	list->statement = statement;
+	list->next = NULL;
+	return list;
 }
 
-// TODO: refactor (like program list)
-struct mcc_ast_statement *mcc_ast_new_statement_list(struct mcc_ast_statement_list *statement_list,
-                                                               struct mcc_ast_statement *next_statement)
+void mcc_ast_delete_statement_list(
+    struct mcc_ast_statement_list *statement_list)
 {
-    assert(next_statement);
-
-    if (!statement_list) {
-        // create new statement - start with statement array of size 10
-        statement_list = construct_new_statement_list(0, 10);
-        statement_list -> list[0] = next_statement;
-    } else {
-        int max = statement_list -> max_size;
-        int current = statement_list -> size;
-        // struct mcc_ast_statement *stmt_list[] = statement_list -> list;
-
-        if (current < max) {
-            statement_list -> list[current] = next_statement;
-        } else {
-            // double size of statement list
-            statement_list = realloc(statement_list, sizeof(*statement_list) + (max * 2));
-
-            // in case realloc fails return NULL for now
-            // TODO create new statement list and free old one?
-            if (!statement_list) {
-                return NULL;
-            }
-
-            statement_list -> max_size = max * 2;
-            statement_list -> size = current + 1;
-            statement_list -> list[current] = next_statement;
-        }
-    }
-
-    struct mcc_ast_statement *stmt = construct_statement();
-
-    stmt -> type = MCC_AST_STATEMENT_TYPE_COMPOUND;
-    stmt -> compound_statement = statement_list;
-
-    return stmt;
+	assert(statement_list);
+	if (statement_list->next != NULL) {
+		mcc_ast_delete_statement_list(statement_list->next);
+	}
+	mcc_ast_delete_statement(statement_list->statement);
+	free(statement_list);
 }
+
+struct mcc_ast_statement *
+mcc_ast_new_statement_compound(struct mcc_ast_statement_list *statement_list)
+{
+	struct mcc_ast_statement *stmt = malloc(sizeof(*stmt));
+	assert(stmt);
+
+	stmt->type = MCC_AST_STATEMENT_TYPE_COMPOUND;
+	stmt->compound_statement = statement_list;
+	return stmt;
+}
+
+// struct mcc_ast_statement_list *construct_new_statement_list(int size, int max)
+// {
+//     struct mcc_ast_statement_list *stmt_list = malloc(sizeof(*stmt_list) + max);
+//     stmt_list -> size = size;
+//     stmt_list -> max_size = max;
+
+//     return stmt_list;
+// }
+
+// // TODO: refactor (like program list)
+// struct mcc_ast_statement *mcc_ast_new_statement_list(struct mcc_ast_statement_list *statement_list,
+//                                                                struct mcc_ast_statement *next_statement)
+// {
+    
+
+//     if (!statement_list) {
+//         // create new statement - start with statement array of size 10
+//         statement_list = construct_new_statement_list(0, 10);
+//         statement_list -> list[0] = next_statement;
+//     } else {
+//         int max = statement_list -> max_size;
+//         int current = statement_list -> size;
+//         // struct mcc_ast_statement *stmt_list[] = statement_list -> list;
+
+//         if (current < max) {
+//             statement_list -> list[current] = next_statement;
+//         } else {
+//             // double size of statement list
+//             statement_list = realloc(statement_list, sizeof(*statement_list) + (max * 2));
+
+//             // in case realloc fails return NULL for now
+//             // TODO create new statement list and free old one?
+//             if (!statement_list) {
+//                 return NULL;
+//             }
+
+//             statement_list -> max_size = max * 2;
+//             statement_list -> size = current + 1;
+//             statement_list -> list[current] = next_statement;
+//         }
+//     }
+
+//     struct mcc_ast_statement *stmt = construct_statement();
+
+//     stmt -> type = MCC_AST_STATEMENT_TYPE_COMPOUND;
+//     stmt -> compound_statement = statement_list;
+
+//     return stmt;
+// }
 
 struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_assignment *assignment)
 {

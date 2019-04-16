@@ -75,58 +75,81 @@ enum mcc_ast_unary_op {
 // ---------------------------------------------------------------- Expressions
 
 enum mcc_ast_expression_type {
-    MCC_AST_STATEMENT_TYPE_EXPR,
 	MCC_AST_EXPRESSION_TYPE_LITERAL,
-	MCC_AST_EXPRESSION_TYPE_BINARY_OP,
-	MCC_AST_EXPRESSION_TYPE_UNARY_OP,
-	MCC_AST_EXPRESSION_TYPE_PARENTH,
 	MCC_AST_EXPRESSION_TYPE_IDENTIFIER,
-	MCC_AST_EXPRESSION_TYPE_ARRAY_IDENTIFIER,
-
+	MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION,
+	MCC_AST_EXPRESSION_TYPE_UNARY_OP,
+	MCC_AST_EXPRESSION_TYPE_BINARY_OP,
+	MCC_AST_EXPRESSION_TYPE_PARENTH,
+	MCC_AST_EXPRESSION_TYPE_BRACKET,
 };
-
 
 struct mcc_ast_expression {
 	struct mcc_ast_node node;
 
 	enum mcc_ast_expression_type type;
 	union {
-		// MCC_AST_EXPRESSION_TYPE_LITERAL
+		/* MCC_AST_EXPRESSION_TYPE_LITERAL */
 		struct mcc_ast_literal *literal;
 
-		// MCC_AST_EXPRESSION_TYPE_BINARY_OP
+		/* MCC_AST_EXPRESSION_TYPE_IDENTIFIER */
+		struct mcc_ast_identifier *identifier;
+
+		/* MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION */
+		struct {
+			struct mcc_ast_identifier *function_name;
+			struct mcc_ast_argument *argument;
+		};
+
+		/* MCC_AST_EXPRESSION_TYPE_UNARY_OP */
+		struct {
+			enum mcc_ast_unary_op unary_op;
+			struct mcc_ast_expression *unary_expression;
+		};
+
+		/* MCC_AST_EXPRESSION_TYPE_BINARY_OP */
 		struct {
 			enum mcc_ast_binary_op op;
-            enum mcc_ast_unary_op up;
 			struct mcc_ast_expression *lhs;
 			struct mcc_ast_expression *rhs;
 		};
 
-        // MCC_AST_EXPRESSION_TYPE_UNARY_OP
-		// MCC_AST_EXPRESSION_TYPE_PARENTH
+		/* MCC_AST_EXPRESSION_TYPE_PARENTH */
 		struct mcc_ast_expression *expression;
 
+		/* MCC_AST_EXPRESSION_TYPE_BRACKET */
 		struct {
-			struct mcc_ast_identifier *identifier;
-			struct mcc_ast_expression *expression;
-		} array_identifier;
+			struct mcc_ast_identifier *bracket_identifier;
+			struct mcc_ast_expression *bracket_expression;
+		};
 	};
 };
 
+struct mcc_ast_expression *
+mcc_ast_new_expression_literal(struct mcc_ast_literal *literal);
 
-struct mcc_ast_expression *mcc_ast_new_expression_literal(struct mcc_ast_literal *literal);
+struct mcc_ast_expression *
+mcc_ast_new_expression_identifier(struct mcc_ast_identifier *identifier);
 
-struct mcc_ast_expression *mcc_ast_new_expression_binary_op(enum mcc_ast_binary_op op,
-                                                            struct mcc_ast_expression *lhs,
-                                                            struct mcc_ast_expression *rhs);
+struct mcc_ast_expression *
+mcc_ast_new_expression_call_expression(struct mcc_ast_identifier *function_name,
+                                       struct mcc_ast_argument *argument);
 
-struct mcc_ast_expression *mcc_ast_new_exprssion_unary_op( enum mcc_ast_unary_op op,
-														   struct mcc_ast_expression *rhs);
+struct mCc_ast_expression *
+mCc_ast_new_expression_unary_op(enum mcc_ast_unary_op op,
+                                struct mcc_ast_expression *expression);
 
-struct mcc_ast_expression *mcc_ast_new_expression_parenth(struct mcc_ast_expression *expression);
+struct mCc_ast_expression *
+mCc_ast_new_expression_binary_op(enum mcc_ast_binary_op op,
+                                 struct mcc_ast_expression *lhs,
+                                 struct mcc_ast_expression *rhs);
 
-// struct mcc_ast_expression *mcc_ast_new_expression_call(struct mcc_ast_identifier *identifier,
-// 													   struct mcc_ast_argument *argument );
+struct mcc_ast_expression *
+mcc_ast_new_expression_parenth(struct mcc_ast_expression *expression);
+
+struct mcc_ast_expression *
+mcc_ast_new_expression_bracket(struct mcc_ast_identifier *identifier,
+                               struct mcc_ast_expression *expression);
 
 void mcc_ast_delete_expression(struct mcc_ast_expression *expression);
 
@@ -213,13 +236,24 @@ enum mcc_ast_statement_type {
 	// MCC_AST_STATEMENT_TYPE_BLOCK
 };
 
-struct mcc_ast_statement_list {
+// struct mcc_ast_statement_list {
 
+// 	struct mcc_ast_node node;
+//     int size;
+//     int max_size;
+//     struct mcc_ast_statement *list[];
+// };
+
+struct mcc_ast_statement_list {
 	struct mcc_ast_node node;
-    int size;
-    int max_size;
-    struct mcc_ast_statement *list[];
+	struct mcc_ast_statement *statement;
+	struct mcc_ast_statement_list *next;
 };
+
+struct mcc_ast_statement_list *
+mcc_ast_new_statement_list(struct mcc_ast_statement *statement);
+
+void mcc_ast_delete_statement_list(struct mcc_ast_statement_list *statement_list);
 
 struct mcc_ast_statement {
     struct mcc_ast_node node;
@@ -266,8 +300,8 @@ struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_assign
 
 struct mcc_ast_statement *mcc_ast_new_statement_declaration(enum mcc_ast_data_type data_type,
 															struct mcc_ast_identifier *identifier);
-struct mcc_ast_statement *mcc_ast_new_statement_list(struct mcc_ast_statement_list *statement_list,
-                                                                struct mcc_ast_statement *next_statement);
+
+struct mcc_ast_statement *mcc_ast_new_statement_compound(struct mcc_ast_statement_list *statement_list);
 
 void mcc_ast_delete_statement(struct mcc_ast_statement *statement);
 
