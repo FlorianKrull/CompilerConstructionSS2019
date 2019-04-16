@@ -268,20 +268,12 @@ void mcc_ast_delete_assignment(struct mcc_ast_assignment *assignment)
 
 // ------------------------------------------------------------------- Statements
 
-struct mcc_ast_statement *construct_statement()
-{
-    struct mcc_ast_statement *stmt = malloc(sizeof(*stmt));
-    if (!stmt)
-        return NULL;
-
-    return stmt;
-}
-
 struct mcc_ast_statement *mcc_ast_new_statement_expression(struct mcc_ast_expression *expression)
 {
 	assert(expression);
 
-	struct mcc_ast_statement *stmt = construct_statement();
+	struct mcc_ast_statement *stmt = malloc(sizeof(*stmt));
+    assert(stmt);
 
 	stmt -> type = MMC_AST_STATEMENT_TYPE_EXPRESSION;
 	stmt -> expression = expression;
@@ -295,11 +287,11 @@ struct mcc_ast_statement *mcc_ast_new_statement_if(struct mcc_ast_expression *co
 {
     assert(condition);
     assert(if_stmt);
-    // assert(else_stmt);
 
-    struct mcc_ast_statement *stmt = construct_statement();
+    struct mcc_ast_statement *stmt = malloc(sizeof(*stmt));
 
     stmt -> type = MCC_AST_STATEMENT_TYPE_IF;
+    stmt->if_condition = condition;
     stmt -> if_stmt = if_stmt;
     if (else_stmt != NULL) {
         stmt -> else_stmt = else_stmt;
@@ -313,8 +305,7 @@ struct mcc_ast_statement *mcc_ast_new_statement_declaration(enum mcc_ast_data_ty
 {
     assert(identifier);
 
-    struct mcc_ast_statement *stmt = construct_statement();
-
+    struct mcc_ast_statement *stmt = malloc(sizeof(*stmt));
     stmt -> type = MCC_AST_STATEMENT_TYPE_DECL;
     stmt -> data_type = data_type;
     stmt -> id_decl = identifier;
@@ -328,7 +319,7 @@ struct mcc_ast_statement *mcc_ast_new_statement_while(struct mcc_ast_expression 
     assert(condition);
     assert(while_stmt);
 
-    struct mcc_ast_statement *stmt = construct_statement();
+    struct mcc_ast_statement *stmt = malloc(sizeof(*stmt));
 
     stmt -> type = MCC_AST_STATEMENT_TYPE_WHILE;
     stmt -> while_condition = condition;
@@ -341,8 +332,7 @@ struct mcc_ast_statement *mcc_ast_new_statement(struct mcc_ast_statement *statem
 
     assert(statement);
 
-    struct mcc_ast_statement *stmt = construct_statement();
-
+    struct mcc_ast_statement *stmt = malloc(sizeof(*stmt));
     return statement;
 }
 
@@ -434,7 +424,8 @@ struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_assign
 {
     assert(assignment);
     
-    struct mcc_ast_statement *stmt = construct_statement();
+    struct mcc_ast_statement *stmt = malloc(sizeof(*stmt));
+    assert(stmt);
 
    stmt->type = assignment->type == MCC_AST_ASSIGNMENT_TYPE_NORMAL
 	                 ? MCC_AST_STATEMENT_TYPE_ASSGN

@@ -104,7 +104,7 @@ void mcc_parser_error();
 %destructor { mcc_ast_delete_identifier($$); }         	identifier
 %destructor { mcc_ast_delete_declaration($$); }        	declaration
 
-%destructor { mcc_ast_delete_function($$); } 		function_def
+%destructor { mcc_ast_delete_function($$); } 			function_def
 %destructor { mcc_ast_delete_parameter($$); }           parameter
 %destructor { mcc_ast_delete_program($$); }             program
 
@@ -185,6 +185,7 @@ statement : expression SEMICOLON    { $$ = mcc_ast_new_statement_expression($1);
 	  	  | compound_statement      { $$ = $1; loc($$, @1); }
           | assignment SEMICOLON    { $$ = $1; loc($$, @1); }
           | declaration SEMICOLON   { $$ = $1; loc($$, @1); }
+		  ;
 
 if_statement: IF LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statement_if($3, $5,NULL);  loc($$, @1); }
             | IF LPARENTH expression RPARENTH statement ELSE statement { $$ = mcc_ast_new_statement_if($3, $5, $7);  loc($$, @1); }
@@ -197,12 +198,12 @@ declaration: type identifier { $$ = mcc_ast_new_declaration($1, $2); loc($$, @1)
 while_statement: WHILE LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statement_while($3, $5); loc($$, @1); }
 		;
 
-compound_statement: 	LBRACE statement_list LBRACE { $$ = mcc_ast_new_statement_compound($2); loc($$, @1); }
+compound_statement: 	LBRACE statement_list RBRACE { $$ = mcc_ast_new_statement_compound($2); loc($$, @1); }
 					|   LBRACE RBRACE { $$ = mcc_ast_new_statement_compound(NULL); loc($$, @1); }
 		  ;
 
-statement_list:	  statement statement_list 	{ $$ = mcc_ast_new_statement_list($1); $$->next = $2 ; loc($$, @1); }
-	    		| statement 				{ $$ = mcc_ast_new_statement_list($1); loc($$, @1); }
+statement_list:	  statement 				{ $$ = mcc_ast_new_statement_list($1); loc($$, @1); }  
+				| statement statement_list 	{ $$ = mcc_ast_new_statement_list($1); $$->next = $2 ; loc($$, @1); }
 		  		;
 
 assignment:  identifier ASSIGNMENT expression
@@ -232,7 +233,7 @@ program : function_def { $$ = mcc_ast_new_program($1); loc($$, @1);}
 #include <assert.h>
 #include "scanner.h"
 #include "utils/unused.h"
-void mcc_parser_error(struct MCC_PARSER_LTYPE *yylloc, yyscan_t *scanner, const char *msg)
+void mcc_parser_error(struct MCC_PARSER_LTYPE *yylloc, yyscan_t *scanner,struct mcc_parser_result *result, const char *msg)
 {
 	// TODO
 	UNUSED(yylloc);
