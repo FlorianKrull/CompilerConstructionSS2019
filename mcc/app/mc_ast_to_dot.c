@@ -29,26 +29,26 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    struct mcc_ast_expression *expr = NULL;
-    struct mcc_ast_declaration *decl = NULL;
+   struct mcc_ast_statement *prog = NULL;
 
     // parsing phase
     {
         printf("Start parsing \n");
+
         struct mcc_parser_result result = mcc_parse_file(in);
         if (result.status != MCC_PARSER_STATUS_OK) {
-            printf("NOT OK");
+            printf("NOT OK \n");
             return EXIT_FAILURE;
         }
-        printf("OK");
-        decl = result.declaration;
-        result.expression = expr;
+        printf("Parsing ok \n");
+        printf("---- Printing tree ----\n");
+        prog = result.program;
     }
 
-    mcc_ast_print_dot(stdout, decl);
+    mcc_ast_print_dot(stdout, prog);
 
     // cleanup
-    mcc_ast_delete(expr);
+    mcc_ast_delete(prog);
 
     return EXIT_SUCCESS;
 }
