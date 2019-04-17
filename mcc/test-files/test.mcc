@@ -7,7 +7,5 @@ void c(int c) {
 }
 
 void b(int c) {
- int c;
-       if(a)
-       int b;
+ 
 }

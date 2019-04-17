@@ -163,6 +163,9 @@ struct mcc_ast_literal *mcc_ast_new_literal(enum mcc_ast_literal_type type, char
 void mcc_ast_delete_literal(struct mcc_ast_literal *literal)
 {
 	assert(literal);
+	if (literal->value) {
+		free(literal->value);
+	}
 	free(literal);
 }
 

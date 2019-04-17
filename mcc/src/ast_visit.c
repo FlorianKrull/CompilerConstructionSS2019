@@ -62,31 +62,12 @@ void mcc_ast_visit_expression(struct mcc_ast_expression *expression, struct mcc_
 	visit_if_post_order(expression, visitor->expression, visitor);
 }
 
-void mcc_ast_visit_literal(struct mcc_ast_literal *literal, struct mcc_ast_visitor *visitor)
+void mcc_ast_visit_literal(struct mcc_ast_literal *literal,struct mcc_ast_visitor *visitor)
 {
 	assert(literal);
 	assert(visitor);
 
-	visit_if_pre_order(literal, visitor->literal, visitor);
-
-	switch (literal->type) {
-	case MCC_AST_LITERAL_TYPE_INT:
-		visit(literal, visitor->literal, visitor);
-		break;
-
-	case MCC_AST_LITERAL_TYPE_FLOAT:
-		visit(literal, visitor->literal, visitor);
-		break;
-	
-	case MCC_AST_LITERAL_TYPE_STRING:
-		visit(literal, visitor->literal,visitor);
-		break;
-
-	case MCC_AST_LITERAL_TYPE_BOOL:
-		visit(literal, visitor->literal,visitor);
-	}
-
-	visit_if_post_order(literal, visitor->literal, visitor);
+	visit(literal, visitor->literal, visitor);
 }
 
 void mcc_ast_visit_declaration(struct mcc_ast_declaration *declaration, struct mcc_ast_visitor *visitor)
@@ -97,7 +78,6 @@ void mcc_ast_visit_declaration(struct mcc_ast_declaration *declaration, struct m
 	visit_if_pre_order(declaration, visitor->declaration, visitor);
 
 	mcc_ast_visit_identifier(declaration -> ident, visitor);
-
 
 	visit_if_post_order(declaration, visitor->declaration, visitor);
 }
