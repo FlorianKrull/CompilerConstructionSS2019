@@ -1,11 +1,12 @@
+void a(int b) {
+    int c;
+    int d;
 
-void a(int c) {
-}
+    c = 1;
+    d = 2;
 
-void c(int c) {
-   
-}
+    if (c < d) {
+       int final = 5;
+    }
 
-void b(int c) {
- 
 }
