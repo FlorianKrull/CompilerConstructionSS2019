@@ -1,12 +1,3 @@
-void a(int b) {
-    int z;
-    int d;
-
-    z = 2;
-    d = 1;
-
-    if (z < d) {
-        int r;
-    }
-
+void a(bool test) {
+    b(test, r);
 }

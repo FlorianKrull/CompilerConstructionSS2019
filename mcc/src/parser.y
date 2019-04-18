@@ -88,7 +88,7 @@ void mcc_parser_error();
 %precedence UMINUS
 
 
-%type <struct mcc_ast_expression *> expression single_expr binary_op
+%type <struct mcc_ast_expression *> expression single_expr binary_op call_expression
 %type <struct mcc_ast_identifier *> identifier
 %type <struct mcc_ast_literal *> literal
 %type <struct mcc_ast_statement *> statement if_statement while_statement compound_statement
@@ -98,12 +98,13 @@ void mcc_parser_error();
 %type <struct mcc_ast_declaration *> declaration
 %type <struct mcc_ast_assignment *> assignment
 %type <struct mcc_ast_parameter *> parameters
-// %type <struct mcc_ast_arguments *> argument
+%type <struct mcc_ast_argument *> argument
 %type <struct mcc_ast_program *> program
 
 
 %destructor { mcc_ast_delete_identifier($$); }         	identifier
 %destructor { mcc_ast_delete_declaration($$); }        	declaration
+%destructor {mcc_ast_delete_argument($$); }		argument
 
 %destructor { mcc_ast_delete_function($$); } 		function_def
 %destructor { mcc_ast_delete_parameter($$); }           parameters
@@ -158,8 +159,9 @@ single_expr : literal
               { $$ = mcc_ast_new_expression_parenth($2);      loc($$, @1); }
             ;
 
-expression : binary_op    { $$ = $1; } 
-           | single_expr  { $$ = $1; }
+expression : binary_op    	{ $$ = $1; }
+           | single_expr  	{ $$ = $1; }
+           | call_expression 	{ $$ = $1; }
            ;
 
 
@@ -213,14 +215,22 @@ assignment:  identifier ASSIGNMENT expression
           	{ $$ = mcc_ast_new_array_assignment($1, $3, $6); 	loc($$, @1); };
           ;
 
-parameters  : declaration COMMA parameters 	{ $$ = mcc_ast_new_parameter($1, $3); loc($$, @1); }
-	    | declaration 			{ $$ = mcc_ast_new_parameter($1, NULL); loc($$, @1); }
-            ;
+call_expression: identifier LPARENTH RPARENTH 		{ $$ = mcc_ast_new_expression_call_expression($1, NULL); loc($$, @1); }
+	       | identifier LPARENTH argument RPARENTH { $$ = mcc_ast_new_expression_call_expression($1, $3); loc($$, @1); }
+	       ;
 
-function_def:  type identifier LPARENTH parameters RPARENTH compound_statement
+argument: expression COMMA argument { $$ = mcc_ast_add_new_argument($1, $3); loc($$, @1); }
+	 | expression { $$ = mcc_ast_new_argument($1) ; loc($$, @1); }
+
+
+parameters: declaration COMMA parameters 	{ $$ = mcc_ast_new_parameter($1, $3); loc($$, @1); }
+	  | declaration 			{ $$ = mcc_ast_new_parameter($1, NULL); loc($$, @1); }
+          ;
+
+function_def: type identifier LPARENTH parameters RPARENTH compound_statement
 		{ $$ = mcc_ast_new_function($1, $2, $4, $6);   loc($$, @1);};
 	    | type identifier LPARENTH RPARENTH compound_statement
-		{ $$ = mcc_ast_new_function($1, $2, NULL, $5);   loc($$, @1);}
+		{ $$ = mcc_ast_new_function($1, $2, NULL, $5); loc($$, @1);}
 	    ;
 
 program : function_def { $$ = mcc_ast_new_program($1); loc($$, @1);}

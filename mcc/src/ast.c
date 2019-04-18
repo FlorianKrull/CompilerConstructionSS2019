@@ -142,10 +142,30 @@ void mcc_ast_delete_expression(struct mcc_ast_expression *expression)
 		mcc_ast_delete_expression(expression->bracket_expression);
 		break;
     case MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION:
+        mcc_ast_delete_identifier(expression->bracket_identifier);
+        mcc_ast_delete_argument(expression->argument);
         break;
 	}
 
 	free(expression);
+}
+
+struct mcc_ast_expression *
+mcc_ast_new_expression_call_expression(struct mcc_ast_identifier *function_name,
+                                       struct mcc_ast_argument *argument)
+{
+    assert(function_name);
+
+    struct mcc_ast_expression *expression = malloc(sizeof(*expression));
+
+    expression -> type = MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION;
+    expression -> function_name = function_name;
+
+    if (argument != NULL) {
+        expression -> argument = argument;
+    }
+
+    return expression;
 }
 
 // ------------------------------------------------------------------- Literals
@@ -376,56 +396,6 @@ mcc_ast_new_statement_compound(struct mcc_ast_statement_list *statement_list)
 	return stmt;
 }
 
-// struct mcc_ast_statement_list *construct_new_statement_list(int size, int max)
-// {
-//     struct mcc_ast_statement_list *stmt_list = malloc(sizeof(*stmt_list) + max);
-//     stmt_list -> size = size;
-//     stmt_list -> max_size = max;
-
-//     return stmt_list;
-// }
-
-// // TODO: refactor (like program list)
-// struct mcc_ast_statement *mcc_ast_new_statement_list(struct mcc_ast_statement_list *statement_list,
-//                                                                struct mcc_ast_statement *next_statement)
-// {
-    
-
-//     if (!statement_list) {
-//         // create new statement - start with statement array of size 10
-//         statement_list = construct_new_statement_list(0, 10);
-//         statement_list -> list[0] = next_statement;
-//     } else {
-//         int max = statement_list -> max_size;
-//         int current = statement_list -> size;
-//         // struct mcc_ast_statement *stmt_list[] = statement_list -> list;
-
-//         if (current < max) {
-//             statement_list -> list[current] = next_statement;
-//         } else {
-//             // double size of statement list
-//             statement_list = realloc(statement_list, sizeof(*statement_list) + (max * 2));
-
-//             // in case realloc fails return NULL for now
-//             // TODO create new statement list and free old one?
-//             if (!statement_list) {
-//                 return NULL;
-//             }
-
-//             statement_list -> max_size = max * 2;
-//             statement_list -> size = current + 1;
-//             statement_list -> list[current] = next_statement;
-//         }
-//     }
-
-//     struct mcc_ast_statement *stmt = construct_statement();
-
-//     stmt -> type = MCC_AST_STATEMENT_TYPE_COMPOUND;
-//     stmt -> compound_statement = statement_list;
-
-//     return stmt;
-// }
-
 struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_assignment *assignment)
 {
     assert(assignment);
@@ -520,6 +490,53 @@ void mcc_ast_delete_parameter(struct mcc_ast_parameter *parameter) {
         free(parameter);
     }
 
+}
+
+// ------------------------------------------------------------------- Arguments
+
+struct mcc_ast_argument *mcc_ast_new_argument(struct mcc_ast_expression *expression) {
+    assert(expression);
+
+    struct mcc_ast_argument *argument = malloc(sizeof(*argument) + sizeof(struct mcc_ast_expression) * 4);
+
+    argument -> expressions[0] = expression;
+    argument -> size = 1;
+    argument -> max = 4;
+
+    return argument;
+}
+
+struct mcc_ast_argument *mcc_ast_add_new_argument(struct mcc_ast_expression *expression, struct mcc_ast_argument *argument) {
+    assert(argument);
+    assert(expression);
+
+    int size = argument -> size;
+    int max = argument -> max;
+
+    if (size < max) {
+        argument -> expressions[size] = expression;
+        argument -> size += 1;
+    } else {
+        int next_max = max + 4;
+
+        argument = realloc(argument, sizeof(*argument) + sizeof(struct mcc_ast_expression) * next_max);
+        argument -> expressions[size] = expression;
+        argument -> size += 1;
+        argument -> max = next_max;
+    }
+
+    return argument;
+}
+
+void mcc_ast_delete_argument(struct mcc_ast_argument *argument) {
+    assert(argument);
+
+    for(int i = 0; i < argument -> size; i++) {
+        mcc_ast_delete_expression(argument -> expressions[i]);
+    }
+
+    free(argument -> expressions);
+    free(argument);
 }
 
 // ------------------------------------------------------------------- Function

@@ -153,6 +153,24 @@ mcc_ast_new_expression_bracket(struct mcc_ast_identifier *identifier,
 
 void mcc_ast_delete_expression(struct mcc_ast_expression *expression);
 
+
+// ------------------------------------------------------------------- Argument
+
+struct mcc_ast_argument {
+	struct mcc_ast_node node;
+
+	int size;
+	int max;
+
+	struct mcc_ast_expression *expressions[];
+};
+
+struct mcc_ast_argument *mcc_ast_new_argument(struct mcc_ast_expression *expression);
+
+struct mcc_ast_argument *mcc_ast_add_new_argument(struct mcc_ast_expression *expression, struct mcc_ast_argument *argument);
+
+void mcc_ast_delete_argument(struct mcc_ast_argument *argument);
+
 // ------------------------------------------------------------------- Identifier
 
 struct mcc_ast_identifier {
@@ -164,7 +182,9 @@ struct mcc_ast_identifier {
 struct mcc_ast_identifier *mcc_ast_new_identifier(char *value);
 
 void mcc_ast_delete_identifier(struct mcc_ast_identifier *identifier);
+
 // ------------------------------------------------------------------- Declaration
+
 enum mcc_ast_declaration_type {
 	MCC_AST_DECLARATION_TYPE_DECLARATION,
 	MCC_AST_DECLARATION_TYPE_ARRAY_DECLARATION
@@ -234,14 +254,6 @@ enum mcc_ast_statement_type {
 	MCC_AST_STATEMENT_TYPE_COMPOUND,
 	// MCC_AST_STATEMENT_TYPE_BLOCK
 };
-
-// struct mcc_ast_statement_list {
-
-// 	struct mcc_ast_node node;
-//     int size;
-//     int max_size;
-//     struct mcc_ast_statement *list[];
-// };
 
 struct mcc_ast_statement_list {
 	struct mcc_ast_node node;
