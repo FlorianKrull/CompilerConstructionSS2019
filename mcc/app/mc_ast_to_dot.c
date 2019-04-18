@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-   struct mcc_ast_statement *prog = NULL;
+   struct mcc_ast_program *prog = NULL;
 
     // parsing phase
     {

@@ -30,7 +30,7 @@ digit         [0-9]
 
 int_literal   {digit}+
 float_literal {digit}+\.{digit}+
-bool_literal true|false
+bool_literal  true|false
 identifier {alpha}{alpha_num}*
 string_literal \"(\\.|[^"\\])*\"
 comment (\/\*.*\*\/)
@@ -90,8 +90,10 @@ comment_multiline ("/*"([^*]|\*+[^*/])*\*+"/")
                     yylval->TK_IDENTIFIER = strdup(yytext);
                     return TK_IDENTIFIER;
                   }
-{bool_literal}    { yylval->TK_BOOL_LITERAL = strdup(yytext);
-                    return TK_BOOL_LITERAL; }
+{bool_literal}    {
+                    yylval->TK_BOOL_LITERAL = strdup(yytext);
+                    return TK_BOOL_LITERAL;
+                  }
 
 {int_literal}     { yylval->TK_INT_LITERAL = strdup(yytext);
                     return TK_INT_LITERAL; }

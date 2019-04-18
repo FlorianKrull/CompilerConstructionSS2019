@@ -33,7 +33,8 @@ void mcc_ast_print_dot_program(FILE *out, struct mcc_ast_program *program);
 		struct mcc_ast_expression *: 	mcc_ast_print_dot_expression, \
 		struct mcc_ast_literal *:    	mcc_ast_print_dot_literal, \
 		struct mcc_ast_declaration *:	mcc_ast_print_dot_declaration, \
-		struct mcc_ast_statement *: 	mcc_ast_print_dot_statement \
+		struct mcc_ast_statement *: 	mcc_ast_print_dot_statement, \
+		struct mcc_ast_program *: 		mcc_ast_print_dot_program \
 	)(out, x)
 
 // clang-format on

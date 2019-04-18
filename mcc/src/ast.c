@@ -24,7 +24,7 @@ mcc_ast_new_expression_literal(struct mcc_ast_literal *literal)
 }
 
 
-struct mCc_ast_expression *
+struct mcc_ast_expression *
 mcc_ast_new_expression_unary_op(enum mcc_ast_unary_op op,
                                 struct mcc_ast_expression *expression)
 {
@@ -38,7 +38,8 @@ mcc_ast_new_expression_unary_op(enum mcc_ast_unary_op op,
 	expr->type = MCC_AST_EXPRESSION_TYPE_UNARY_OP;
 	expr->unary_op = op;
 	expr->unary_expression = expression;
-	return expr;
+
+    return expr;
 }
 
 struct mcc_ast_expression *
@@ -140,6 +141,8 @@ void mcc_ast_delete_expression(struct mcc_ast_expression *expression)
 		mcc_ast_delete_identifier(expression->bracket_identifier);
 		mcc_ast_delete_expression(expression->bracket_expression);
 		break;
+    case MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION:
+        break;
 	}
 
 	free(expression);
@@ -304,15 +307,14 @@ struct mcc_ast_statement *mcc_ast_new_statement_if(struct mcc_ast_expression *co
     return stmt;
 }
 
-struct mcc_ast_statement *mcc_ast_new_statement_declaration(enum mcc_ast_data_type data_type,
-                                                            struct mcc_ast_identifier *identifier)
+struct mcc_ast_statement *mcc_ast_new_statement_declaration(struct mcc_ast_declaration *declaration)
 {
-    assert(identifier);
+    assert(declaration);
 
     struct mcc_ast_statement *stmt = malloc(sizeof(*stmt));
     stmt -> type = MCC_AST_STATEMENT_TYPE_DECL;
-    stmt -> data_type = data_type;
-    stmt -> id_decl = identifier;
+    stmt -> data_type = declaration -> type;
+    stmt -> id_decl = declaration -> ident;
 
     return stmt;
 }
@@ -466,7 +468,7 @@ void mcc_ast_delete_statement(struct mcc_ast_statement *statement)
             break;
 	    case MCC_AST_STATEMENT_TYPE_COMPOUND:
             if(statement->compound_statement != NULL){
-                mcc_ast_delete_statement(statement->compound_statement);
+                // TODO delete statement list// mcc_ast_delete_statement(statement->compound_statement);
             }
             break;
         default : break;

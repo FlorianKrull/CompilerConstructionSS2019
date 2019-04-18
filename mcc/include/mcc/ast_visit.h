@@ -22,13 +22,13 @@ enum mcc_ast_visit_order {
 };
 
 // Callbacks
-typedef void (*mcc_ast_visit_expression_cb)(struct mcc_ast_expression *, void *userdata);
-typedef void (*mcc_ast_visit_literal_cb)(struct mcc_ast_literal *, void *userdata);
-typedef void (*mcc_ast_visit_declaration_cb)(struct mcc_ast_declaration *, void *userdata);
-typedef void (*mcc_ast_visit_identifier_cb)(struct mcc_ast_identifier *, void *userdata);
-typedef void (*mcc_ast_visit_statement_cb)(struct mcc_ast_statement *, void *userdata);
-typedef void (*mcc_ast_visit_statement_list_cb)(struct mCc_ast_statement_list *,void *userData);
-typedef void (*mcc_ast_visit_assignment_cb)(struct mcc_ast_assignment *, void *userdata);
+typedef void (*mcc_ast_visit_expression_cb)(struct mcc_ast_expression *, void *userData);
+typedef void (*mcc_ast_visit_literal_cb)(struct mcc_ast_literal *, void *userData);
+typedef void (*mcc_ast_visit_declaration_cb)(struct mcc_ast_declaration *, void *userData);
+typedef void (*mcc_ast_visit_identifier_cb)(struct mcc_ast_identifier *, void *userData);
+typedef void (*mcc_ast_visit_statement_cb)(struct mcc_ast_statement *, void *userData);
+typedef void (*mcc_ast_visit_statement_list_cb)(struct mcc_ast_statement_list *,void *userData);
+typedef void (*mcc_ast_visit_assignment_cb)(struct mcc_ast_assignment *, void *userData);
 typedef void (*mcc_ast_visit_function_cb)(struct mcc_ast_function *, void *userData);
 typedef void (*mcc_ast_visit_parameter_cb)(struct mcc_ast_parameter *, void *userData);
 typedef void (*mcc_ast_visit_program_cb)(struct mcc_ast_program *, void *userData);

@@ -135,12 +135,12 @@ struct mcc_ast_expression *
 mcc_ast_new_expression_call_expression(struct mcc_ast_identifier *function_name,
                                        struct mcc_ast_argument *argument);
 
-struct mCc_ast_expression *
-mCc_ast_new_expression_unary_op(enum mcc_ast_unary_op op,
+struct mcc_ast_expression *
+mcc_ast_new_expression_unary_op(enum mcc_ast_unary_op op,
                                 struct mcc_ast_expression *expression);
 
-struct mCc_ast_expression *
-mCc_ast_new_expression_binary_op(enum mcc_ast_binary_op op,
+struct mcc_ast_expression *
+mcc_ast_new_expression_binary_op(enum mcc_ast_binary_op op,
                                  struct mcc_ast_expression *lhs,
                                  struct mcc_ast_expression *rhs);
 
@@ -284,7 +284,7 @@ struct mcc_ast_statement {
 
 		struct mcc_ast_expression *expression;
 
-        struct mcc_ast_statement_compound *compound_statement;
+        struct mcc_ast_statement_list *compound_statement;
     };
 };
 
@@ -299,8 +299,7 @@ struct mcc_ast_statement *mcc_ast_new_statement_while(struct mcc_ast_expression 
 
 struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_assignment *assignment);
 
-struct mcc_ast_statement *mcc_ast_new_statement_declaration(enum mcc_ast_data_type data_type,
-															struct mcc_ast_identifier *identifier);
+struct mcc_ast_statement *mcc_ast_new_statement_declaration(struct mcc_ast_declaration *declaration);
 
 struct mcc_ast_statement *mcc_ast_new_statement_compound(struct mcc_ast_statement_list *statement_list);
 
@@ -390,7 +389,8 @@ void mcc_ast_delete_program(struct mcc_ast_program *program);
 #define mcc_ast_delete(x) _Generic((x), \
 		struct mcc_ast_expression *: mcc_ast_delete_expression, \
 		struct mcc_ast_literal *:    mcc_ast_delete_literal, \
-		struct mcc_ast_statement *: mcc_ast_delete_statement \
+		struct mcc_ast_statement *:  mcc_ast_delete_statement, \
+        struct mcc_ast_program *:  mcc_ast_delete_program \
 	)(x)
 
 // clang-format on

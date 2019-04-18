@@ -4,7 +4,7 @@
 #include "mcc/parser.h"
 
 // Threshold for floating point comparisions.
-static const double EPS = 1e-3;
+// static const double EPS = 1e-3;
 
 // void BinaryOp_1(CuTest *tc)
 // {
@@ -250,7 +250,7 @@ static const double EPS = 1e-3;
 // }
 
 #define TESTS \
-	// TEST(MissingClosingParenthesis_1) \
+/*	// TEST(MissingClosingParenthesis_1) \
 	// TEST(SourceLocation_SingleLineColumn)\
 	// TEST(StatementWhile)\
 	// TEST(StatementIf)\
@@ -259,7 +259,7 @@ static const double EPS = 1e-3;
   //   TEST(StatementRet)\
   //   TEST(StatementDeclarationString)\
   //   TEST(StatementDeclarationFloat)\
-  //   TEST(StatementDeclarationInt)\
+  //   TEST(StatementDeclarationInt)\*/
 
 #include "main_stub.inc"
 #undef TESTS

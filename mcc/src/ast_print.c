@@ -82,7 +82,8 @@ const char *mcc_ast_print_statement(enum mcc_ast_statement_type stmt_type)
 			return "ASSGN_STMT";
 		case MCC_AST_STATEMENT_TYPE_COMPOUND:
 			return "COMPOUND_STMT";
-
+        case MCC_AST_STATEMENT_TYPE_ASSGN_ARR:
+            return "TYPE ARR STMT";
 	}
 
 	return "unknown statement";
@@ -282,23 +283,23 @@ static void print_dot_statement_declaration(struct mcc_ast_statement *statement,
 	print_dot_edge(out, statement, statement->declaration, "declaration");
 }
 
-static void
-print_dot_statement_list(struct mcc_ast_statement_list *statement_list,void *data)
-{
-	assert(statement_list);
-	assert(data);
-
-	char label[LABEL_SIZE] = { 0 };
-	snprintf(label, sizeof(label), "statement list");
-
-	FILE *out = data;
-	print_dot_node(out, statement_list, label);
-	print_dot_edge(out, statement_list, statement_list->statement, "statement");
-	if (statement_list->next != NULL) {
-		print_dot_edge(out, statement_list, statement_list->next,
-		               "next statement");
-	}
-}
+//static void
+//print_dot_statement_list(struct mcc_ast_statement_list *statement_list,void *data)
+//{
+//	assert(statement_list);
+//	assert(data);
+//
+//	char label[LABEL_SIZE] = { 0 };
+//	snprintf(label, sizeof(label), "statement list");
+//
+//	FILE *out = data;
+//	print_dot_node(out, statement_list, label);
+//	print_dot_edge(out, statement_list, statement_list->statement, "statement");
+//	if (statement_list->next != NULL) {
+//		print_dot_edge(out, statement_list, statement_list->next,
+//		               "next statement");
+//	}
+//}
 
 static void print_dot_statement_compound( struct mcc_ast_statement *statement, void *data)
 {
@@ -339,7 +340,7 @@ static void print_dot_parameter(struct mcc_ast_parameter *parameter, void *data)
 
 	FILE *out = data;
 	print_dot_node(out, parameter, "param: decl");
-	for (unsigned int i = 0; i < parameter->size; ++i) {
+	for (int i = 0; i < parameter->size; ++i) {
 		print_dot_edge(out, parameter, parameter->parameters[i], "declaration");
 	}
 }
@@ -374,7 +375,7 @@ static void print_dot_program(struct mcc_ast_program *program, void *data)
 
 	FILE *out = data;
 	print_dot_node(out, program, "program");
-	for (unsigned int i = 0; i < program->size; i++) {
+	for (int i = 0; i < program->size; i++) {
 		print_dot_edge(out, program, program->function_def[i],
 		               "function_definition");
 	}
@@ -471,11 +472,12 @@ void mcc_ast_print_dot_declaration(FILE *out, struct mcc_ast_declaration *declar
 void mcc_ast_print_dot_program(FILE *out, struct mcc_ast_program *program)
 {
 	assert(out);
+    assert(program);
 
 	print_dot_begin(out);
 
-	struct mcc_ast_visitor visitor = print_dot_visitor(out);
-	mcc_ast_visit_program(program, &visitor);
+	// struct mcc_ast_visitor visitor = print_dot_visitor(out);
+	// mcc_ast_visit_program(program, &visitor);
 
 	print_dot_end(out);
 }
