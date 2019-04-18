@@ -102,6 +102,20 @@ void mcc_ast_visit_declaration(struct mcc_ast_declaration *declaration, struct m
 	visit_if_post_order(declaration, visitor->declaration, visitor);
 }
 
+void mcc_ast_visit_statement_list(struct mcc_ast_statement_list *statement_list,
+                                  struct mcc_ast_visitor *visitor)
+{
+    assert(statement_list);
+    assert(visitor);
+
+    struct mcc_ast_statement_list *next = statement_list;
+    while (next != NULL) {
+        visit_if_pre_order(next, visitor->statement_list, visitor);
+        mcc_ast_visit_statement(next->statement, visitor);
+        visit_if_post_order(statement_list, visitor->statement_list, visitor);
+        next = next->next;
+    }
+}
 
 void mcc_ast_visit_statement(struct mcc_ast_statement *statement,
                              struct mcc_ast_visitor *visitor)
@@ -174,21 +188,6 @@ void mcc_ast_visit_statement(struct mcc_ast_statement *statement,
 		visit_if_post_order(statement, visitor->statement, visitor);
 	}
 }
-
-void mcc_ast_visit_statement_list(struct mcc_ast_statement_list *statement_list,
-                                  struct mcc_ast_visitor *visitor)
-{
-	assert(statement_list);
-	assert(visitor);
-	
-	struct mcc_ast_statement_list *next = statement_list;
-	while (next != NULL) {
-		visit_if_pre_order(next, visitor->statement_list, visitor);
-		mcc_ast_visit_statement(next->statement, visitor);
-		visit_if_post_order(statement_list, visitor->statement_list, visitor);
-		next = next->next;
-	}
-}	
 
 void mcc_ast_visit_assignment(struct mcc_ast_assignment *assignment,
                               struct mcc_ast_visitor *visitor)
