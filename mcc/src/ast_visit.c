@@ -58,6 +58,10 @@ void mcc_ast_visit_expression(struct mcc_ast_expression *expression, struct mcc_
 		break;
 	case MCC_AST_EXPRESSION_TYPE_IDENTIFIER:
 	case MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION:
+         visit_if_pre_order(expression, visitor->expression_call_expression, visitor);
+         mcc_ast_visit(expression->expression, visitor);
+         visit_if_post_order(expression, visitor->expression_parenth, visitor);
+         break;
 	case MCC_AST_EXPRESSION_TYPE_BRACKET:
 		break;
 	}
@@ -224,8 +228,15 @@ void mcc_ast_visit_function(struct mcc_ast_function *function,
 	assert(visitor);
 	visit_if_pre_order(function, visitor->function, visitor);
 	mcc_ast_visit_identifier(function->identifier, visitor);
-	mcc_ast_visit_parameter(function->parameter, visitor);
-	mcc_ast_visit_statement(function->statement, visitor);
+
+    if (function -> parameter != NULL) {
+        mcc_ast_visit_parameter(function->parameter, visitor);
+    }
+
+    if (function -> statement != NULL) {
+        mcc_ast_visit_statement(function->statement, visitor);
+    }
+
 	visit_if_post_order(function, visitor->function, visitor);
 }
 

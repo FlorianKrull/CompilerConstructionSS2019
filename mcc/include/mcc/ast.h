@@ -385,7 +385,7 @@ struct mcc_ast_program {
 	struct mcc_ast_node node;
     int max;
     int size;
-	struct mcc_ast_function *function_def[];
+	struct mcc_ast_function* function_def[];
 };
 
 struct mcc_ast_program *mcc_ast_new_program(struct mcc_ast_function *function_def);
@@ -402,7 +402,7 @@ void mcc_ast_delete_program(struct mcc_ast_program *program);
 		struct mcc_ast_expression *: mcc_ast_delete_expression, \
 		struct mcc_ast_literal *:    mcc_ast_delete_literal, \
 		struct mcc_ast_statement *:  mcc_ast_delete_statement, \
-        struct mcc_ast_program *:  mcc_ast_delete_program \
+        struct mcc_ast_program *:    mcc_ast_delete_program \
 	)(x)
 
 // clang-format on

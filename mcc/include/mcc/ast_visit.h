@@ -86,6 +86,8 @@ void mcc_ast_visit_parameter(struct mcc_ast_parameter *parameter, struct mcc_ast
 
 void mcc_ast_visit_function(struct mcc_ast_function *function, struct mcc_ast_visitor *visitor);
 
+void mcc_ast_visit_program(struct mcc_ast_program *program, struct mcc_ast_visitor *visitor);
+
 // clang-format off
 
 #define mcc_ast_visit(x, visitor) _Generic((x), \
@@ -93,7 +95,10 @@ void mcc_ast_visit_function(struct mcc_ast_function *function, struct mcc_ast_vi
 		struct mcc_ast_literal *:    	mcc_ast_visit_literal, \
 		struct mcc_ast_declaration *:   mcc_ast_visit_declaration, \
 		struct mcc_ast_identifier *:	mcc_ast_visit_identifier, \
-		struct mcc_ast_statement *:	mcc_ast_visit_statement \
+		struct mcc_ast_statement *:		mcc_ast_visit_statement, \
+		struct mcc_ast_parameter *: 	mcc_ast_visit_parameter, \
+		struct mcc_ast_function *: 		mcc_ast_visit_function, \
+		struct mcc_ast_program *:		mcc_ast_visit_program \
 	)(x, visitor)
 
 // clang-format on

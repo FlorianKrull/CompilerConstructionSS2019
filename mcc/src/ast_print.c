@@ -313,7 +313,6 @@ static void print_dot_statement_compound( struct mcc_ast_statement *statement, v
 	}
 }
 
-
 // ------------------------------------------------------------------- Declaration
 
 static void print_dot_declaration(struct mcc_ast_declaration *declaration, void *data)
@@ -340,7 +339,7 @@ static void print_dot_parameter(struct mcc_ast_parameter *parameter, void *data)
 
 	FILE *out = data;
 	print_dot_node(out, parameter, "param: decl");
-	for (int i = 0; i < parameter->size; ++i) {
+    for (int i = 0; i < parameter->size; ++i) {
 		print_dot_edge(out, parameter, parameter->parameters[i], "declaration");
 	}
 }
@@ -358,10 +357,11 @@ static void print_dot_function(struct mcc_ast_function *function, void *data)
 	FILE *out = data;
 	print_dot_node(out, function, label);
 	print_dot_edge(out, function, function->identifier, "identifier");
-	if (function->parameter) {
+
+	if (function->parameter != NULL) {
 		print_dot_edge(out, function, function->parameter, "parameter");
 	}
-	if (function->statement) {
+	if (function->statement != NULL) {
 		print_dot_edge(out, function, function->statement, "body");
 	}
 }
@@ -476,8 +476,8 @@ void mcc_ast_print_dot_program(FILE *out, struct mcc_ast_program *program)
 
 	print_dot_begin(out);
 
-	// struct mcc_ast_visitor visitor = print_dot_visitor(out);
-	// mcc_ast_visit_program(program, &visitor);
+	struct mcc_ast_visitor visitor = print_dot_visitor(out);
+	mcc_ast_visit(program, &visitor);
 
 	print_dot_end(out);
 }

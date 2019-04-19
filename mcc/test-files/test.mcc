@@ -1,3 +1,2 @@
-void a(bool test) {
-    b(test, r);
+void a() {
 }

@@ -481,7 +481,6 @@ struct mcc_ast_parameter *mcc_ast_new_parameter(struct mcc_ast_declaration *decl
 }
 
 void mcc_ast_delete_parameter(struct mcc_ast_parameter *parameter) {
-
     if (parameter != NULL) {
         for (int i = 0; i < parameter -> size; i++) {
             mcc_ast_delete_declaration(parameter -> parameters[i]);
@@ -489,7 +488,6 @@ void mcc_ast_delete_parameter(struct mcc_ast_parameter *parameter) {
 
         free(parameter);
     }
-
 }
 
 // ------------------------------------------------------------------- Arguments
@@ -535,7 +533,6 @@ void mcc_ast_delete_argument(struct mcc_ast_argument *argument) {
         mcc_ast_delete_expression(argument -> expressions[i]);
     }
 
-    free(argument -> expressions);
     free(argument);
 }
 
@@ -561,7 +558,6 @@ struct mcc_ast_function *mcc_ast_new_function(
 
     func -> statement = statement;
 
-    printf("Function \n");
     return func;
 }
 
@@ -569,8 +565,14 @@ void mcc_ast_delete_function(struct mcc_ast_function *function) {
     assert(function);
 
     mcc_ast_delete_identifier(function -> identifier);
-    mcc_ast_delete_parameter(function -> parameter);
-    // TODO delete statement
+
+	if (function -> parameter != NULL) {
+		mcc_ast_delete_parameter(function -> parameter);
+	}
+
+	if (function -> statement != NULL) {
+		mcc_ast_delete_statement(function -> statement);
+	}
 
     free(function);
 }
@@ -621,6 +623,5 @@ void mcc_ast_delete_program(struct mcc_ast_program *program)
         mcc_ast_delete_function(program -> function_def[i]);
     }
 
-    free(program -> function_def);
     free(program);
 }
