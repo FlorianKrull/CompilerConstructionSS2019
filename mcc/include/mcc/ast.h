@@ -396,6 +396,7 @@ void mcc_ast_delete_program(struct mcc_ast_program *program);
 
 // -------------------------------------------------------------------- Utility
 
+
 // clang-format off
 
 #define mcc_ast_delete(x) _Generic((x), \

@@ -37,7 +37,9 @@ int main(int argc, char *argv[]) {
 
         struct mcc_parser_result result = mcc_parse_file(in);
         if (result.status != MCC_PARSER_STATUS_OK) {
-            printf("NOT OK \n");
+            // print error message
+            printf("%s", result.parser_error -> error_msg);
+
             return EXIT_FAILURE;
         }
         printf("Parsing ok \n");
@@ -49,6 +51,8 @@ int main(int argc, char *argv[]) {
 
     // cleanup
     mcc_ast_delete(prog);
+
+    // TODO free result
 
     return EXIT_SUCCESS;
 }
