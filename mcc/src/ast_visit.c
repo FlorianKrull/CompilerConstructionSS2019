@@ -78,15 +78,17 @@ void mcc_ast_visit_literal(struct mcc_ast_literal *literal,struct mcc_ast_visito
 	visit(literal, visitor->literal, visitor);
 }
 
-void mcc_ast_visit_declaration(struct mcc_ast_declaration *declaration, struct mcc_ast_visitor *visitor)
+void mcc_ast_visit_declaration(struct mcc_ast_declaration *declaration,
+                               struct mcc_ast_visitor *visitor)
 {
 	assert(declaration);
 	assert(visitor);
 
 	visit_if_pre_order(declaration, visitor->declaration, visitor);
-
-	mcc_ast_visit_identifier(declaration -> ident, visitor);
-
+	if (declaration->arr_literal) {
+		mcc_ast_visit_literal(declaration->arr_literal, visitor);
+	}
+	mcc_ast_visit_identifier(declaration->ident, visitor);
 	visit_if_post_order(declaration, visitor->declaration, visitor);
 }
 
@@ -204,7 +206,7 @@ void mcc_ast_visit_identifier(struct mcc_ast_identifier *identifier, struct mcc_
 	assert(identifier);
 	assert(visitor);
 
-	visit(identifier, visitor -> identifier, visitor);
+	visit(identifier, visitor->identifier, visitor);
 }
 
 void mcc_ast_visit_parameter(struct mcc_ast_parameter *parameter,

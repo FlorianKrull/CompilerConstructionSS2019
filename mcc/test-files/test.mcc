@@ -1,2 +1,6 @@
 void a() {
+    while (a){
+       if(a)
+       int c;
+    }
 }

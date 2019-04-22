@@ -194,7 +194,8 @@ if_statement: IF LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_state
             | IF LPARENTH expression RPARENTH statement ELSE statement { $$ = mcc_ast_new_statement_if($3, $5, $7);  loc($$, @1); }
             ;
 
-declaration: type identifier { $$ = mcc_ast_new_declaration($1, $2); loc($$, @1); }
+declaration:    type identifier { $$ = mcc_ast_new_declaration($1,NULL, $2); loc($$, @1); }
+            |   type LBRACKET literal RBRACKET identifier { $$ = mcc_ast_new_declaration($1,$3, $5); loc($$, @1); }
 	   ;
 
 
