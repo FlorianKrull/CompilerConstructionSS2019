@@ -18,7 +18,10 @@ int mcc_parser_lex();
 void mcc_parser_error();
 
 #define loc(ast_node, ast_sloc) \
-	(ast_node)->node.sloc.start_col = (ast_sloc).first_column;
+	(ast_node)->node.sloc.start_col = (ast_sloc).first_column; \
+	(ast_node)->node.sloc.start_line = (ast_sloc).first_line; \
+	(ast_node)->node.sloc.end_line = (ast_sloc).last_line; \
+	(ast_node)->node.sloc.end_col = (ast_sloc).last_column;
 
 %}
 
@@ -254,6 +257,7 @@ void mcc_parser_error(struct MCC_PARSER_LTYPE *yylloc, yyscan_t *scanner,struct 
 
 	struct mcc_parser_error *error = new_parser_error(loc, (char*) msg);
 	result -> parser_error = error;
+	free(loc);
 }
 struct mcc_parser_result mcc_parse_string(const char *input)
 {

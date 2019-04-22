@@ -2,4 +2,11 @@ int a() {
     if (b){
         int c;
     }
+    /*
+     *
+     *
+     * Comment
+     *
+     */
+    bool r;
 }

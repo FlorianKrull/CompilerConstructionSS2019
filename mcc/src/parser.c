@@ -15,7 +15,7 @@ struct mcc_parser_error *new_parser_error(struct mcc_ast_source_location *loc, c
 
     sprintf(error_msg, "Parser Error: \n "
             "%s \n"
-            "Location: Line: %d, Column, %d \n", msg, loc->start_line, loc->end_col);
+            "Location: Line: %d, Column, %d \n", msg, loc->end_line, loc->start_col);
 
     struct mcc_parser_error *error = malloc(sizeof(*error));
 
