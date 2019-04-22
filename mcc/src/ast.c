@@ -200,7 +200,6 @@ struct mcc_ast_identifier *mcc_ast_new_identifier(char *value)
 	if (!id) {
 		return NULL;
 	}
-
 	char *str = malloc((strlen(value) + 1) * sizeof(char));
 	strcpy(str, value);
 
@@ -217,28 +216,27 @@ void mcc_ast_delete_identifier(struct mcc_ast_identifier *identifier)
 
 // ------------------------------------------------------------------- Declaration
 
-struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type, struct mcc_ast_identifier *ident)
+struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type, struct mcc_ast_literal *arr_size, struct mcc_ast_identifier *ident)
 {
     assert(ident);
 
-    struct mcc_ast_declaration *decl= malloc(sizeof(*decl));
-    assert(decl);
+	struct mcc_ast_declaration *decl = malloc(sizeof(*decl));
+	if (!decl) {
+		return NULL;
+	}
 
-    decl -> type = type;
-    decl -> ident = ident;
-
-    return decl;
+	decl->type = type;
+	decl->ident = ident;
+	decl->arr_literal = arr_size ? arr_size : NULL;
+	return decl;
 }
 
 void mcc_ast_delete_declaration(struct mcc_ast_declaration *declaration)
 {
     assert(declaration);
-    if (declaration->declaration_type ==
-	    MCC_AST_DECLARATION_TYPE_ARRAY_DECLARATION) {
+    mcc_ast_delete_identifier(declaration->ident);
+	if (declaration->arr_literal) {
 		mcc_ast_delete_literal(declaration->arr_literal);
-		mcc_ast_delete_identifier(declaration->ident);
-	} else {
-		mcc_ast_delete_identifier(declaration->ident);
 	}
 	free(declaration);
 }
@@ -332,10 +330,12 @@ struct mcc_ast_statement *mcc_ast_new_statement_declaration(struct mcc_ast_decla
     assert(declaration);
 
     struct mcc_ast_statement *stmt = malloc(sizeof(*stmt));
+    if (!stmt) {
+		return NULL;
+	}
+    stmt-> declaration = declaration;
     stmt -> type = MCC_AST_STATEMENT_TYPE_DECL;
-    stmt -> data_type = declaration -> type;
-    stmt -> id_decl = declaration -> ident;
-
+    
     return stmt;
 }
 

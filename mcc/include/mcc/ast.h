@@ -185,16 +185,9 @@ void mcc_ast_delete_identifier(struct mcc_ast_identifier *identifier);
 
 // ------------------------------------------------------------------- Declaration
 
-enum mcc_ast_declaration_type {
-	MCC_AST_DECLARATION_TYPE_DECLARATION,
-	MCC_AST_DECLARATION_TYPE_ARRAY_DECLARATION
-};
-
 struct mcc_ast_declaration {
 	
 	struct mcc_ast_node node;
-
-	enum mcc_ast_declaration_type declaration_type;
 
 	enum mcc_ast_data_type type;
 
@@ -204,7 +197,7 @@ struct mcc_ast_declaration {
 
 };
 
-struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type, struct mcc_ast_identifier *ident);
+struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type, struct mcc_ast_literal *arr_size, struct mcc_ast_identifier *ident);
 
 void mcc_ast_delete_declaration(struct mcc_ast_declaration *declaration);
 

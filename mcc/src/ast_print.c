@@ -315,19 +315,22 @@ static void print_dot_statement_compound( struct mcc_ast_statement *statement, v
 
 // ------------------------------------------------------------------- Declaration
 
-static void print_dot_declaration(struct mcc_ast_declaration *declaration, void *data)
+static void print_dot_declaration(struct mcc_ast_declaration *declaration,
+                                  void *data)
 {
 	assert(declaration);
 	assert(data);
 
-	char label[LABEL_SIZE] = {0};
-	snprintf(label, sizeof(label), "%d", declaration->type);
+	char label[LABEL_SIZE] = { 0 };
+	snprintf(label, sizeof(label), "decl: %s",
+	         mcc_ast_print_data_type(declaration->type));
 
 	FILE *out = data;
 	print_dot_node(out, declaration, label);
-	print_dot_edge(out, declaration, &declaration -> type, "declaration type");
-	print_dot_edge(out, declaration, &declaration -> ident -> i_value, "declaration ident");
-
+	print_dot_edge(out, declaration, declaration->ident, "identifier");
+	if (declaration->arr_literal != NULL) {
+		print_dot_edge(out, declaration, declaration->arr_literal, "array size");
+	}
 }
 
 // ------------------------------------------------------------------- Parameter
