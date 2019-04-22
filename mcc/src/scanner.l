@@ -15,13 +15,24 @@
 #define YYSTYPE MCC_PARSER_STYPE
 #define YYLTYPE MCC_PARSER_LTYPE
 
-// TODO
-// - track lines
-// - take line breaks into account
+/* Update line and column count *
+* Reference: https://stackoverflow.com/a/22125500  */
 
 #define YY_USER_ACTION \
-	yylloc->first_column = yylloc->last_column; \
-	yylloc->last_column += yyleng;
+yylloc->first_column = yylloc->last_column; \
+yylloc->last_column += yyleng; \
+for(int i = 0; yytext[i] != '\0'; i++) { \
+    if(yytext[i] == '\n') { \
+        yylloc->last_line++; \
+        yylloc->last_column = 0; \
+    } \
+    else { \
+        yylloc->last_column++; \
+    } \
+}
+
+int line_num = 1;
+int comment_caller;
 %}
 
 alpha         [a-zA-Z_]
@@ -33,12 +44,28 @@ float_literal {digit}+\.{digit}+
 bool_literal  true|false
 identifier {alpha}{alpha_num}*
 string_literal \"(\\.|[^"\\])*\"
-comment (\/\*.*\*\/)
-comment_multiline ("/*"([^*]|\*+[^*/])*\*+"/")
 
+%x comment foo
+
+/* Scanning comments based on documentation *
+ * Documentation: ftp://ftp.gnu.org/old-gnu/Manuals/flex-2.5.4/html_mono/flex.html */
 
 %%
 
+"/*"         {
+                comment_caller = INITIAL;
+                BEGIN(comment);
+             }
+
+<foo>"/*" {
+          comment_caller = foo;
+          BEGIN(comment);
+          }
+
+<comment>[^*\n]*        /* eat anything that's not a '*' */
+<comment>"*"+[^*/\n]*   /* eat up '*'s not followed by '/'s */
+<comment>\n             ++line_num;
+<comment>"*"+"/"        BEGIN(comment_caller);
 
 "+"               { return TK_PLUS; }
 "-"               { return TK_MINUS; }
