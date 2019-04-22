@@ -330,11 +330,12 @@ struct mcc_ast_statement *mcc_ast_new_statement_declaration(struct mcc_ast_decla
     assert(declaration);
 
     struct mcc_ast_statement *stmt = malloc(sizeof(*stmt));
+    if (!stmt) {
+		return NULL;
+	}
     stmt-> declaration = declaration;
     stmt -> type = MCC_AST_STATEMENT_TYPE_DECL;
-    stmt -> data_type = declaration -> type;
-    stmt -> id_decl = declaration -> ident;
-
+    
     return stmt;
 }
 

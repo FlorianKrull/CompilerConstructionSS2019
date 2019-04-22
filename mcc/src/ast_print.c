@@ -328,7 +328,7 @@ static void print_dot_declaration(struct mcc_ast_declaration *declaration,
 	FILE *out = data;
 	print_dot_node(out, declaration, label);
 	print_dot_edge(out, declaration, declaration->ident, "identifier");
-	if (declaration->arr_literal) {
+	if (declaration->arr_literal != NULL) {
 		print_dot_edge(out, declaration, declaration->arr_literal, "array size");
 	}
 }
