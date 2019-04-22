@@ -244,10 +244,16 @@ program : function_def { $$ = mcc_ast_new_program($1); loc($$, @1);}
 #include "utils/unused.h"
 void mcc_parser_error(struct MCC_PARSER_LTYPE *yylloc, yyscan_t *scanner,struct mcc_parser_result *result, const char *msg)
 {
-	// TODO
-	UNUSED(yylloc);
-	UNUSED(scanner);
-	UNUSED(msg);
+
+	struct mcc_ast_source_location *loc = malloc(sizeof(*loc));
+
+	loc -> start_line = yylloc -> first_line;
+	loc -> start_col = yylloc -> first_column;
+	loc -> end_line = yylloc -> last_line;
+	loc -> end_col = yylloc -> last_column;
+
+	struct mcc_parser_error *error = new_parser_error(loc, (char*) msg);
+	result -> parser_error = error;
 }
 struct mcc_parser_result mcc_parse_string(const char *input)
 {

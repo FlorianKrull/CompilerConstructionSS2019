@@ -18,8 +18,21 @@ enum mcc_parser_status {
 	MCC_PARSER_STATUS_UNKNOWN_ERROR,
 };
 
+// -------------------- Parser Error
+
+struct mcc_parser_error {
+	struct mcc_ast_source_location *loc;
+	char *error_msg;
+};
+
+struct mcc_parser_error *new_parser_error(struct mcc_ast_source_location *loc, char *msg);
+
+// -------------------- Parser Result
+
 struct mcc_parser_result {
 	enum mcc_parser_status status;
+
+    struct mcc_parser_error *parser_error;
 
 	struct mcc_ast_expression *expression;
 	struct mcc_ast_literal *literal;
