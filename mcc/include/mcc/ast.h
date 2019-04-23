@@ -22,7 +22,6 @@ struct mcc_ast_literal;
 struct mcc_ast_statement;
 struct mcc_ast_identifier;
 
-
 // ------------------------------------------------------------------- AST Node
 
 struct mcc_ast_source_location {
@@ -38,8 +37,6 @@ struct mcc_ast_node {
 };
 
 // -------------------------------------------------------------------- Types
-
-
 
 enum mcc_ast_data_type {
     MCC_AST_DATA_TYPE_INT,
@@ -65,7 +62,6 @@ enum mcc_ast_binary_op {
     MCC_AST_BINARY_OP_LESS_EQUALS,
     MCC_AST_BINARY_OP_GREATER_EQUALS,
 };
-
 
 enum mcc_ast_unary_op {
     MCC_AST_UNARY_OP_NOT,
@@ -338,7 +334,6 @@ void mcc_ast_empty_node();
 
 // -------------------------------------------------------------------- Parameter
 
-// int PARAMETER_BLOCK_SIZE = 4;
 struct mcc_ast_parameter {
 	struct mcc_ast_node node;
     int max;
@@ -372,7 +367,6 @@ struct mcc_ast_function *mcc_ast_new_function(
 void mcc_ast_delete_function(struct mcc_ast_function *function);
 
 // -------------------------------------------------------------------- Program
-
 
 struct mcc_ast_program {
 	struct mcc_ast_node node;
