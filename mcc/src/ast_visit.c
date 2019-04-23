@@ -173,6 +173,15 @@ void mcc_ast_visit_statement(struct mcc_ast_statement *statement,
 			visit_if_post_order(statement, visitor->statement_compound,
 			                    visitor);
 			break;
+
+		case MCC_AST_STATEMENT_TYPE_RETURN:
+			visit_if_pre_order(statement, visitor->statement_return, visitor);
+			if (statement->expression != NULL) {
+				mcc_ast_visit_expression(statement->expression, visitor);
+			}
+			visit_if_post_order(statement, visitor->statement_return, visitor);
+			break;
+			
         case MCC_AST_STATEMENT_TYPE_ASSGN_ARR:
             break;
 		}

@@ -313,6 +313,19 @@ static void print_dot_statement_compound( struct mcc_ast_statement *statement, v
 	}
 }
 
+static void print_dot_statement_return(
+    struct mcc_ast_statement *statement, void *data)
+{
+	assert(statement);
+	assert(data);
+	assert(statement->type == MCC_AST_STATEMENT_TYPE_RETURN);
+
+	FILE *out = data;
+	if (statement->expression != NULL) {
+		print_dot_edge(out, statement, statement->expression, "expression");
+	}
+}
+
 // ------------------------------------------------------------------- Declaration
 
 static void print_dot_declaration(struct mcc_ast_declaration *declaration,

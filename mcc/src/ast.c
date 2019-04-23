@@ -410,6 +410,18 @@ struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_assign
     return stmt;
 }
 
+struct mcc_ast_statement *mcc_ast_new_statement_return(struct mcc_ast_expression *expression)
+{
+	struct mcc_ast_statement *stmt = malloc(sizeof(*stmt));
+	if (!stmt) {
+		return NULL;
+	}
+	stmt->type = MCC_AST_STATEMENT_TYPE_RETURN;
+	stmt->expression = expression;
+	
+	return stmt;
+}
+
 void mcc_ast_delete_statement(struct mcc_ast_statement *statement)
 {
     assert(statement);

@@ -182,13 +182,15 @@ type : INT_TYPE { $$ = MCC_AST_DATA_TYPE_INT; }
      ;
 
 
-statement : expression SEMICOLON    { $$ = mcc_ast_new_statement_expression($1); loc($$, @1); }
-          | if_statement            { $$ = $1;  loc($$, @1); }
-	  | while_statement         { $$ = $1; loc($$, @1); }
-	  | compound_statement      { $$ = $1; loc($$, @1); }
-          | assignment SEMICOLON    { $$ = mcc_ast_new_statement_assignment($1); loc($$, @1); }
-          | declaration SEMICOLON   { $$ = mcc_ast_new_statement_declaration($1); loc($$, @1); }
-	  ;
+statement : expression SEMICOLON        { $$ = mcc_ast_new_statement_expression($1); loc($$, @1); }
+          | if_statement                { $$ = $1;  loc($$, @1); }
+	      | while_statement             { $$ = $1; loc($$, @1); }
+	      | compound_statement          { $$ = $1; loc($$, @1); }
+          | assignment SEMICOLON        { $$ = mcc_ast_new_statement_assignment($1); loc($$, @1); }
+          | declaration SEMICOLON       { $$ = mcc_ast_new_statement_declaration($1); loc($$, @1); }
+          | RETURN expression SEMICOLON { $$ = mcc_ast_new_statement_return($2); loc($$,@1);}
+          | RETURN SEMICOLON            { $$ = mcc_ast_new_statement_return(NULL); loc($$,@1);}
+	      ;
 
 if_statement: IF LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statement_if($3, $5,NULL);  loc($$, @1); }
             | IF LPARENTH expression RPARENTH statement ELSE statement { $$ = mcc_ast_new_statement_if($3, $5, $7);  loc($$, @1); }
