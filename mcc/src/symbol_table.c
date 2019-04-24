@@ -4,6 +4,11 @@
 #include <string.h>
 #include "mcc/symbol_table.h"
 
+// ---------------------------------------------------------- CONSTANTS
+
+const int SYMBOL_TABLE_SYMBOL_SIZE = 100;
+const int SYMBOL_TABLE_CHILDREN_SIZE = 5;
+
 // ---------------------------------------------------------- Symbol
 
 struct mcc_symbol *mcc_symbol_new_symbol_variable(char* variable_name, enum mcc_ast_data_type data_type) {
@@ -56,8 +61,8 @@ void mcc_symbol_delete_symbol(struct mcc_symbol *symbol) {
 // ---------------------------------------------------------- Symbol Table
 
 struct mcc_symbol_table *mcc_symbol_table_new_table(struct mcc_symbol_table *parent) {
-    int mem_symbols = sizeof(struct mcc_symbol) * SYMBOL_TABLE_SYMBOL_SIZE;
-    int mem_children = sizeof(struct mcc_symbol_table) * SYMBOL_TABLE_CHILDREN_SIZE;
+    int mem_symbols = sizeof(struct mcc_symbol*) * SYMBOL_TABLE_SYMBOL_SIZE;
+    int mem_children = sizeof(struct mcc_symbol_table*) * SYMBOL_TABLE_CHILDREN_SIZE;
 
     struct mcc_symbol_table *table = malloc(sizeof(*table) + mem_symbols + mem_children);
 
@@ -101,7 +106,7 @@ int mcc_add_symbol_table_to_parent(struct mcc_symbol_table *parent, struct mcc_s
         return 0;
     } else {
         int next_children_max = children_max + SYMBOL_TABLE_CHILDREN_SIZE;
-        int mem_children = sizeof(struct mcc_symbol_table) * SYMBOL_TABLE_CHILDREN_SIZE;
+        int mem_children = sizeof(struct mcc_symbol_table*) * SYMBOL_TABLE_CHILDREN_SIZE;
 
         parent = realloc(parent, sizeof(*parent) + mem_children);
 
@@ -128,7 +133,7 @@ int insert_symbol(struct mcc_symbol_table *table, struct mcc_symbol *symbol) {
         table -> symbols_size += 1;
         return 0;
     } else {
-        table = realloc(table, sizeof(*table) + sizeof(struct mcc_symbol) + SYMBOL_TABLE_SYMBOL_SIZE);
+        table = realloc(table, sizeof(*table) + sizeof(struct mcc_symbol*) + SYMBOL_TABLE_SYMBOL_SIZE);
 
         if (table == NULL) {
             return 1;
@@ -146,7 +151,7 @@ struct mcc_symbol *get_symbol(struct mcc_symbol_table *symbol_table, char* symbo
     for (int i = 0; i < symbol_table -> symbols_size; i++) {
         struct mcc_symbol *s = symbol_table -> symbols[i];
 
-        if (strcmp(s -> variable_name, symbol_name)) {
+        if (strcmp(s -> variable_name, symbol_name) == 0) {
             return s;
         }
     }

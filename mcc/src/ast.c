@@ -499,7 +499,7 @@ void mcc_ast_delete_parameter(struct mcc_ast_parameter *parameter) {
 struct mcc_ast_argument *mcc_ast_new_argument(struct mcc_ast_expression *expression) {
     assert(expression);
 
-    struct mcc_ast_argument *argument = malloc(sizeof(*argument) + sizeof(struct mcc_ast_expression) * ARGUMENT_EXPRESSION_SIZE);
+    struct mcc_ast_argument *argument = malloc(sizeof(*argument) + sizeof(struct mcc_ast_expression*) * ARGUMENT_EXPRESSION_SIZE);
 
     argument -> expressions[0] = expression;
     argument -> size = 1;
@@ -520,7 +520,7 @@ struct mcc_ast_argument *mcc_ast_add_new_argument(struct mcc_ast_expression *exp
         argument -> size += 1;
     } else {
 
-        argument = realloc(argument, sizeof(*argument) + sizeof(struct mcc_ast_expression) * ARGUMENT_EXPRESSION_SIZE);
+        argument = realloc(argument, sizeof(*argument) + sizeof(struct mcc_ast_expression*) * ARGUMENT_EXPRESSION_SIZE);
         argument -> expressions[size] = expression;
         argument -> size += 1;
         argument -> max += ARGUMENT_EXPRESSION_SIZE;
@@ -587,7 +587,7 @@ struct mcc_ast_program *mcc_ast_new_program(struct mcc_ast_function *function_de
 
     printf("Single func in program \n");
 
-    struct mcc_ast_program *p = malloc(sizeof(*p) + sizeof(struct mcc_ast_function) * PROGRAM_FUNCTION_DEF_SIZE);
+    struct mcc_ast_program *p = malloc(sizeof(*p) + sizeof(struct mcc_ast_function*) * PROGRAM_FUNCTION_DEF_SIZE);
 
     p -> size = 1;
     p -> max = PROGRAM_FUNCTION_DEF_SIZE;
@@ -607,7 +607,7 @@ struct mcc_ast_program *mcc_ast_add_function(struct mcc_ast_function *function_d
         program -> size += 1;
     } else {
 
-        program = realloc(program, sizeof(*program) + sizeof(struct mcc_ast_function) * PROGRAM_FUNCTION_DEF_SIZE);
+        program = realloc(program, sizeof(*program) + sizeof(struct mcc_ast_function*) * PROGRAM_FUNCTION_DEF_SIZE);
         program -> max += PROGRAM_FUNCTION_DEF_SIZE;
         program -> function_def[size] = function_def;
         program -> size += 1;
@@ -627,6 +627,5 @@ void mcc_ast_delete_program(struct mcc_ast_program *program)
     free(program);
 }
 
-// ------------------------------------------------------------------- Error
 
 
