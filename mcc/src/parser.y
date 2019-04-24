@@ -192,23 +192,23 @@ statement : expression SEMICOLON        { $$ = mcc_ast_new_statement_expression(
           | RETURN SEMICOLON            { $$ = mcc_ast_new_statement_return(NULL); loc($$,@1);}
 	      ;
 
-if_statement: IF LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statement_if($3, $5,NULL);  loc($$, @1); }
-            | IF LPARENTH expression RPARENTH statement ELSE statement { $$ = mcc_ast_new_statement_if($3, $5, $7);  loc($$, @1); }
+if_statement: IF LPARENTH expression RPARENTH statement                 { $$ = mcc_ast_new_statement_if($3, $5,NULL);  loc($$, @1); }
+            | IF LPARENTH expression RPARENTH statement ELSE statement  { $$ = mcc_ast_new_statement_if($3, $5, $7);  loc($$, @1); }
             ;
 
-declaration:    type identifier { $$ = mcc_ast_new_declaration($1,NULL, $2); loc($$, @1); }
-            |   type LBRACKET literal RBRACKET identifier { $$ = mcc_ast_new_declaration($1,$3, $5); loc($$, @1); }
-	   ;
+declaration:    type identifier                             { $$ = mcc_ast_new_declaration($1,NULL, $2); loc($$, @1); }
+            |   type LBRACKET literal RBRACKET identifier   { $$ = mcc_ast_new_declaration($1,$3, $5); loc($$, @1); }
+	        ;
 
 
 while_statement: WHILE LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statement_while($3, $5); loc($$, @1); }
 		;
 
-compound_statement: LBRACE statement_list RBRACE { $$ = mcc_ast_new_statement_compound($2); loc($$, @1); }
-		  | LBRACE RBRACE { $$ = mcc_ast_new_statement_compound(NULL); loc($$, @1); }
+compound_statement: LBRACE statement_list RBRACE    { $$ = mcc_ast_new_statement_compound($2); loc($$, @1); }
+		  | LBRACE RBRACE                           { $$ = mcc_ast_new_statement_compound(NULL); loc($$, @1); }
 		  ;
 
-statement_list:	statement 			{ $$ = mcc_ast_new_statement_list($1); loc($$, @1); }
+statement_list:	statement 			    { $$ = mcc_ast_new_statement_list($1); loc($$, @1); }
 	      | statement statement_list 	{ $$ = mcc_ast_new_statement_list($1); $$ -> next = $2; loc($$, @1); }
 	      ;
 
@@ -219,15 +219,16 @@ assignment:  identifier ASSIGNMENT expression
           ;
 
 call_expression: identifier LPARENTH RPARENTH 		{ $$ = mcc_ast_new_expression_call_expression($1, NULL); loc($$, @1); }
-	       | identifier LPARENTH argument RPARENTH { $$ = mcc_ast_new_expression_call_expression($1, $3); loc($$, @1); }
+	       | identifier LPARENTH argument RPARENTH  { $$ = mcc_ast_new_expression_call_expression($1, $3); loc($$, @1); }
 	       ;
 
 argument: expression COMMA argument { $$ = mcc_ast_add_new_argument($1, $3); loc($$, @1); }
-	 | expression { $$ = mcc_ast_new_argument($1) ; loc($$, @1); }
+	    | expression                { $$ = mcc_ast_new_argument($1) ; loc($$, @1); }
+        | literal                   { $$ = mcc_ast_new_expression_literal($1);      loc($$, @1); }
 
 
 parameters: declaration COMMA parameters 	{ $$ = mcc_ast_new_parameter($1, $3); loc($$, @1); }
-	  | declaration 			{ $$ = mcc_ast_new_parameter($1, NULL); loc($$, @1); }
+	      | declaration 			        { $$ = mcc_ast_new_parameter($1, NULL); loc($$, @1); }
           ;
 
 function_def: type identifier LPARENTH parameters RPARENTH compound_statement
