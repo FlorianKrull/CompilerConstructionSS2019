@@ -227,7 +227,6 @@ call_expression: identifier LPARENTH RPARENTH 		{ $$ = mcc_ast_new_expression_ca
 
 argument: expression COMMA argument { $$ = mcc_ast_add_new_argument($1, $3); loc($$, @1); }
 	    | expression                { $$ = mcc_ast_new_argument($1) ; loc($$, @1); }
-        | literal                   { $$ = mcc_ast_new_expression_literal($1);      loc($$, @1); }
 
 
 parameters: declaration COMMA parameters 	{ $$ = mcc_ast_new_parameter($1, $3); loc($$, @1); }
@@ -277,7 +276,6 @@ struct mcc_parser_result mcc_parse_string(const char *input)
 }
 struct mcc_parser_result mcc_parse_file(FILE *input)
 {
-    printf("Parse file \n");
 	assert(input);
 	yyscan_t scanner;
 	mcc_parser_lex_init(&scanner);

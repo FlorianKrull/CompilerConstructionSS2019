@@ -594,8 +594,6 @@ void mcc_ast_delete_function(struct mcc_ast_function *function) {
 struct mcc_ast_program *mcc_ast_new_program(struct mcc_ast_function *function_def) {
     assert(function_def);
 
-    printf("Single func in program \n");
-
     struct mcc_ast_program *p = malloc(sizeof(*p) + sizeof(struct mcc_ast_function) * 4);
 
     p -> size = 1;
