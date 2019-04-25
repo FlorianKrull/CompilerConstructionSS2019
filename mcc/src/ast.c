@@ -370,7 +370,7 @@ mcc_ast_new_statement_list(struct mcc_ast_statement *statement)
 	assert(list);
 
 	list->statement = statement;
-	list->next = NULL;
+	
 	return list;
 }
 
@@ -386,15 +386,42 @@ void mcc_ast_delete_statement_list(
 }
 
 struct mcc_ast_statement *
-mcc_ast_new_statement_compound(struct mcc_ast_statement_list *statement_list)
+mcc_ast_new_statement_compound(struct mcc_ast_statement *statement)
 {
-	struct mcc_ast_statement *stmt = malloc(sizeof(*stmt));
-	assert(stmt);
+	assert(statement);
 
-	stmt->type = MCC_AST_STATEMENT_TYPE_COMPOUND;
-	stmt->compound_statement = statement_list;
-	return stmt;
+    struct mcc_ast_statement *s = malloc(sizeof(*s) + sizeof(struct mcc_ast_statement) * 4);
+
+	s -> type = MCC_AST_STATEMENT_TYPE_COMPOUND;
+    s -> compound_size = 1;
+    s -> compound_max = 4;
+    s -> compound_statement[0] = statement;
+
+    return s;
 }
+
+struct mcc_ast_statement *mcc_ast_add_compund_statement(struct mcc_ast_statement *statement, struct mcc_ast_statement *sub_statement)
+{
+    assert(statement);
+    assert(sub_statement);
+
+    int size = statement -> compound_size;
+    int max = statement -> compound_max;
+    if (statement -> compound_size < statement -> compound_max) {
+        statement -> compound_statement[size] = sub_statement;
+        statement -> compound_size += 1;
+    } else {
+        int next_max = max + max;
+
+        statement = realloc(statement, sizeof(*statement) + sizeof(struct mcc_ast_statement) * next_max);
+        statement -> compound_max = next_max;
+        statement -> compound_statement[size] = sub_statement;
+        statement -> compound_size += 1;
+    }
+
+    return statement;
+}
+
 
 struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_assignment *assignment)
 {

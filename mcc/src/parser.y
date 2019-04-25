@@ -207,12 +207,13 @@ declaration:    type identifier                             { $$ = mcc_ast_new_d
 while_statement: WHILE LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statement_while($3, $5); loc($$, @1); }
 		;
 
-compound_statement: LBRACE statement_list RBRACE    { $$ = mcc_ast_new_statement_compound($2); loc($$, @1); }
-		  | LBRACE RBRACE                           { $$ = mcc_ast_new_statement_compound(NULL); loc($$, @1); }
+compound_statement: LBRACE compound_statement statement RBRACE      { $$ = mcc_ast_add_compund_statement($2,$3); loc($$, @1); }
+		          | LBRACE statement RBRACE                         { $$ = mcc_ast_new_statement_compound($2); loc($$, @1); }  
+                  | LBRACE RBRACE                                   { $$ = mcc_ast_new_statement_compound(NULL); loc($$, @1); }
 		  ;
 
-statement_list:	statement 			    { $$ = mcc_ast_new_statement_list($1); loc($$, @1); }
-	      | statement statement_list 	{ $$ = mcc_ast_new_statement_list($1); $$ -> next = $2; loc($$, @1); }
+statement_list:	 statement statement_list 	{ $$ = mcc_ast_new_statement_list($1); $$ -> next = $2; loc($$, @1); }
+              |  statement 			        { $$ = mcc_ast_new_statement_list($1); loc($$, @1); }
 	      ;
 
 assignment:  identifier ASSIGNMENT expression

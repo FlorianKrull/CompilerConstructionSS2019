@@ -167,8 +167,8 @@ void mcc_ast_visit_statement(struct mcc_ast_statement *statement,
 
 		case MCC_AST_STATEMENT_TYPE_COMPOUND:
 			visit_if_pre_order(statement, visitor->statement_compound, visitor);
-			if(statement->compound_statement != NULL){
-				mcc_ast_visit_statement_list(statement->compound_statement, visitor);
+			for (int i = 0; i < statement->compound_size; i++) {
+				mcc_ast_visit_statement(statement->compound_statement[i], visitor);
 			}
 			visit_if_post_order(statement, visitor->statement_compound,
 			                    visitor);
