@@ -38,17 +38,29 @@ struct mcc_symbol *mcc_symbol_new_symbol_array(char* variable_name, enum mcc_ast
     return symbol;
 }
 
-struct mcc_symbol *mcc_symbol_new_symbol_function(char* variable_name, enum mcc_ast_data_type data_type, int param_size) {
+struct mcc_symbol *mcc_symbol_new_symbol_function(
+        char* variable_name,
+        enum mcc_ast_data_type data_type,
+        struct mcc_ast_parameter *parameter) {
     assert(variable_name);
     assert(data_type);
-    assert(param_size);
+    // assert(parameter);
 
     struct mcc_symbol *symbol = malloc(sizeof(*symbol));
 
     symbol -> variable_name = variable_name;
     symbol -> data_type = data_type;
 
-    symbol -> params_size = param_size;
+    if (parameter != NULL) {
+        struct mcc_symbol_function_parameters *fp = malloc(sizeof(*fp) + sizeof(enum mcc_ast_data_type*) * parameter -> size);
+        fp -> params_size = parameter -> size;
+
+        for (int i = 0; i < parameter -> size; i++) {
+            fp -> params_types[i] = parameter -> parameters[i] -> type;
+        }
+
+        symbol -> func_params = fp;
+    }
 
     return symbol;
 }
@@ -74,10 +86,6 @@ struct mcc_symbol_table *mcc_symbol_table_new_table(struct mcc_symbol_table *par
 
     table -> parent = parent;
 
-    if (parent != NULL) {
-        mcc_add_symbol_table_to_parent(parent, table);
-    }
-
     return table;
 }
 
@@ -93,6 +101,31 @@ void mcc_symbol_table_delete_table(struct mcc_symbol_table *table) {
     }
 
     free(table);
+}
+
+struct mcc_symbol_table *mcc_symbol_table_create_inner_table(struct mcc_symbol_table *parent) {
+    assert(parent);
+
+    struct mcc_symbol_table *child = mcc_symbol_table_new_table(parent);
+
+    int children_size = parent -> inner_tables_size;
+    int children_max = parent -> inner_tables_max;
+
+    if (children_size < children_max) {
+        parent -> inner_tables[children_size] = child;
+        return 0;
+    } else {
+        int next_children_max = children_max + SYMBOL_TABLE_CHILDREN_SIZE;
+        int mem_children = sizeof(struct mcc_symbol_table*) * SYMBOL_TABLE_CHILDREN_SIZE;
+
+        parent = realloc(parent, sizeof(*parent) + mem_children);
+
+        parent -> inner_tables_max = next_children_max;
+        parent -> inner_tables[children_size] = child;
+
+    }
+
+    return child;
 }
 
 int mcc_add_symbol_table_to_parent(struct mcc_symbol_table *parent, struct mcc_symbol_table *child) {
@@ -121,7 +154,7 @@ int mcc_add_symbol_table_to_parent(struct mcc_symbol_table *parent, struct mcc_s
     }
 }
 
-int insert_symbol(struct mcc_symbol_table *table, struct mcc_symbol *symbol) {
+int mcc_symbol_table_insert_symbol(struct mcc_symbol_table *table, struct mcc_symbol *symbol) {
     assert(table);
     assert(symbol);
 
@@ -147,7 +180,7 @@ int insert_symbol(struct mcc_symbol_table *table, struct mcc_symbol *symbol) {
     }
 }
 
-struct mcc_symbol *get_symbol(struct mcc_symbol_table *symbol_table, char* symbol_name) {
+struct mcc_symbol *mcc_symbol_table_get_symbol(struct mcc_symbol_table *symbol_table, char *symbol_name) {
     for (int i = 0; i < symbol_table -> symbols_size; i++) {
         struct mcc_symbol *s = symbol_table -> symbols[i];
 
@@ -158,7 +191,7 @@ struct mcc_symbol *get_symbol(struct mcc_symbol_table *symbol_table, char* symbo
 
     // not found in current symbol table
     if (symbol_table -> parent != NULL) {
-        struct mcc_symbol *s = get_symbol(symbol_table -> parent, symbol_name);
+        struct mcc_symbol *s = mcc_symbol_table_get_symbol(symbol_table->parent, symbol_name);
 
         return s;
     }

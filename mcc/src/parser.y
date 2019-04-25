@@ -168,10 +168,10 @@ expression : binary_op    	{ $$ = $1; }
            ;
 
 
-literal : BOOL_LITERAL    { $$ = mcc_ast_new_literal(MCC_AST_LITERAL_TYPE_INT, $1); loc($$, @1); }
-        | INT_LITERAL     { $$ = mcc_ast_new_literal(MCC_AST_LITERAL_TYPE_INT, $1); loc($$, @1); }
-        | FLOAT_LITERAL   { $$ = mcc_ast_new_literal(MCC_AST_LITERAL_TYPE_FLOAT, $1); loc($$, @1); }
-        | STRING_LITERAL  { $$ = mcc_ast_new_literal(MCC_AST_LITERAL_TYPE_STRING, $1); loc($$, @1); }
+literal : BOOL_LITERAL    { $$ = mcc_ast_new_literal(MCC_AST_DATA_TYPE_INT, $1); loc($$, @1); }
+        | INT_LITERAL     { $$ = mcc_ast_new_literal(MCC_AST_DATA_TYPE_INT, $1); loc($$, @1); }
+        | FLOAT_LITERAL   { $$ = mcc_ast_new_literal(MCC_AST_DATA_TYPE_FLOAT, $1); loc($$, @1); }
+        | STRING_LITERAL  { $$ = mcc_ast_new_literal(MCC_AST_DATA_TYPE_STRING, $1); loc($$, @1); }
         ;
 
 identifier : IDENTIFIER { $$ = mcc_ast_new_identifier($1); loc($$, @1); }

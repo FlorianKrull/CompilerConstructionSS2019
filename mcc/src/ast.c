@@ -174,7 +174,7 @@ mcc_ast_new_expression_call_expression(struct mcc_ast_identifier *function_name,
 
 // ------------------------------------------------------------------- Literals
 
-struct mcc_ast_literal *mcc_ast_new_literal(enum mcc_ast_literal_type type, char *value)
+struct mcc_ast_literal *mcc_ast_new_literal(enum mcc_ast_data_type type, char *value)
 {
 	struct mcc_ast_literal *lit = malloc(sizeof(*lit));
 	if (!lit) {
@@ -229,9 +229,9 @@ struct mcc_ast_declaration *mcc_ast_new_declaration(enum mcc_ast_data_type type,
 		return NULL;
 	}
 
-	decl->type = type;
-	decl->ident = ident;
-	decl->arr_literal = arr_size ? arr_size : NULL;
+	decl -> type = type;
+	decl -> ident = ident;
+	decl -> arr_literal = arr_size ? arr_size : NULL;
 	return decl;
 }
 

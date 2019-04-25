@@ -24,3 +24,9 @@ struct mcc_parser_error *new_parser_error(struct mcc_ast_source_location *loc, c
 
     return error;
 }
+
+void delete_parser_error(struct mcc_parser_error *error) {
+    free(error -> loc);
+    free(error -> error_msg);
+    free(error);
+}
