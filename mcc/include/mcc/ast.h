@@ -89,29 +89,36 @@ struct mcc_ast_expression {
 
 	enum mcc_ast_expression_type type;
 	union {
-		
+
+		// MCC_AST_EXPRESSION_TYPE_LITERAL
 		struct mcc_ast_literal *literal;
 
+		// MCC_AST_EXPRESSION_TYPE_IDENTIFIER
 		struct mcc_ast_identifier *identifier;
 
+		// MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION
 		struct {
 			struct mcc_ast_identifier *function_name;
 			struct mcc_ast_argument *argument;
 		};
 
+		// MCC_AST_EXPRESSION_TYPE_UNARY_OP
 		struct {
 			enum mcc_ast_unary_op unary_op;
 			struct mcc_ast_expression *unary_expression;
 		};
 
+		// MCC_AST_EXPRESSION_TYPE_BINARY_OP
 		struct {
 			enum mcc_ast_binary_op op;
 			struct mcc_ast_expression *lhs;
 			struct mcc_ast_expression *rhs;
 		};
 
+		// MCC_AST_EXPRESSION_TYPE_PARENTH
 		struct mcc_ast_expression *expression;
 
+		// MCC_AST_EXPRESSION_TYPE_BRACKET
 		struct {
 			struct mcc_ast_identifier *bracket_identifier;
 			struct mcc_ast_expression *bracket_expression;
@@ -328,7 +335,7 @@ struct mcc_ast_literal {
 	char *value;
 };
 
-struct mcc_ast_literal *mcc_ast_new_literal(enum mcc_ast_literal_type,char* value);
+struct mcc_ast_literal *mcc_ast_new_literal(enum mcc_ast_literal_type, char* value);
 
 
 void mcc_ast_delete_literal(struct mcc_ast_literal *literal);
