@@ -216,7 +216,7 @@ statement_list:	 statement statement_list 	{ $$ = mcc_ast_new_statement_list($1)
 	      ;
 
 assignment:  identifier ASSIGNMENT expression
-		{ $$ = mcc_ast_new_assignment($1, $3); 	loc($$, @1); };
+		    { $$ = mcc_ast_new_assignment($1, $3); 	loc($$, @1); };
           |  identifier LBRACKET expression RBRACKET ASSIGNMENT expression
           	{ $$ = mcc_ast_new_array_assignment($1, $3, $6); 	loc($$, @1); };
           ;

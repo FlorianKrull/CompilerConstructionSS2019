@@ -370,7 +370,7 @@ mcc_ast_new_statement_list(struct mcc_ast_statement *statement)
 	assert(list);
 
 	list->statement = statement;
-	list -> next = NULL;
+	
 	return list;
 }
 

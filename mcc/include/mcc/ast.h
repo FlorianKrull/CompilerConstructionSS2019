@@ -285,7 +285,7 @@ struct mcc_ast_statement {
 
 		struct mcc_ast_expression *return_expression;
 
-		struct mCc_ast_statement_list *statement_list;
+		struct mcc_ast_statement_list *statement_list;
 
 
     };

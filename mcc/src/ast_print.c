@@ -425,6 +425,7 @@ static struct mcc_ast_visitor print_dot_visitor(FILE *out)
 		.statement_if = print_dot_statement_if,
 		.statement_while = print_dot_statement_while,
 		.statement_compound = print_dot_statement_compound,
+		.statement_list = print_dot_statement_list,
 		.statement_return = print_dot_statement_return,
 		
 		.declaration = print_dot_declaration,
