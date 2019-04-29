@@ -185,32 +185,35 @@ type : INT_TYPE { $$ = MCC_AST_DATA_TYPE_INT; }
      ;
 
 
-statement : expression SEMICOLON    { $$ = mcc_ast_new_statement_expression($1); loc($$, @1); }
-          | if_statement            { $$ = $1;  loc($$, @1); }
-	  | while_statement         { $$ = $1; loc($$, @1); }
-	  | compound_statement      { $$ = $1; loc($$, @1); }
-          | assignment SEMICOLON    { $$ = mcc_ast_new_statement_assignment($1); loc($$, @1); }
-          | declaration SEMICOLON   { $$ = mcc_ast_new_statement_declaration($1); loc($$, @1); }
-	  ;
+statement : expression SEMICOLON        { $$ = mcc_ast_new_statement_expression($1); loc($$, @1); }
+          | if_statement                { $$ = $1;  loc($$, @1); }
+	      | while_statement             { $$ = $1; loc($$, @1); }
+	      | compound_statement          { $$ = $1; loc($$, @1); }
+          | assignment SEMICOLON        { $$ = mcc_ast_new_statement_assignment($1); loc($$, @1); }
+          | declaration SEMICOLON       { $$ = mcc_ast_new_statement_declaration($1); loc($$, @1); }
+          | RETURN expression SEMICOLON { $$ = mcc_ast_new_statement_return($2); loc($$,@1);}
+          | RETURN SEMICOLON            { $$ = mcc_ast_new_statement_return(NULL); loc($$,@1);}
+	      ;
 
-if_statement: IF LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statement_if($3, $5,NULL);  loc($$, @1); }
-            | IF LPARENTH expression RPARENTH statement ELSE statement { $$ = mcc_ast_new_statement_if($3, $5, $7);  loc($$, @1); }
+if_statement: IF LPARENTH expression RPARENTH statement                 { $$ = mcc_ast_new_statement_if($3, $5,NULL);  loc($$, @1); }
+            | IF LPARENTH expression RPARENTH statement ELSE statement  { $$ = mcc_ast_new_statement_if($3, $5, $7);  loc($$, @1); }
             ;
 
-declaration:    type identifier { $$ = mcc_ast_new_declaration($1,NULL, $2); loc($$, @1); }
-            |   type LBRACKET literal RBRACKET identifier { $$ = mcc_ast_new_declaration($1,$3, $5); loc($$, @1); }
-	   ;
+declaration:    type identifier                             { $$ = mcc_ast_new_declaration($1,NULL, $2); loc($$, @1); }
+            |   type LBRACKET literal RBRACKET identifier   { $$ = mcc_ast_new_declaration($1,$3, $5); loc($$, @1); }
+	        ;
 
 
 while_statement: WHILE LPARENTH expression RPARENTH statement { $$ = mcc_ast_new_statement_while($3, $5); loc($$, @1); }
 		;
 
-compound_statement: LBRACE statement_list RBRACE { $$ = mcc_ast_new_statement_compound($2); loc($$, @1); }
-		  | LBRACE RBRACE { $$ = mcc_ast_new_statement_compound(NULL); loc($$, @1); }
+compound_statement: LBRACE compound_statement statement RBRACE      { $$ = mcc_ast_add_compund_statement($2,$3); loc($$, @1); }
+		          | LBRACE statement RBRACE                         { $$ = mcc_ast_new_statement_compound($2); loc($$, @1); }  
+                  | LBRACE RBRACE                                   { $$ = mcc_ast_new_statement_compound(NULL); loc($$, @1); }
 		  ;
 
-statement_list:	statement 			{ $$ = mcc_ast_new_statement_list($1); loc($$, @1); }
-	      | statement statement_list 	{ $$ = mcc_ast_new_statement_list($1); $$ -> next = $2; loc($$, @1); }
+statement_list:	 statement statement_list 	{ $$ = mcc_ast_new_statement_list($1); $$ -> next = $2; loc($$, @1); }
+              |  statement 			        { $$ = mcc_ast_new_statement_list($1); loc($$, @1); }
 	      ;
 
 assignment:  identifier ASSIGNMENT expression
@@ -220,15 +223,15 @@ assignment:  identifier ASSIGNMENT expression
           ;
 
 call_expression: identifier LPARENTH RPARENTH 		{ $$ = mcc_ast_new_expression_call_expression($1, NULL); loc($$, @1); }
-	       | identifier LPARENTH argument RPARENTH { $$ = mcc_ast_new_expression_call_expression($1, $3); loc($$, @1); }
+	       | identifier LPARENTH argument RPARENTH  { $$ = mcc_ast_new_expression_call_expression($1, $3); loc($$, @1); }
 	       ;
 
 argument: expression COMMA argument { $$ = mcc_ast_add_new_argument($1, $3); loc($$, @1); }
-	 | expression { $$ = mcc_ast_new_argument($1) ; loc($$, @1); }
+	    | expression                { $$ = mcc_ast_new_argument($1) ; loc($$, @1); }
 
 
 parameters: declaration COMMA parameters 	{ $$ = mcc_ast_new_parameter($1, $3); loc($$, @1); }
-	  | declaration 			{ $$ = mcc_ast_new_parameter($1, NULL); loc($$, @1); }
+	      | declaration 			        { $$ = mcc_ast_new_parameter($1, NULL); loc($$, @1); }
           ;
 
 function_def: type identifier LPARENTH parameters RPARENTH compound_statement
@@ -274,7 +277,6 @@ struct mcc_parser_result mcc_parse_string(const char *input)
 }
 struct mcc_parser_result mcc_parse_file(FILE *input)
 {
-    printf("Parse file \n");
 	assert(input);
 	yyscan_t scanner;
 	mcc_parser_lex_init(&scanner);

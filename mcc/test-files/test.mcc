@@ -1,12 +1,9 @@
 int a() {
     if (b){
-        int c;
+        
+        while(a){
+            int d;
+        }
     }
-    /*
-     *
-     *
-     * Comment
-     *
-     */
-    bool r;
+    
 }

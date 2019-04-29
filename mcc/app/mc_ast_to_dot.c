@@ -6,6 +6,7 @@
 #include "mcc/ast_print.h"
 #include "mcc/parser.h"
 
+
 void print_usage(const char *prg) {
     printf("usage: %s <FILE>\n\n", prg);
     printf("  <FILE>  Input filepath or - for stdin\n");
@@ -33,7 +34,6 @@ int main(int argc, char *argv[]) {
 
     // parsing phase
     {
-        printf("Start parsing \n");
 
         struct mcc_parser_result result = mcc_parse_file(in);
         if (result.status != MCC_PARSER_STATUS_OK) {
@@ -42,8 +42,6 @@ int main(int argc, char *argv[]) {
 
             return EXIT_FAILURE;
         }
-        printf("Parsing ok \n");
-        printf("---- Printing tree ----\n");
         prog = result.program;
     }
 

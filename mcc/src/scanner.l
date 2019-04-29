@@ -128,6 +128,14 @@ string_literal \"(\\.|[^"\\])*\"
 {float_literal}   { yylval->TK_FLOAT_LITERAL = strdup(yytext);
                     return TK_FLOAT_LITERAL; }
 
+{string_literal}  { char* str = malloc(sizeof(char) * yyleng+3);
+                    strcpy(str, "\\");
+                    strncpy(str+1, yytext, yyleng-1);
+                    strcpy(str+yyleng, "\\\"");
+                    str[yyleng+2] = '\0';
+                    yylval->TK_STRING_LITERAL = str;
+                    return TK_STRING_LITERAL; }
+
 
 
 <<EOF>>           { return TK_END; }

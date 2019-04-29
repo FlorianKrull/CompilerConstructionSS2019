@@ -7,18 +7,8 @@
 
 #include "mcc/parser.h";
 #include "mcc/symbol_table.h";
-
-struct mcc_symbol_table_error_collector {
-    int error_size;
-    int error_max;
-    struct mcc_parser_error *errors[];
-};
-
-struct mcc_symbol_table_error_collector *mcc_symbol_table_new_error_collector();
-
-void  mcc_symbol_table_delete_error_collector(struct mcc_symbol_table_error_collector *ec);
-
-int mcc_symbol_table_add_error(struct mcc_symbol_table_error_collector *ec, struct mcc_parser_error *er);
+#include "mcc/symbol_table_semantic_error.h"
+#include "mcc/symbol_table_validate.h";
 
 // ------------------------------------------------------------ Array
 
@@ -54,6 +44,12 @@ int mcc_symbol_table_check_expression(
 
 // ------------------------------------------------------------ Statement
 
+int mcc_symbol_table_parse_compound_statement(
+        struct mcc_ast_statement_list *compound,
+        struct mcc_symbol_table *symbol_table,
+        struct mcc_symbol_table_error_collector *ec
+);
+
 int mcc_symbol_table_check_statement(
         struct mcc_ast_statement *statement,
         struct mcc_symbol_table *symbol_table,
@@ -68,6 +64,14 @@ int mcc_symbol_table_add_function_declaration(
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec);
 
+/**
+ * Parses program and containing functions
+ * Add declarations and function definitions to symbol table and applies semantic validation on statements and expressions
+ * @param program - mcc_ast_program pointer
+ * @param symbol_table - mcc_symbol_table pointer
+ * @param ec - mcc_symbol_table_error_collector error collector that contains semantic errors
+ * @return 1 if semantic check throws an error, 0 if parsing passed successfully
+ */
 int mcc_symbol_table_parse_program(
         struct mcc_ast_program *program,
         struct mcc_symbol_table *symbol_table,

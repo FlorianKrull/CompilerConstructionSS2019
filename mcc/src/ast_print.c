@@ -308,8 +308,22 @@ static void print_dot_statement_compound( struct mcc_ast_statement *statement, v
 	assert(statement->type == MCC_AST_STATEMENT_TYPE_COMPOUND);
 
 	FILE *out = data;
-	if (statement->compound_statement != NULL) {
-		print_dot_edge(out, statement, statement->compound_statement, "stmt list");
+	for (int i = 0; i < statement->compound_size; i++) {
+		print_dot_edge(out, statement, statement->compound_statement[i],
+		               "compund statement");
+	}
+}
+
+static void print_dot_statement_return(
+    struct mcc_ast_statement *statement, void *data)
+{
+	assert(statement);
+	assert(data);
+	assert(statement->type == MCC_AST_STATEMENT_TYPE_RETURN);
+
+	FILE *out = data;
+	if (statement->expression != NULL) {
+		print_dot_edge(out, statement, statement->expression, "expression");
 	}
 }
 

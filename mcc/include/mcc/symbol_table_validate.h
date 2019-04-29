@@ -7,7 +7,7 @@
 
 #include "mcc/ast.h"
 #include "mcc/symbol_table.h"
-#include "mcc/symbol_table_parse.h"
+#include "mcc/symbol_table_semantic_error.h"
 
 // --------------------------------------- Expression
 
@@ -73,6 +73,15 @@ int mcc_symbol_table_validate_expression_semantic(
         struct mcc_ast_expression *expression,
         struct mcc_symbol_table *symbol_table
 );
+
+// --------------------------------------- Assignment
+
+int mcc_symbol_table_validate_assignemt_semantic(
+        struct mcc_ast_assignment *assignment,
+        struct mcc_symbol_table *symbol_table,
+        struct mcc_symbol_table_error_collector *ec
+);
+
 
 #endif //MCC_SYMBOL_TABLE_VALIDATE_H
 

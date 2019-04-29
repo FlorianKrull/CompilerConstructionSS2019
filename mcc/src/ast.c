@@ -174,7 +174,7 @@ mcc_ast_new_expression_call_expression(struct mcc_ast_identifier *function_name,
 
 // ------------------------------------------------------------------- Literals
 
-struct mcc_ast_literal *mcc_ast_new_literal(enum mcc_ast_data_type type, char *value)
+struct mcc_ast_literal *mcc_ast_new_literal(enum mcc_ast_literal_type type, char* value)
 {
 	struct mcc_ast_literal *lit = malloc(sizeof(*lit));
 	if (!lit) {
@@ -374,7 +374,7 @@ mcc_ast_new_statement_list(struct mcc_ast_statement *statement)
 	assert(list);
 
 	list->statement = statement;
-	list->next = NULL;
+	
 	return list;
 }
 
@@ -390,15 +390,42 @@ void mcc_ast_delete_statement_list(
 }
 
 struct mcc_ast_statement *
-mcc_ast_new_statement_compound(struct mcc_ast_statement_list *statement_list)
+mcc_ast_new_statement_compound(struct mcc_ast_statement *statement)
 {
-	struct mcc_ast_statement *stmt = malloc(sizeof(*stmt));
-	assert(stmt);
+	assert(statement);
 
-	stmt->type = MCC_AST_STATEMENT_TYPE_COMPOUND;
-	stmt->compound_statement = statement_list;
-	return stmt;
+    struct mcc_ast_statement *s = malloc(sizeof(*s) + sizeof(struct mcc_ast_statement) * 4);
+
+	s -> type = MCC_AST_STATEMENT_TYPE_COMPOUND;
+    s -> compound_size = 1;
+    s -> compound_max = 4;
+    s -> compound_statement[0] = statement;
+
+    return s;
 }
+
+struct mcc_ast_statement *mcc_ast_add_compund_statement(struct mcc_ast_statement *statement, struct mcc_ast_statement *sub_statement)
+{
+    assert(statement);
+    assert(sub_statement);
+
+    int size = statement -> compound_size;
+    int max = statement -> compound_max;
+    if (statement -> compound_size < statement -> compound_max) {
+        statement -> compound_statement[size] = sub_statement;
+        statement -> compound_size += 1;
+    } else {
+        int next_max = max + max;
+
+        statement = realloc(statement, sizeof(*statement) + sizeof(struct mcc_ast_statement) * next_max);
+        statement -> compound_max = next_max;
+        statement -> compound_statement[size] = sub_statement;
+        statement -> compound_size += 1;
+    }
+
+    return statement;
+}
+
 
 struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_assignment *assignment)
 {
@@ -412,6 +439,18 @@ struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_assign
 	                 : MCC_AST_STATEMENT_TYPE_ASSGN_ARR;
 	stmt->assignment = assignment;
     return stmt;
+}
+
+struct mcc_ast_statement *mcc_ast_new_statement_return(struct mcc_ast_expression *expression)
+{
+	struct mcc_ast_statement *stmt = malloc(sizeof(*stmt));
+	if (!stmt) {
+		return NULL;
+	}
+	stmt->type = MCC_AST_STATEMENT_TYPE_RETURN;
+	stmt->expression = expression;
+	
+	return stmt;
 }
 
 void mcc_ast_delete_statement(struct mcc_ast_statement *statement)
@@ -585,9 +624,7 @@ void mcc_ast_delete_function(struct mcc_ast_function *function) {
 struct mcc_ast_program *mcc_ast_new_program(struct mcc_ast_function *function_def) {
     assert(function_def);
 
-    printf("Single func in program \n");
-
-    struct mcc_ast_program *p = malloc(sizeof(*p) + sizeof(struct mcc_ast_function*) * PROGRAM_FUNCTION_DEF_SIZE);
+	struct mcc_ast_program *p = malloc(sizeof(*p) + sizeof(struct mcc_ast_function*) * PROGRAM_FUNCTION_DEF_SIZE);
 
     p -> size = 1;
     p -> max = PROGRAM_FUNCTION_DEF_SIZE;

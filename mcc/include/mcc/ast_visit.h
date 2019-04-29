@@ -57,6 +57,7 @@ struct mcc_ast_visitor {
 	mcc_ast_visit_statement_cb statement_while;
 	mcc_ast_visit_statement_cb statement_compound;
 	mcc_ast_visit_statement_cb statement_declaration;
+	mcc_ast_visit_statement_cb statement_return;
 
 	mcc_ast_visit_statement_list_cb statement_list;
 

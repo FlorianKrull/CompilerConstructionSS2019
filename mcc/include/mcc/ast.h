@@ -22,6 +22,7 @@ struct mcc_ast_literal;
 struct mcc_ast_statement;
 struct mcc_ast_identifier;
 
+
 // ------------------------------------------------------------------- AST Node
 
 struct mcc_ast_source_location {
@@ -37,6 +38,8 @@ struct mcc_ast_node {
 };
 
 // -------------------------------------------------------------------- Types
+
+
 
 enum mcc_ast_data_type {
     MCC_AST_DATA_TYPE_INT,
@@ -63,6 +66,7 @@ enum mcc_ast_binary_op {
     MCC_AST_BINARY_OP_GREATER_EQUALS,
 };
 
+
 enum mcc_ast_unary_op {
     MCC_AST_UNARY_OP_NOT,
     MCC_AST_UNARY_OP_MINUS
@@ -85,6 +89,7 @@ struct mcc_ast_expression {
 
 	enum mcc_ast_expression_type type;
 	union {
+
 		// MCC_AST_EXPRESSION_TYPE_LITERAL
 		struct mcc_ast_literal *literal;
 
@@ -241,7 +246,7 @@ enum mcc_ast_statement_type {
 	MCC_AST_STATEMENT_TYPE_ASSGN,
 	MCC_AST_STATEMENT_TYPE_ASSGN_ARR,
 	MCC_AST_STATEMENT_TYPE_COMPOUND,
-	// MCC_AST_STATEMENT_TYPE_BLOCK
+	MCC_AST_STATEMENT_TYPE_RETURN
 };
 
 struct mcc_ast_statement_list {
@@ -285,7 +290,15 @@ struct mcc_ast_statement {
 
 		struct mcc_ast_expression *expression;
 
-        struct mcc_ast_statement_list *compound_statement;
+		struct mcc_ast_expression *return_expression;
+
+		struct {
+			int compound_size;  
+			int compound_max;
+			struct mcc_ast_statement *compound_statement[];
+		};
+
+
     };
 };
 
@@ -302,22 +315,32 @@ struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_assign
 
 struct mcc_ast_statement *mcc_ast_new_statement_declaration(struct mcc_ast_declaration *declaration);
 
-struct mcc_ast_statement *mcc_ast_new_statement_compound(struct mcc_ast_statement_list *statement_list);
+struct mcc_ast_statement *mcc_ast_new_statement_compound(struct mcc_ast_statement *statement);
+
+struct mcc_ast_statement *mcc_ast_new_statement_return(struct mcc_ast_expression *expression);
 
 void mcc_ast_delete_statement(struct mcc_ast_statement *statement);
 
-struct mcc_ast_statement mcc_ast_new_block_statement();
+
 
 // ------------------------------------------------------------------- Literals
+
+enum mcc_ast_literal_type {
+	MCC_AST_LITERAL_TYPE_INT,
+	MCC_AST_LITERAL_TYPE_FLOAT,
+	MCC_AST_LITERAL_TYPE_STRING,
+	MCC_AST_LITERAL_TYPE_BOOL
+};
 
 struct mcc_ast_literal {
 	struct mcc_ast_node node;
 
-	enum mcc_ast_data_type type;
+	enum mcc_ast_literal_type type;
 	char *value;
 };
 
-struct mcc_ast_literal *mcc_ast_new_literal(enum mcc_ast_data_type,char* value);
+struct mcc_ast_literal *mcc_ast_new_literal(enum mcc_ast_literal_type, char* value);
+
 
 void mcc_ast_delete_literal(struct mcc_ast_literal *literal);
 
@@ -326,6 +349,7 @@ void mcc_ast_empty_node();
 
 // -------------------------------------------------------------------- Parameter
 
+// int PARAMETER_BLOCK_SIZE = 4;
 struct mcc_ast_parameter {
 	struct mcc_ast_node node;
     int max;
@@ -359,6 +383,7 @@ struct mcc_ast_function *mcc_ast_new_function(
 void mcc_ast_delete_function(struct mcc_ast_function *function);
 
 // -------------------------------------------------------------------- Program
+
 
 struct mcc_ast_program {
 	struct mcc_ast_node node;
