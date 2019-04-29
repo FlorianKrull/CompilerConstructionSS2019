@@ -3,7 +3,10 @@ int a() {
         
         while(a){
             int d;
+            d = 3;
+
         }
     }
     
+
 }

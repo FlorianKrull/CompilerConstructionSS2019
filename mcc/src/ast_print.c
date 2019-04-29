@@ -84,6 +84,8 @@ const char *mcc_ast_print_statement(enum mcc_ast_statement_type stmt_type)
 			return "COMPOUND_STMT";
         case MCC_AST_STATEMENT_TYPE_ASSGN_ARR:
             return "TYPE ARR STMT";
+		case MCC_AST_STATEMENT_TYPE_RETURN:
+			return "RETURN_STMT";
 	}
 
 	return "unknown statement";
@@ -424,6 +426,7 @@ static struct mcc_ast_visitor print_dot_visitor(FILE *out)
 		.statement_if = print_dot_statement_if,
 		.statement_while = print_dot_statement_while,
 		.statement_compound = print_dot_statement_compound,
+		.statement_return = print_dot_statement_return,
 		
 		.declaration = print_dot_declaration,
 
