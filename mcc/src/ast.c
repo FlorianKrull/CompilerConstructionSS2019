@@ -147,7 +147,9 @@ void mcc_ast_delete_expression(struct mcc_ast_expression *expression)
 		break;
     case MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION:
         mcc_ast_delete_identifier(expression->bracket_identifier);
-        mcc_ast_delete_argument(expression->argument);
+		if(expression->argument != NULL){
+			mcc_ast_delete_argument(expression->argument);
+		}
         break;
 	}
 
