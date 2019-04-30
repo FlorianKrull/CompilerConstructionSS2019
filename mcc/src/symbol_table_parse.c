@@ -39,7 +39,7 @@ int mcc_symbol_table_check_array_declaration_size(
         if(declaration->arr_literal->type != MCC_AST_DATA_TYPE_INT) {
             mcc_symbol_table_add_error(
                     ec,
-                    mcc_symbol_table_new_error(&(declaration->node.sloc), MCC_SEMANTIC_ERROR_ARRAY_SIZE_DEFINITION);
+                    mcc_symbol_table_new_error(&(declaration->node.sloc), MCC_SEMANTIC_ERROR_ARRAY_SIZE_DEFINITION));
 
             return 1;
         }
@@ -165,7 +165,7 @@ int mcc_symbol_table_check_statement(
         case MCC_AST_STATEMENT_TYPE_COMPOUND:
             // TODO create new symbol table as child
             return mcc_symbol_table_parse_compound_statement(
-                    statement -> compound_statement,
+                    statement -> statement_list,
                     symbol_table,
                     ec
             );
