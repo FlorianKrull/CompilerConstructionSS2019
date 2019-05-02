@@ -147,7 +147,9 @@ void mcc_ast_delete_expression(struct mcc_ast_expression *expression)
 		break;
     case MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION:
         mcc_ast_delete_identifier(expression->bracket_identifier);
-        mcc_ast_delete_argument(expression->argument);
+		if(expression->argument != NULL){
+			mcc_ast_delete_argument(expression->argument);
+		}
         break;
 	}
 
@@ -174,7 +176,7 @@ mcc_ast_new_expression_call_expression(struct mcc_ast_identifier *function_name,
 
 // ------------------------------------------------------------------- Literals
 
-struct mcc_ast_literal *mcc_ast_new_literal(enum mcc_ast_data_type type, char* value)
+struct mcc_ast_literal *mcc_ast_new_literal(enum mcc_ast_literal_type type, char* value)
 {
 	struct mcc_ast_literal *lit = malloc(sizeof(*lit));
 	if (!lit) {
@@ -390,41 +392,39 @@ void mcc_ast_delete_statement_list(
 }
 
 struct mcc_ast_statement *
-mcc_ast_new_statement_compound(struct mcc_ast_statement *statement)
+mcc_ast_new_statement_compound(struct mcc_ast_statement_list *statement)
 {
-	assert(statement);
+	struct mcc_ast_statement *stmt = malloc(sizeof(*stmt));
+	assert(stmt);
 
-    struct mcc_ast_statement *s = malloc(sizeof(*s) + sizeof(struct mcc_ast_statement*) * 4);
+	stmt -> type = MCC_AST_STATEMENT_TYPE_COMPOUND;
+    stmt -> statement_list = statement;
 
-	s -> type = MCC_AST_STATEMENT_TYPE_COMPOUND;
-    s -> compound_size = 1;
-    s -> compound_max = 4;
-    s -> compound_statement[0] = statement;
-
-    return s;
+    return stmt;
 }
 
-struct mcc_ast_statement *mcc_ast_add_compund_statement(struct mcc_ast_statement *statement, struct mcc_ast_statement *sub_statement)
-{
-    assert(statement);
-    assert(sub_statement);
+// struct mcc_ast_statement *mcc_ast_add_compund_statement(struct mcc_ast_statement *statement, struct mcc_ast_statement *sub_statement)
+// {
+//     assert(statement);
+//     assert(sub_statement);
 
-    int size = statement -> compound_size;
-    int max = statement -> compound_max;
-    if (statement -> compound_size < statement -> compound_max) {
-        statement -> compound_statement[size] = sub_statement;
-        statement -> compound_size += 1;
-    } else {
-        int next_max = max + 4;
+//     int size = statement -> compound_size;
+//     int max = statement -> compound_max;
+//     if (statement -> compound_size < statement -> compound_max) {
+//         statement -> compound_statement[size] = sub_statement;
+//         statement -> compound_size += 1;
+//     } else {
+//         int next_max = max + max;
 
-        statement = realloc(statement, sizeof(*statement) + sizeof(struct mcc_ast_statement*) * 4);
-        statement -> compound_max = next_max;
-        statement -> compound_statement[size] = sub_statement;
-        statement -> compound_size += 1;
-    }
+//         statement = realloc(statement, sizeof(*statement) + sizeof(struct mcc_ast_statement) * next_max);
+//         statement -> compound_max = next_max;
+//         statement -> compound_statement[size] = sub_statement;
+//         statement -> compound_size += 1;
+//     }
 
-    return statement;
-}
+//     return statement;
+// }
+
 
 struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_assignment *assignment)
 {
@@ -479,13 +479,9 @@ void mcc_ast_delete_statement(struct mcc_ast_statement *statement)
             mcc_ast_delete_assignment(statement->assignment);
             break;
 	    case MCC_AST_STATEMENT_TYPE_COMPOUND:
-            if(statement-> compound_size > 0) {
-                for (int i = 0;i < statement -> compound_size; i++) {
-                    if (statement -> compound_statement[i] != NULL) {
-                        mcc_ast_delete_statement(statement -> compound_statement[i]);
-                    }
-                }
+            if(statement -> statement_list != NULL){
                 // TODO delete statement list// mcc_ast_delete_statement(statement->compound_statement);
+                mcc_ast_delete_statement_list(statement->statement_list);
             }
             break;
         default : break;
@@ -513,6 +509,7 @@ struct mcc_ast_parameter *mcc_ast_new_parameter(struct mcc_ast_declaration *decl
 
     // add to previous params list
     if ((params -> size) == (params -> max)) {
+        int next_max = params -> size + PARAMETER_DECLARATION_SIZE;
         int size = params -> size;
         struct mcc_ast_parameter *new_params = realloc(params, sizeof(*params) + sizeof(struct mcc_ast_declaration*) * PARAMETER_DECLARATION_SIZE);
         new_params -> parameters[size -1] = declaration;

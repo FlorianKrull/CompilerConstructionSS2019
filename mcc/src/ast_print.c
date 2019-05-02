@@ -84,6 +84,8 @@ const char *mcc_ast_print_statement(enum mcc_ast_statement_type stmt_type)
 			return "COMPOUND_STMT";
         case MCC_AST_STATEMENT_TYPE_ASSGN_ARR:
             return "TYPE ARR STMT";
+		case MCC_AST_STATEMENT_TYPE_RETURN:
+			return "RETURN_STMT";
 	}
 
 	return "unknown statement";
@@ -283,23 +285,22 @@ static void print_dot_statement_declaration(struct mcc_ast_statement *statement,
 	print_dot_edge(out, statement, statement->declaration, "declaration");
 }
 
-//static void
-//print_dot_statement_list(struct mcc_ast_statement_list *statement_list,void *data)
-//{
-//	assert(statement_list);
-//	assert(data);
-//
-//	char label[LABEL_SIZE] = { 0 };
-//	snprintf(label, sizeof(label), "statement list");
-//
-//	FILE *out = data;
-//	print_dot_node(out, statement_list, label);
-//	print_dot_edge(out, statement_list, statement_list->statement, "statement");
-//	if (statement_list->next != NULL) {
-//		print_dot_edge(out, statement_list, statement_list->next,
-//		               "next statement");
-//	}
-//}
+static void print_dot_statement_list(struct mcc_ast_statement_list *statement_list,void *data)
+{
+	assert(statement_list);
+	assert(data);
+
+	char label[LABEL_SIZE] = { 0 };
+	snprintf(label, sizeof(label), "statement list");
+
+	FILE *out = data;
+	print_dot_node(out, statement_list, label);
+	print_dot_edge(out, statement_list, statement_list->statement, "statement");
+	if (statement_list->next != NULL) {
+		print_dot_edge(out, statement_list, statement_list->next,
+		               "next statement");
+	}
+}
 
 static void print_dot_statement_compound( struct mcc_ast_statement *statement, void *data)
 {
@@ -308,9 +309,9 @@ static void print_dot_statement_compound( struct mcc_ast_statement *statement, v
 	assert(statement->type == MCC_AST_STATEMENT_TYPE_COMPOUND);
 
 	FILE *out = data;
-	for (int i = 0; i < statement->compound_size; i++) {
-		print_dot_edge(out, statement, statement->compound_statement[i],
-		               "compund statement");
+	if (statement->statement_list != NULL) {
+		print_dot_edge(out, statement, statement->statement_list,
+		               "statement list");
 	}
 }
 
@@ -424,6 +425,8 @@ static struct mcc_ast_visitor print_dot_visitor(FILE *out)
 		.statement_if = print_dot_statement_if,
 		.statement_while = print_dot_statement_while,
 		.statement_compound = print_dot_statement_compound,
+		.statement_list = print_dot_statement_list,
+		.statement_return = print_dot_statement_return,
 		
 		.declaration = print_dot_declaration,
 

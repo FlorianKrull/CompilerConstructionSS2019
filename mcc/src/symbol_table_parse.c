@@ -103,6 +103,36 @@ int mcc_symbol_table_check_expression(
 
 // ---------------------------------------------------------- Statement
 
+int mcc_symbol_table_parse_compound_statement(
+        struct mcc_ast_statement_list *compound,
+        struct mcc_symbol_table *symbol_table,
+        struct mcc_symbol_table_error_collector *ec
+) {
+    assert(compound);
+    assert(symbol_table);
+    assert(ec);
+
+    // create it's own inner scope
+    struct mcc_symbol_table *sub_table = mcc_symbol_table_create_inner_table(symbol_table);
+
+    do {
+        struct mcc_ast_statement *st = compound -> statement;
+        int statement_result = mcc_symbol_table_check_statement(
+                st,
+                sub_table,
+                ec
+        );
+
+        if (statement_result == 1) {
+            return 1;
+        }
+
+        compound = compound -> next;
+    } while (compound -> next != NULL);
+
+    return 0;
+}
+
 int mcc_symbol_table_check_statement(
         struct mcc_ast_statement *statement,
         struct mcc_symbol_table *symbol_table,
@@ -114,7 +144,8 @@ int mcc_symbol_table_check_statement(
 
     switch(statement->type) {
         case MCC_AST_STATEMENT_TYPE_EXPRESSION:
-            return 0;
+
+            break;
         case MCC_AST_STATEMENT_TYPE_WHILE:
         case MCC_AST_STATEMENT_TYPE_IF:
             // TODO check for bool result
@@ -132,50 +163,17 @@ int mcc_symbol_table_check_statement(
         case MCC_AST_STATEMENT_TYPE_ASSGN_ARR:
             // Array validation
         case MCC_AST_STATEMENT_TYPE_COMPOUND:
+            // TODO create new symbol table as child
             return mcc_symbol_table_parse_compound_statement(
-                    statement -> compound_statement,
-                    statement -> compound_size,
+                    statement -> statement_list,
                     symbol_table,
                     ec
             );
+            break;
         default:
             // if nothing matches return 0 to continue going through ast
             return 0;
     }
-}
-
-int mcc_symbol_table_parse_compound_statement(
-        struct mcc_ast_statement *compound[],
-        int statement_list_size,
-        struct mcc_symbol_table *symbol_table,
-        struct mcc_symbol_table_error_collector *ec
-) {
-    assert(compound);
-    assert(symbol_table);
-    assert(ec);
-
-    // create it's own inner scope
-    struct mcc_symbol_table *sub_table = mcc_symbol_table_create_inner_table(symbol_table);
-
-    for (int i = 0; i < statement_list_size; i++) {
-
-        // Cast should not be necessary
-        struct mcc_ast_statement *st = compound[i];
-
-        int statement_result = mcc_symbol_table_check_statement(
-                st,
-                sub_table,
-                ec
-        );
-
-
-        if (statement_result == 1) {
-            return 1;
-        }
-
-    }
-
-    return 0;
 }
 
 // ---------------------------------------------------------- Function
@@ -200,14 +198,12 @@ int mcc_symbol_table_add_function_declaration(
         mcc_symbol_table_insert_symbol(symbol_table, fs);
 
         // create new scope and parse function
-        // struct mcc_symbol_table *sub_table = mcc_symbol_table_create_inner_table(symbol_table);
+        struct mcc_symbol_table *sub_table = mcc_symbol_table_create_inner_table(symbol_table);
         //
 
     } else {
         // already declared - create already declared error message
     }
-
-    return 0;
 }
 
 // ---------------------------------------------------------- Program
@@ -217,16 +213,12 @@ int mcc_symbol_table_parse_program(
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec) {
     assert(program);
-    assert(symbol_table);
-    assert(ec);
 
     for(int i = 0; i < program->size; i++) {
         /**
          * if (mcc_symbol_table_add_function_declaration(...) == 1) return 1;
          */
     }
-
-    return 0;
 }
 
 void build_symbol_table(struct mcc_ast_program *program) {

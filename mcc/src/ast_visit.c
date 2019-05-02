@@ -110,7 +110,7 @@ void mcc_ast_visit_statement_list(struct mcc_ast_statement_list *statement_list,
 void mcc_ast_visit_statement(struct mcc_ast_statement *statement,
                              struct mcc_ast_visitor *visitor)
 {
-	if (statement) {
+		assert(statement);
 		assert(visitor);
 
 		visit_if_pre_order(statement, visitor->statement, visitor);
@@ -119,10 +119,7 @@ void mcc_ast_visit_statement(struct mcc_ast_statement *statement,
 		case MCC_AST_STATEMENT_TYPE_IF:
 			visit_if_pre_order(statement, visitor->statement_if, visitor);
 			mcc_ast_visit_expression(statement->if_condition, visitor);
-
-	
 			mcc_ast_visit_statement(statement->if_stmt, visitor);
-
 			visit_if_post_order(statement, visitor->statement_if, visitor);
 			break;
 
@@ -130,9 +127,7 @@ void mcc_ast_visit_statement(struct mcc_ast_statement *statement,
 		case MCC_AST_STATEMENT_TYPE_WHILE:
 			visit_if_pre_order(statement, visitor->statement_while, visitor);
 			mcc_ast_visit_expression(statement->while_condition, visitor);
-
 			mcc_ast_visit_statement(statement->while_stmt, visitor);
-
 			visit_if_post_order(statement, visitor->statement_while, visitor);
 			break;
 
@@ -167,8 +162,8 @@ void mcc_ast_visit_statement(struct mcc_ast_statement *statement,
 
 		case MCC_AST_STATEMENT_TYPE_COMPOUND:
 			visit_if_pre_order(statement, visitor->statement_compound, visitor);
-			for (int i = 0; i < statement->compound_size; i++) {
-				mcc_ast_visit_statement(statement->compound_statement[i], visitor);
+			if (statement->statement_list != NULL) {
+			mcc_ast_visit_statement_list(statement->statement_list, visitor);
 			}
 			visit_if_post_order(statement, visitor->statement_compound,
 			                    visitor);
@@ -187,7 +182,7 @@ void mcc_ast_visit_statement(struct mcc_ast_statement *statement,
 		}
 
 		visit_if_post_order(statement, visitor->statement, visitor);
-	}
+	
 }
 
 void mcc_ast_visit_assignment(struct mcc_ast_assignment *assignment,

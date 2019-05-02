@@ -83,6 +83,8 @@ void mcc_ast_visit_identifier(struct mcc_ast_identifier *identifier, struct mcc_
 
 void mcc_ast_visit_statement(struct mcc_ast_statement *statement,struct mcc_ast_visitor *visitor);
 
+void mcc_ast_visit_statement_list(struct mcc_ast_statement_list *statement_list,struct mcc_ast_visitor *visitor);
+
 void mcc_ast_visit_parameter(struct mcc_ast_parameter *parameter, struct mcc_ast_visitor *visitor);
 
 void mcc_ast_visit_function(struct mcc_ast_function *function, struct mcc_ast_visitor *visitor);

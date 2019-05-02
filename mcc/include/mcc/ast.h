@@ -292,11 +292,7 @@ struct mcc_ast_statement {
 
 		struct mcc_ast_expression *return_expression;
 
-		struct {
-			int compound_size;  
-			int compound_max;
-			struct mcc_ast_statement *compound_statement[];
-		};
+		struct mcc_ast_statement_list *statement_list;
 
 
     };
@@ -315,7 +311,7 @@ struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_assign
 
 struct mcc_ast_statement *mcc_ast_new_statement_declaration(struct mcc_ast_declaration *declaration);
 
-struct mcc_ast_statement *mcc_ast_new_statement_compound(struct mcc_ast_statement *statement);
+struct mcc_ast_statement *mcc_ast_new_statement_compound(struct mcc_ast_statement_list *statement_list);
 
 struct mcc_ast_statement *mcc_ast_add_compund_statement(struct mcc_ast_statement *statement, struct mcc_ast_statement *sub_statement);
 
