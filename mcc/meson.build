@@ -34,6 +34,7 @@ mcc_src = [ 'src/ast.c',
             'src/symbol_table.c',
             'src/symbol_table_validate.c',
             'src/symbol_table_parse.c',
+            'src/symbol_table_semantic_error.c',
             lgen.process('src/scanner.l'),
             pgen.process('src/parser.y') ]
 
