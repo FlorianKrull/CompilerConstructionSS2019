@@ -230,3 +230,29 @@ int mcc_symbol_table_validate_assignemt_array_semantic(
 ) {
 // TODO array validation
 }
+
+// --------------------------------------- Statement
+
+
+// Program
+
+int mcc_symbol_table_validate_main(
+        struct mcc_ast_program *program,
+        struct mcc_symbol_table *symbol_table,
+        struct mcc_symbol_table_error_collector *ec
+) { 
+   struct mcc_symbol *s = mcc_symbol_table_get_symbol(symbol_table,"main");
+
+    if(!s){
+        mcc_symbol_table_add_error(
+                        ec,
+                        mcc_symbol_table_new_error(&(program ->node.sloc), MCC_SEMANTIC_ERROR_MAIN_MISSINIG)
+        );
+        return 1;
+    }
+    else{
+        return 0;
+    }
+
+}
+

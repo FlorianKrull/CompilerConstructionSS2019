@@ -4,6 +4,7 @@
 #include <assert.h>
 #include "mcc/ast.h"
 #include "mcc/symbol_table_parse.h"
+#include "mcc/symbol_table_semantic_error.h"
 
 // ------------------------------------------------------------ Variable
 
@@ -92,6 +93,7 @@ int mcc_symbol_table_check_expression(
     assert(ec);
 
     switch(expression->type) {
+    
         case MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION:
             // TODO check for unknown function (remember built-ins)
             // TODO validate return type of call expression
@@ -147,8 +149,19 @@ int mcc_symbol_table_check_statement(
 
             break;
         case MCC_AST_STATEMENT_TYPE_WHILE:
+            if (mcc_symbol_table_check_expression(
+                        statement->while_condition, symbol_table, ec)) {
+                    return mcc_symbol_table_check_statement(
+                        statement->while_stmt, symbol_table, ec);
+                }
+                break;
         case MCC_AST_STATEMENT_TYPE_IF:
-            // TODO check for bool result
+            if (mcc_symbol_table_check_expression(
+			        statement->if_condition, symbol_table, ec)) {
+				return mcc_symbol_table_check_statement(
+				    statement->if_stmt, symbol_table, ec);
+			}
+            break;
         case MCC_AST_STATEMENT_TYPE_DECL:
             // TODO check for shadowing
             if(statement->declaration->arr_literal != NULL) {
@@ -186,7 +199,7 @@ int mcc_symbol_table_add_function_declaration(
     assert(ec);
     assert(func_def);
 
-    struct mcc_symbol *fs = mcc_symbol_new_symbol_function(
+   struct mcc_symbol *fs = mcc_symbol_new_symbol_function(
             func_def->identifier->i_value,
             func_def->return_type,
             func_def->parameter);
@@ -194,18 +207,22 @@ int mcc_symbol_table_add_function_declaration(
     // check if already declared
     if(mcc_symbol_table_get_symbol(symbol_table, fs->variable_name) == NULL) {
         // verify semantic of function (validify return type)
-
+        if (func_def->return_type != MCC_AST_DATA_TYPE_VOID ){
+            // mcc_symbol_table_validate_statement_return
+        }
         mcc_symbol_table_insert_symbol(symbol_table, fs);
 
         // create new scope and parse function
         struct mcc_symbol_table *sub_table = mcc_symbol_table_create_inner_table(symbol_table);
 
-        // add parameters
         // go through statement list and add to symbol table
 
     } else {
         // already declared - create already declared error message
+        mcc_symbol_table_add_error(ec, mcc_symbol_table_new_error(&(func_def->node.sloc),
+                                                                  MCC_SEMANTIC_ERROR_FUNC_ALREADY_DECLARED));
     }
+     
 }
 
 // ---------------------------------------------------------- Program
@@ -220,6 +237,7 @@ int mcc_symbol_table_parse_program(
         /**
          * if (mcc_symbol_table_add_function_declaration(...) == 1) return 1;
          */
+        mcc_symbol_table_add_function_declaration(program->function_def[i], symbol_table, ec);
     }
 }
 
