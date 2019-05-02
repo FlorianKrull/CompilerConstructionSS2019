@@ -28,7 +28,7 @@ int mcc_symbool_table_check_variable_assignment(
         struct mcc_ast_assignment *assignment,
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec
-)
+);
 
 int mcc_symbol_table_add_variable_declaration(
         struct mcc_ast_declaration *declaration,

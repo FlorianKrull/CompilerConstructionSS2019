@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <mcc/ast.h>
+#include "mcc/ast.h"
 #include "mcc/symbol_table_parse.h"
 
 // ------------------------------------------------------------ Variable
@@ -198,9 +198,8 @@ int mcc_symbol_table_add_function_declaration(
         mcc_symbol_table_insert_symbol(symbol_table, fs);
 
         // create new scope and parse function
-        // innermost table acts like database layer , 
-        // inserting new entries in the table, finding them, deleting them
         struct mcc_symbol_table *sub_table = mcc_symbol_table_create_inner_table(symbol_table);
+
         // add parameters
         // go through statement list and add to symbol table
 

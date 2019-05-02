@@ -63,7 +63,7 @@ enum mcc_ast_data_type mcc_symbol_table_get_expression_return_type(
             // array index ? - should that alway be INT?
             return MCC_AST_DATA_TYPE_INT;
         default:
-            return NULL;
+            return 0;
     }
 }
 
