@@ -25,7 +25,7 @@ struct mcc_symbol_table_error_collector *mcc_symbol_table_new_error_collector() 
 void mcc_symbol_table_delete_error_collector(struct mcc_symbol_table_error_collector *ec) {
     assert(ec);
 
-    for (int i = 0; i < ec -> error_size; ec) {
+    for (int i = 0; i < ec -> error_size; i++) {
         // delete_parser_error(ec -> errors[i]);
     }
 
