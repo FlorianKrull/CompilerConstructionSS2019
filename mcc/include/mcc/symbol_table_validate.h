@@ -83,5 +83,13 @@ int mcc_symbol_table_validate_assignemt_semantic(
 );
 
 
+// --------------------------------------- Program
+
+int mcc_symbol_table_validate_main(
+        struct mcc_ast_program *program,
+        struct mcc_symbol_table *symbol_table,
+        struct mcc_symbol_table_error_collector *ec
+);
+
 #endif //MCC_SYMBOL_TABLE_VALIDATE_H
 

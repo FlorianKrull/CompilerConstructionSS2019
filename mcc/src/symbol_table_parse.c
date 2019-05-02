@@ -146,7 +146,7 @@ int mcc_symbol_table_check_statement(
 
     switch(statement->type) {
         case MCC_AST_STATEMENT_TYPE_EXPRESSION:
-
+            mcc_symbol_table_check_expression(statement->expression,symbol_table,ec);
             break;
         case MCC_AST_STATEMENT_TYPE_WHILE:
             if (mcc_symbol_table_check_expression(
@@ -215,7 +215,8 @@ int mcc_symbol_table_add_function_declaration(
         // create new scope and parse function
         struct mcc_symbol_table *sub_table = mcc_symbol_table_create_inner_table(symbol_table);
 
-        // go through statement list and add to symbol table
+        // add compund statement to symbol table
+         mcc_symbol_table_parse_compound_statement(func_def->statement->statement_list,symbol_table,ec);
 
     } else {
         // already declared - create already declared error message
