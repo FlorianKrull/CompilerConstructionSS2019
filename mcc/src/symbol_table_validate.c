@@ -110,7 +110,7 @@ int mcc_symbol_table_validate_binary_operator_handside_bool_type_check(
         struct mcc_ast_expression *expression,
         struct mcc_symbol_table *symbol_table
 ) {
-    if(((mcc_symbol_table_get_expression_return_type(expression->lhs, symbol_table) == MCC_AST_DATA_TYPE_BOOL) &&
+    if((mcc_symbol_table_get_expression_return_type(expression->lhs, symbol_table) == MCC_AST_DATA_TYPE_BOOL) &&
         (mcc_symbol_table_get_expression_return_type(expression->rhs, symbol_table) == MCC_AST_DATA_TYPE_BOOL)) {
         // both sides are bool types
         return 0;
