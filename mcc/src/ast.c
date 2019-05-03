@@ -403,29 +403,6 @@ mcc_ast_new_statement_compound(struct mcc_ast_statement_list *statement)
     return stmt;
 }
 
-// struct mcc_ast_statement *mcc_ast_add_compund_statement(struct mcc_ast_statement *statement, struct mcc_ast_statement *sub_statement)
-// {
-//     assert(statement);
-//     assert(sub_statement);
-
-//     int size = statement -> compound_size;
-//     int max = statement -> compound_max;
-//     if (statement -> compound_size < statement -> compound_max) {
-//         statement -> compound_statement[size] = sub_statement;
-//         statement -> compound_size += 1;
-//     } else {
-//         int next_max = max + max;
-
-//         statement = realloc(statement, sizeof(*statement) + sizeof(struct mcc_ast_statement) * next_max);
-//         statement -> compound_max = next_max;
-//         statement -> compound_statement[size] = sub_statement;
-//         statement -> compound_size += 1;
-//     }
-
-//     return statement;
-// }
-
-
 struct mcc_ast_statement *mcc_ast_new_statement_assignment(struct mcc_ast_assignment *assignment)
 {
     assert(assignment);
@@ -509,7 +486,6 @@ struct mcc_ast_parameter *mcc_ast_new_parameter(struct mcc_ast_declaration *decl
 
     // add to previous params list
     if ((params -> size) == (params -> max)) {
-        int next_max = params -> size + PARAMETER_DECLARATION_SIZE;
         int size = params -> size;
         struct mcc_ast_parameter *new_params = realloc(params, sizeof(*params) + sizeof(struct mcc_ast_declaration*) * PARAMETER_DECLARATION_SIZE);
         new_params -> parameters[size -1] = declaration;

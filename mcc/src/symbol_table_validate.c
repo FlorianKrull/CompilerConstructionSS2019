@@ -62,6 +62,8 @@ enum mcc_ast_data_type mcc_symbol_table_get_expression_return_type(
         case MCC_AST_EXPRESSION_TYPE_BRACKET:
             // array index ? - should that alway be INT?
             return MCC_AST_DATA_TYPE_INT;
+        default:
+            return 0;
     }
 }
 
@@ -108,8 +110,8 @@ int mcc_symbol_table_validate_binary_operator_handside_bool_type_check(
         struct mcc_ast_expression *expression,
         struct mcc_symbol_table *symbol_table
 ) {
-    if(((mcc_symbol_table_get_expression_return_type(expression->lhs, symbol_table) == MCC_AST_DATA_TYPE_BOOL) &&
-        (mcc_symbol_table_get_expression_return_type(expression->rhs, symbol_table) == MCC_AST_DATA_TYPE_BOOL))) {
+    if((mcc_symbol_table_get_expression_return_type(expression->lhs, symbol_table) == MCC_AST_DATA_TYPE_BOOL) &&
+        (mcc_symbol_table_get_expression_return_type(expression->rhs, symbol_table) == MCC_AST_DATA_TYPE_BOOL)) {
         // both sides are bool types
         return 0;
     } else {
@@ -221,10 +223,36 @@ int mcc_symbol_table_validate_assignemt_semantic(
 
 // Array
 
-//int mcc_symbol_table_validate_assignemt_array_semantic(
-//        struct mcc_ast_assignment *assignment,
-//        struct mcc_symbol_table *symbol_table,
-//        struct mcc_symbol_table_error_collector *ec
-//) {
-//// TODO array validation
-//}
+int mcc_symbol_table_validate_assignemt_array_semantic(
+        struct mcc_ast_assignment *assignment,
+        struct mcc_symbol_table *symbol_table,
+        struct mcc_symbol_table_error_collector *ec
+) {
+// TODO array validation
+}
+
+// --------------------------------------- Statement
+
+
+// Program
+
+int mcc_symbol_table_validate_main(
+        struct mcc_ast_program *program,
+        struct mcc_symbol_table *symbol_table,
+        struct mcc_symbol_table_error_collector *ec
+) { 
+   struct mcc_symbol *s = mcc_symbol_table_get_symbol(symbol_table,"main");
+
+    if(!s){
+        mcc_symbol_table_add_error(
+                        ec,
+                        mcc_symbol_table_new_error(&(program ->node.sloc), MCC_SEMANTIC_ERROR_MAIN_MISSINIG)
+        );
+        return 1;
+    }
+    else{
+        return 0;
+    }
+
+}
+
