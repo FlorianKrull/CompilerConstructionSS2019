@@ -45,8 +45,7 @@ int mcc_symbol_table_check_expression(
 // ------------------------------------------------------------ Statement
 
 int mcc_symbol_table_parse_compound_statement(
-        struct mcc_ast_statement *compound[],
-        int statement_list_size,
+        struct mcc_ast_statement_list *compound,
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec
 );
