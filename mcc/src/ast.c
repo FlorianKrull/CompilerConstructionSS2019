@@ -457,9 +457,9 @@ void mcc_ast_delete_statement(struct mcc_ast_statement *statement)
             break;
 	    case MCC_AST_STATEMENT_TYPE_COMPOUND:
             if(statement -> statement_list != NULL){
-                // TODO delete statement list// mcc_ast_delete_statement(statement->compound_statement);
                 mcc_ast_delete_statement_list(statement->statement_list);
             }
+			free(statement);
             break;
         default : break;
     }

@@ -164,6 +164,10 @@ int mcc_symbol_table_check_statement(
             break;
         case MCC_AST_STATEMENT_TYPE_DECL:
             // TODO check for shadowing
+            if(mcc_symbol_table_get_symbol(symbol_table,statement->id_decl) != NULL){
+                mcc_symbol_table_add_error(ec, mcc_symbol_table_new_error(&(statement->node.sloc),
+                                                                  MCC_SEMANTIC_ERROR_VARIABLE_ALREADY_DECLARED));
+            }
             if(statement->declaration->arr_literal != NULL) {
                 // array declaration
                 return mcc_symbol_table_add_array_declaration(statement->declaration, symbol_table, ec);
