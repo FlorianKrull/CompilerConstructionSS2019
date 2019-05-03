@@ -485,14 +485,14 @@ struct mcc_ast_parameter *mcc_ast_new_parameter(struct mcc_ast_declaration *decl
     }
 
     // add to previous params list
-    if ((params -> size) == (params -> max)) {
+    if ((params -> size) > (params -> max)) {
         int size = params -> size;
         struct mcc_ast_parameter *new_params = realloc(params, sizeof(*params) + sizeof(struct mcc_ast_declaration*) * PARAMETER_DECLARATION_SIZE);
-        new_params -> parameters[size -1] = declaration;
+        new_params -> parameters[size] = declaration;
         new_params -> size += 1;
         new_params -> max += PARAMETER_DECLARATION_SIZE;
     } else {
-        params -> parameters[(params -> size) - 1] = declaration;
+        params -> parameters[(params -> size)] = declaration;
         params -> size += 1;
     }
 

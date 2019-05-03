@@ -357,8 +357,11 @@ static void print_dot_parameter(struct mcc_ast_parameter *parameter, void *data)
 
 	FILE *out = data;
 	print_dot_node(out, parameter, "param: decl");
-    for (int i = 0; i < parameter->size; ++i) {
-		print_dot_edge(out, parameter, parameter->parameters[i], "declaration");
+    for (int i = 0; i <= parameter->size; ++i) {
+		if(parameter->parameters[i] != NULL){
+			print_dot_edge(out, parameter, parameter->parameters[i], "declaration");
+		}
+		
 	}
 }
 

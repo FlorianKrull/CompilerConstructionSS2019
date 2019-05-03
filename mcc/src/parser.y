@@ -229,7 +229,7 @@ argument: expression COMMA argument { $$ = mcc_ast_add_new_argument($1, $3); loc
 	    | expression                { $$ = mcc_ast_new_argument($1) ; loc($$, @1); }
 
 
-parameters: declaration COMMA parameters 	{ $$ = mcc_ast_new_parameter($1, $3); loc($$, @1); }
+parameters: parameters COMMA declaration 	{ $$ = mcc_ast_new_parameter($3, $1); loc($$, @1); }
 	      | declaration 			        { $$ = mcc_ast_new_parameter($1, NULL); loc($$, @1); }
           ;
 
