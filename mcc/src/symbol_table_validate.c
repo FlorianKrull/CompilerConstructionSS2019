@@ -223,13 +223,13 @@ int mcc_symbol_table_validate_assignemt_semantic(
 
 // Array
 
-int mcc_symbol_table_validate_assignemt_array_semantic(
-        struct mcc_ast_assignment *assignment,
-        struct mcc_symbol_table *symbol_table,
-        struct mcc_symbol_table_error_collector *ec
-) {
-// TODO array validation
-}
+//int mcc_symbol_table_validate_assignemt_array_semantic(
+//        struct mcc_ast_assignment *assignment,
+//        struct mcc_symbol_table *symbol_table,
+//        struct mcc_symbol_table_error_collector *ec
+//) {
+//// TODO array validation
+//}
 
 // --------------------------------------- Statement
 

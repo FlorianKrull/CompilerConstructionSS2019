@@ -93,7 +93,7 @@ int mcc_symbol_table_check_expression(
     assert(ec);
 
     switch(expression->type) {
-    
+
         case MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION:
             // TODO check for unknown function (remember built-ins)
             // TODO validate return type of call expression
@@ -118,19 +118,19 @@ int mcc_symbol_table_parse_compound_statement(
     struct mcc_symbol_table *sub_table = mcc_symbol_table_create_inner_table(symbol_table);
 
     do {
-        struct mcc_ast_statement *st = compound -> statement;
+        struct mcc_ast_statement *st = compound->statement;
         int statement_result = mcc_symbol_table_check_statement(
                 st,
                 sub_table,
                 ec
         );
 
-        if (statement_result == 1) {
+        if(statement_result == 1) {
             return 1;
         }
 
-        compound = compound -> next;
-    } while (compound -> next != NULL);
+        compound = compound->next;
+    } while(compound->next != NULL);
 
     return 0;
 }
@@ -146,27 +146,27 @@ int mcc_symbol_table_check_statement(
 
     switch(statement->type) {
         case MCC_AST_STATEMENT_TYPE_EXPRESSION:
-            mcc_symbol_table_check_expression(statement->expression,symbol_table,ec);
+            mcc_symbol_table_check_expression(statement->expression, symbol_table, ec);
             break;
         case MCC_AST_STATEMENT_TYPE_WHILE:
-            if (mcc_symbol_table_check_expression(
-                        statement->while_condition, symbol_table, ec)) {
-                    return mcc_symbol_table_check_statement(
+            if(mcc_symbol_table_check_expression(
+                    statement->while_condition, symbol_table, ec)) {
+                return mcc_symbol_table_check_statement(
                         statement->while_stmt, symbol_table, ec);
-                }
-                break;
+            }
+            break;
         case MCC_AST_STATEMENT_TYPE_IF:
-            if (mcc_symbol_table_check_expression(
-			        statement->if_condition, symbol_table, ec)) {
-				return mcc_symbol_table_check_statement(
-				    statement->if_stmt, symbol_table, ec);
-			}
+            if(mcc_symbol_table_check_expression(
+                    statement->if_condition, symbol_table, ec)) {
+                return mcc_symbol_table_check_statement(
+                        statement->if_stmt, symbol_table, ec);
+            }
             break;
         case MCC_AST_STATEMENT_TYPE_DECL:
             // TODO check for shadowing
-            if(mcc_symbol_table_get_symbol(symbol_table,statement->id_decl) != NULL){
+            if(mcc_symbol_table_get_symbol(symbol_table, statement->id_decl->i_value) != NULL) {
                 mcc_symbol_table_add_error(ec, mcc_symbol_table_new_error(&(statement->node.sloc),
-                                                                  MCC_SEMANTIC_ERROR_VARIABLE_ALREADY_DECLARED));
+                                                                          MCC_SEMANTIC_ERROR_VARIABLE_ALREADY_DECLARED));
             }
             if(statement->declaration->arr_literal != NULL) {
                 // array declaration
@@ -182,7 +182,7 @@ int mcc_symbol_table_check_statement(
         case MCC_AST_STATEMENT_TYPE_COMPOUND:
             // TODO create new symbol table as child
             return mcc_symbol_table_parse_compound_statement(
-                    statement -> statement_list,
+                    statement->statement_list,
                     symbol_table,
                     ec
             );
@@ -191,6 +191,8 @@ int mcc_symbol_table_check_statement(
             // if nothing matches return 0 to continue going through ast
             return 0;
     }
+
+    return 0;
 }
 
 // ---------------------------------------------------------- Function
@@ -203,7 +205,7 @@ int mcc_symbol_table_add_function_declaration(
     assert(ec);
     assert(func_def);
 
-   struct mcc_symbol *fs = mcc_symbol_new_symbol_function(
+    struct mcc_symbol *fs = mcc_symbol_new_symbol_function(
             func_def->identifier->i_value,
             func_def->return_type,
             func_def->parameter);
@@ -211,23 +213,24 @@ int mcc_symbol_table_add_function_declaration(
     // check if already declared
     if(mcc_symbol_table_get_symbol(symbol_table, fs->variable_name) == NULL) {
         // verify semantic of function (validify return type)
-        if (func_def->return_type != MCC_AST_DATA_TYPE_VOID ){
+        if(func_def->return_type != MCC_AST_DATA_TYPE_VOID) {
             // mcc_symbol_table_validate_statement_return
         }
         mcc_symbol_table_insert_symbol(symbol_table, fs);
 
         // create new scope and parse function
-        struct mcc_symbol_table *sub_table = mcc_symbol_table_create_inner_table(symbol_table);
+        // struct mcc_symbol_table *sub_table = mcc_symbol_table_create_inner_table(symbol_table);
 
         // add compund statement to symbol table
-         mcc_symbol_table_parse_compound_statement(func_def->statement->statement_list,symbol_table,ec);
+        mcc_symbol_table_parse_compound_statement(func_def->statement->statement_list, symbol_table, ec);
 
     } else {
         // already declared - create already declared error message
         mcc_symbol_table_add_error(ec, mcc_symbol_table_new_error(&(func_def->node.sloc),
                                                                   MCC_SEMANTIC_ERROR_FUNC_ALREADY_DECLARED));
     }
-     
+
+    return 0;
 }
 
 // ---------------------------------------------------------- Program
@@ -244,8 +247,11 @@ int mcc_symbol_table_parse_program(
          */
         mcc_symbol_table_add_function_declaration(program->function_def[i], symbol_table, ec);
     }
+
+    return 0;
 }
 
 void build_symbol_table(struct mcc_ast_program *program) {
-    struct mcc_symbol_table *st = mcc_symbol_table_new_table(NULL);
+    assert(program);
+    // struct mcc_symbol_table *st = mcc_symbol_table_new_table(NULL);
 }
