@@ -5,10 +5,10 @@
 #ifndef MCC_SUMBOL_TABLE_BUILD_H
 #define MCC_SUMBOL_TABLE_BUILD_H
 
-#include "mcc/parser.h";
-#include "mcc/symbol_table.h";
+#include "mcc/parser.h"
+#include "mcc/symbol_table.h"
 #include "mcc/symbol_table_semantic_error.h"
-#include "mcc/symbol_table_validate.h";
+#include "mcc/symbol_table_validate.h"
 
 // ------------------------------------------------------------ Array
 
@@ -45,7 +45,8 @@ int mcc_symbol_table_check_expression(
 // ------------------------------------------------------------ Statement
 
 int mcc_symbol_table_parse_compound_statement(
-        struct mcc_ast_statement_list *compound,
+        struct mcc_ast_statement *compound[],
+        int statement_list_size,
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec
 );

@@ -313,6 +313,8 @@ struct mcc_ast_statement *mcc_ast_new_statement_declaration(struct mcc_ast_decla
 
 struct mcc_ast_statement *mcc_ast_new_statement_compound(struct mcc_ast_statement_list *statement_list);
 
+struct mcc_ast_statement *mcc_ast_add_compund_statement(struct mcc_ast_statement *statement, struct mcc_ast_statement *sub_statement);
+
 struct mcc_ast_statement *mcc_ast_new_statement_return(struct mcc_ast_expression *expression);
 
 void mcc_ast_delete_statement(struct mcc_ast_statement *statement);
@@ -331,11 +333,11 @@ enum mcc_ast_literal_type {
 struct mcc_ast_literal {
 	struct mcc_ast_node node;
 
-	enum mcc_ast_literal_type type;
+	enum mcc_ast_data_type type;
 	char *value;
 };
 
-struct mcc_ast_literal *mcc_ast_new_literal(enum mcc_ast_literal_type, char* value);
+struct mcc_ast_literal *mcc_ast_new_literal(enum mcc_ast_data_type, char* value);
 
 
 void mcc_ast_delete_literal(struct mcc_ast_literal *literal);

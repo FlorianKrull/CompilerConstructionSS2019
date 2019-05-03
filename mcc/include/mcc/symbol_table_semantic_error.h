@@ -5,7 +5,7 @@
 #ifndef MCC_SYMBOL_TABLE_SEMANTIC_ERROR_H
 #define MCC_SYMBOL_TABLE_SEMANTIC_ERROR_H
 
-#include "mcc/ast.h";
+#include "mcc/ast.h"
 
 
 enum mcc_semantic_error_type {
