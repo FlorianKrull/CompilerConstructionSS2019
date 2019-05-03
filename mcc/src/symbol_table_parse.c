@@ -146,8 +146,7 @@ int mcc_symbol_table_check_statement(
 
     switch(statement->type) {
         case MCC_AST_STATEMENT_TYPE_EXPRESSION:
-            mcc_symbol_table_check_expression(statement->expression, symbol_table, ec);
-            break;
+            return mcc_symbol_table_check_expression(statement->expression, symbol_table, ec);
         case MCC_AST_STATEMENT_TYPE_WHILE:
             if(mcc_symbol_table_check_expression(
                     statement->while_condition, symbol_table, ec)) {
@@ -186,7 +185,6 @@ int mcc_symbol_table_check_statement(
                     symbol_table,
                     ec
             );
-            break;
         default:
             // if nothing matches return 0 to continue going through ast
             return 0;
@@ -219,11 +217,27 @@ int mcc_symbol_table_add_function_declaration(
         mcc_symbol_table_insert_symbol(symbol_table, fs);
 
         // create new scope and parse function
-        // struct mcc_symbol_table *sub_table = mcc_symbol_table_create_inner_table(symbol_table);
+        struct mcc_symbol_table *sub_table = mcc_symbol_table_create_inner_table(symbol_table);
+
+        // add params to sub table
+        if (func_def -> parameter -> size > 0) {
+            struct mcc_ast_parameter *p = func_def -> parameter;
+            for (int i = 0; i < p -> size; i++) {
+                struct mcc_ast_declaration *declaration = p -> parameters[i];
+
+                // at this point symbol table is still empty -> adding won't result in an error
+                if (declaration -> arr_literal != NULL) {
+                    // array declaration
+                    mcc_symbol_table_add_array_declaration(declaration, sub_table, ec);
+                } else {
+                    // variable declaration
+                    mcc_symbol_table_add_variable_declaration(declaration, sub_table, ec);
+                }
+            }
+        }
 
         // add compund statement to symbol table
         mcc_symbol_table_parse_compound_statement(func_def->statement->statement_list, symbol_table, ec);
-
     } else {
         // already declared - create already declared error message
         mcc_symbol_table_add_error(ec, mcc_symbol_table_new_error(&(func_def->node.sloc),
