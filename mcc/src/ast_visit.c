@@ -33,37 +33,41 @@ void mcc_ast_visit_expression(struct mcc_ast_expression *expression, struct mcc_
 	switch (expression->type) {
 	case MCC_AST_EXPRESSION_TYPE_LITERAL:
 		visit_if_pre_order(expression, visitor->expression_literal, visitor);
-		mcc_ast_visit(expression->literal, visitor);
+		mcc_ast_visit_literal(expression->literal, visitor);
 		visit_if_post_order(expression, visitor->expression_literal, visitor);
 		break;
 
 	case MCC_AST_EXPRESSION_TYPE_BINARY_OP:
 		visit_if_pre_order(expression, visitor->expression_binary_op, visitor);
-		mcc_ast_visit(expression->lhs, visitor);
-		mcc_ast_visit(expression->rhs, visitor);
+		mcc_ast_visit_expression(expression->lhs, visitor);
+		mcc_ast_visit_expression(expression->rhs, visitor);
 		visit_if_post_order(expression, visitor->expression_binary_op, visitor);
 		break;
 	
 	case MCC_AST_EXPRESSION_TYPE_UNARY_OP:
 		visit_if_pre_order(expression, visitor->expression_unary_op,visitor);
-		mcc_ast_visit(expression->rhs, visitor);
+		mcc_ast_visit_expression(expression->unary_expression, visitor);
 		visit_if_post_order(expression, visitor->expression_unary_op, visitor);
 		break;
 
-
 	case MCC_AST_EXPRESSION_TYPE_PARENTH:
 		visit_if_pre_order(expression, visitor->expression_parenth, visitor);
-		mcc_ast_visit(expression->expression, visitor);
+		mcc_ast_visit_expression(expression->expression, visitor);
 		visit_if_post_order(expression, visitor->expression_parenth, visitor);
 		break;
 	case MCC_AST_EXPRESSION_TYPE_IDENTIFIER:
+		visit_if_pre_order(expression, visitor->expression_identifier, visitor);
+		mcc_ast_visit_identifier(expression->identifier, visitor);
+		visit_if_post_order(expression, visitor->expression_identifier, visitor);
+		break;
 	case MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION:
          visit_if_pre_order(expression, visitor->expression_call_expression, visitor);
-         mcc_ast_visit(expression->expression, visitor);
+		 mcc_ast_visit_identifier(expression->call_identifier,visitor);
+        if (expression->call_arguments != NULL) {
+			mcc_ast_visit_argument(expression->call_arguments, visitor);
+		}
          visit_if_post_order(expression, visitor->expression_parenth, visitor);
          break;
-	case MCC_AST_EXPRESSION_TYPE_BRACKET:
-		break;
 	}
 
 
@@ -240,6 +244,20 @@ void mcc_ast_visit_parameter(struct mcc_ast_parameter *parameter,
 			mcc_ast_visit_declaration(parameter->parameters[i], visitor);
 		}
 		visit_if_post_order(parameter, visitor->parameter, visitor);
+	}
+}
+
+void mcc_ast_visit_argument(struct mcc_ast_argument *argument,
+                            struct mcc_ast_visitor *visitor)
+{
+	assert(visitor);
+
+	if (argument) {
+		visit_if_pre_order(argument, visitor->argument, visitor);
+		for (int i = 0; i < argument->size; i++) {
+			mcc_ast_visit_expression(argument->expressions[i], visitor);
+		}
+		visit_if_post_order(argument, visitor->argument, visitor);
 	}
 }
 
