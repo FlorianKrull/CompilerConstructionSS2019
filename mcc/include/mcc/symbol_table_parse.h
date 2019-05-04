@@ -78,7 +78,7 @@ int mcc_symbol_table_parse_program(
         struct mcc_symbol_table_error_collector *ec
 );
 
-void mcc_symbol_table_build(struct mcc_ast_program *program);
+struct mcc_symbol_table *mcc_smybol_table_build(struct mcc_ast_program *program);
 
 #endif //MCC_SUMBOL_TABLE_BUILD_H
 

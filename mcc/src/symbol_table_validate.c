@@ -9,6 +9,79 @@
 
 // --------------------------------------- Expression
 
+int mcc_symbol_table_validate_validate_identifier(
+        struct mcc_ast_identifier *identifier,
+        struct mcc_symbol_table *symbol_table,
+        bool with_shadowing,
+        struct mcc_symbol_table_error_collector *ec
+) {
+    assert(identifier);
+    assert(symbol_table);
+    assert(ec);
+
+    struct mcc_symbol *s = mcc_symbol_table_get_symbol(symbol_table, identifier -> i_value);
+
+    // identifier does not exist
+    if (s == NULL) {
+        mcc_symbol_table_add_error(
+                ec,
+                mcc_symbol_table_new_error(&(identifier ->node.sloc), MCC_SEMANTIC_ERROR_VARIABLE_NOT_DECLARED));
+
+        return 1;
+    }
+
+    return 0;
+}
+
+int mcc_symbol_table_validate_validate_call_expression(
+        struct mcc_ast_expression *expression,
+        struct mcc_symbol_table *symbol_table,
+        bool with_shadowing,
+        struct mcc_symbol_table_error_collector *ec
+) {
+    assert(expression);
+    assert(symbol_table);
+    assert(ec);
+
+    struct mcc_symbol *s = mcc_symbol_table_get_symbol(symbol_table, expression -> function_name -> i_value);
+
+    // function not declared
+    if (s == NULL) {
+        mcc_symbol_table_add_error(
+                ec,
+                mcc_symbol_table_new_error(&(expression -> node.sloc), MCC_SEMANTIC_ERROR_FUNC_NOT_DECLARED));
+
+        return 1;
+    } else {
+        struct mcc_ast_argument *argument = expression -> argument;
+        struct mcc_symbol_function_arguments *func_args = s -> func_arguments;
+
+        if (argument -> size != func_args -> arg_size) {
+            mcc_symbol_table_add_error(
+                    ec,
+                    mcc_symbol_table_new_error(&(expression -> node.sloc), MCC_SEMANTIC_ERROR_WRONG_NUM_OF_ARGUMENTS));
+
+            return 1;
+        }
+
+        for (int i = 0; i < func_args -> arg_size; i++) {
+            enum mcc_ast_data_type func_arg_type = func_args -> arg_types[i];
+            enum mcc_ast_data_type arg_typ = mcc_symbol_table_get_expression_return_type(argument -> expressions[i], symbol_table);
+
+            // wrong type passed as an argument
+            if (func_arg_type != arg_typ) {
+                mcc_symbol_table_add_error(
+                        ec,
+                        mcc_symbol_table_new_error(&(expression -> node.sloc), MCC_SEMANTIC_ERROR_WRONG_ARGUMENT_TYPE));
+
+                return 1;
+            }
+        }
+
+        return 0;
+    }
+}
+
 enum mcc_ast_data_type mcc_symbol_table_get_expression_return_type_binary_op(
         struct mcc_ast_expression *expression,
         struct mcc_symbol_table *symbol_table
@@ -54,7 +127,6 @@ enum mcc_ast_data_type mcc_symbol_table_get_expression_return_type(
         case MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION:
             return mcc_symbol_table_get_symbol(symbol_table, expression->function_name->i_value)->data_type;
         case MCC_AST_EXPRESSION_TYPE_UNARY_OP:
-
         case MCC_AST_EXPRESSION_TYPE_BINARY_OP:
             return mcc_symbol_table_get_expression_return_type_binary_op(expression, symbol_table);
         case MCC_AST_EXPRESSION_TYPE_PARENTH:
@@ -62,8 +134,6 @@ enum mcc_ast_data_type mcc_symbol_table_get_expression_return_type(
         case MCC_AST_EXPRESSION_TYPE_BRACKET:
             // array index ? - should that alway be INT?
             return MCC_AST_DATA_TYPE_INT;
-        default:
-            return 0;
     }
 }
 
@@ -241,7 +311,7 @@ int mcc_symbol_table_validate_main(
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec
 ) { 
-   struct mcc_symbol *s = mcc_symbol_table_get_symbol(symbol_table,"main");
+   struct mcc_symbol *s = mcc_symbol_table_get_symbol(symbol_table, "main");
 
     if(!s){
         mcc_symbol_table_add_error(

@@ -52,14 +52,14 @@ struct mcc_symbol *mcc_symbol_new_symbol_function(
     symbol -> data_type = data_type;
 
     if (parameter != NULL) {
-        struct mcc_symbol_function_parameters *fp = malloc(sizeof(*fp) + sizeof(enum mcc_ast_data_type*) * parameter -> size);
-        fp -> params_size = parameter -> size;
+        struct mcc_symbol_function_arguments *fp = malloc(sizeof(*fp) + sizeof(enum mcc_ast_data_type*) * parameter -> size);
+        fp -> arg_size = parameter -> size;
 
         for (int i = 0; i < parameter -> size; i++) {
-            fp -> params_types[i] = parameter -> parameters[i] -> type;
+            fp -> arg_types[i] = parameter -> parameters[i] -> type;
         }
 
-        symbol -> func_params = fp;
+        // symbol -> func_params = fp;
     }
 
     return symbol;
@@ -72,14 +72,22 @@ void mcc_symbol_delete_symbol(struct mcc_symbol *symbol) {
 
 // ---------------------------------------------------------- Symbol Table
 
+struct mcc_symbol_table_symbol_container *mcc_symbol_table_new_symbol_container() {
+    struct mcc_symbol_table_symbol_container *sc =
+            malloc(sizeof(*sc) + sizeof(struct mcc_symbol*) * SYMBOL_TABLE_SYMBOL_SIZE);
+
+    sc -> size = 0;
+    sc -> max = SYMBOL_TABLE_SYMBOL_SIZE;
+
+    return sc;
+}
+
 struct mcc_symbol_table *mcc_symbol_table_new_table(struct mcc_symbol_table *parent) {
-    int mem_symbols = sizeof(struct mcc_symbol*) * SYMBOL_TABLE_SYMBOL_SIZE;
     int mem_children = sizeof(struct mcc_symbol_table*) * SYMBOL_TABLE_CHILDREN_SIZE;
 
-    struct mcc_symbol_table *table = malloc(sizeof(*table) + mem_symbols + mem_children);
+    struct mcc_symbol_table *table = malloc(sizeof(*table) + mem_children);
 
-    table -> symbols_size = 0;
-    table -> symbols_max = SYMBOL_TABLE_SYMBOL_SIZE;
+    table -> symbol_container = mcc_symbol_table_new_symbol_container();
 
     table -> inner_tables_size = 0;
     table -> inner_tables_max = SYMBOL_TABLE_CHILDREN_SIZE;
@@ -96,8 +104,8 @@ void mcc_symbol_table_delete_table(struct mcc_symbol_table *table) {
     }
 
     // Delete symbols
-    for (int i = 0; i < table -> symbols_max; i++) {
-        mcc_symbol_delete_symbol(table -> symbols[i]);
+    for (int i = 0; i < table -> symbol_container -> size; i++) {
+        mcc_symbol_delete_symbol(table -> symbol_container -> symbols[i]);
     }
 
     free(table);
@@ -113,6 +121,7 @@ struct mcc_symbol_table *mcc_symbol_table_create_inner_table(struct mcc_symbol_t
 
     if (children_size < children_max) {
         parent -> inner_tables[children_size] = child;
+        parent -> inner_tables_size++;
         return 0;
     } else {
         int next_children_max = children_max + SYMBOL_TABLE_CHILDREN_SIZE;
@@ -158,31 +167,35 @@ int mcc_symbol_table_insert_symbol(struct mcc_symbol_table *table, struct mcc_sy
     assert(table);
     assert(symbol);
 
-    int symbols_size = table -> symbols_size;
-    int symbols_max = table -> symbols_max;
+    int symbols_size = table -> symbol_container -> size;
+    int symbols_max = table -> symbol_container -> max;
 
     if (symbols_size < symbols_max) {
-        table -> symbols[symbols_size] = symbol;
-        table -> symbols_size += 1;
+        table -> symbol_container -> symbols[symbols_size] = symbol;
+        table -> symbol_container -> size += 1;
         return 0;
     } else {
-        table = realloc(table, sizeof(*table) + sizeof(struct mcc_symbol*) + SYMBOL_TABLE_SYMBOL_SIZE);
+        // realloc symbols_container
+        struct mcc_symbol_table_symbol_container *sc = table -> symbol_container;
 
-        if (table == NULL) {
+        sc = realloc(sc, sizeof(*sc) + sizeof(struct mcc_symbol*) + SYMBOL_TABLE_SYMBOL_SIZE);
+
+        if (sc == NULL) {
             return 1;
         }
 
-        table -> symbols[symbols_size] = symbol;
-        table -> symbols_size += 1;
-        table -> symbols_max += SYMBOL_TABLE_SYMBOL_SIZE;
+        sc -> symbols[symbols_size] = symbol;
+        sc -> size += 1;
+        sc -> max += SYMBOL_TABLE_SYMBOL_SIZE;
 
+        table -> symbol_container = sc;
         return 0;
     }
 }
 
 struct mcc_symbol *mcc_symbol_table_get_symbol(struct mcc_symbol_table *symbol_table, char *symbol_name) {
-    for (int i = 0; i < symbol_table -> symbols_size; i++) {
-        struct mcc_symbol *s = symbol_table -> symbols[i];
+    for (int i = 0; i < symbol_table -> symbol_container -> size; i++) {
+        struct mcc_symbol *s = symbol_table -> symbol_container -> symbols[i];
 
         if (strcmp(s -> variable_name, symbol_name) == 0) {
             return s;

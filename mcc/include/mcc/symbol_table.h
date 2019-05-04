@@ -12,9 +12,10 @@ enum mcc_symbol_type {
     MCC_SYMBOL_TYPE_FUNCTION
 };
 
-struct mcc_symbol_function_parameters {
-    int params_size;
-    enum mcc_ast_data_type *params_types;
+struct mcc_symbol_function_arguments {
+    int arg_size;
+    int arg_max;
+    enum mcc_ast_data_type arg_types[];
 };
 
 struct mcc_symbol {
@@ -27,7 +28,7 @@ struct mcc_symbol {
 
     union {
         int array_size;
-        struct mcc_symbol_function_parameters *func_params;
+        struct mcc_symbol_function_arguments *func_arguments;
     };
 };
 
@@ -46,11 +47,15 @@ void mcc_symbol_delete_symbol(struct mcc_symbol *symbol);
 
 // Symbol table implemented as a linked list
 
+struct mcc_symbol_table_symbol_container {
+    int size;
+    int max;
+    struct mcc_symbol *symbols[];
+};
+
 struct mcc_symbol_table {
     // use double-pointer for this as flexible arrays have to be at the end of a struct
-    int symbols_size;
-    int symbols_max;
-    struct mcc_symbol **symbols;
+    struct mcc_symbol_table_symbol_container *symbol_container;
 
     // every symbol table has one parent and can have multiple inner_tables
     struct mcc_symbol_table *parent;

@@ -1,12 +1,7 @@
-int a() {
-    if (b){
-        
-        while(a){
-            int d;
-            d = 3;
+int a (int param1) {}
 
-        }
-    }
-    
+int b () {}
 
-}
+bool c () {}
+
+void main () {}

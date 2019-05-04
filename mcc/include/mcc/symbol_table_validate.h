@@ -12,10 +12,27 @@
 // --------------------------------------- Expression
 
 /**
- * Checks if expression contains identifier or function calls and validates if they have already been declared
+ * Validate identifier (check if exists in symbol table
+ * @param expression
+ * @param symbol_table
+ * @return enum mcc_ast_data_type
  * @return 1 if error, 0 if ok
  */
-int mcc_symbol_table_validate_expression_existence();
+int mcc_symbol_table_validate_validate_identifier(
+        struct mcc_ast_identifier *identifier,
+        struct mcc_symbol_table *symbol_table,
+        bool with_shadowing,
+        struct mcc_symbol_table_error_collector *ec
+        );
+
+
+int mcc_symbol_table_validate_validate_call_expression(
+        struct mcc_ast_expression *expression,
+        struct mcc_symbol_table *symbol_table,
+        bool with_shadowing,
+        struct mcc_symbol_table_error_collector *ec
+);
+
 
 /**
  * Returns binary-op expression return type
