@@ -123,6 +123,11 @@ struct mcc_ast_expression {
 			struct mcc_ast_identifier *bracket_identifier;
 			struct mcc_ast_expression *bracket_expression;
 		};
+
+		struct {
+			struct mCc_ast_identifier *call_identifier;
+			struct mCc_ast_argument_list *call_arguments;
+		} ;
 	};
 };
 
@@ -334,11 +339,29 @@ struct mcc_ast_literal {
 	struct mcc_ast_node node;
 
 	enum mcc_ast_data_type type;
-	char *value;
+	union {
+		// MCC_AST_LITERAL_TYPE_INT
+		long i_value;
+
+		// MCC_AST_LITERAL_TYPE_FLOAT
+		double f_value;
+
+		//MCC_AST_LITERAL_TYPE_STRING
+		char* s_value;
+
+		//MCC_AST_LITERAL_TYPE_BOOL
+		bool b_value;
+	};
+
 };
 
-struct mcc_ast_literal *mcc_ast_new_literal(enum mcc_ast_data_type, char* value);
+struct mcc_ast_literal *mcc_ast_new_literal_int(long value);
 
+struct mcc_ast_literal *mcc_ast_new_literal_float(double value);
+
+struct mcc_ast_literal *mcc_ast_new_literal_string(char *value);
+
+struct mcc_ast_literal *mcc_ast_new_literal_bool(bool value);
 
 void mcc_ast_delete_literal(struct mcc_ast_literal *literal);
 

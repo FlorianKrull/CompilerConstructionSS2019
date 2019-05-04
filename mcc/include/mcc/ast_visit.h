@@ -31,6 +31,7 @@ typedef void (*mcc_ast_visit_statement_list_cb)(struct mcc_ast_statement_list *,
 typedef void (*mcc_ast_visit_assignment_cb)(struct mcc_ast_assignment *, void *userData);
 typedef void (*mcc_ast_visit_function_cb)(struct mcc_ast_function *, void *userData);
 typedef void (*mcc_ast_visit_parameter_cb)(struct mcc_ast_parameter *, void *userData);
+typedef void (*mcc_ast_visit_argument_cb)(struct mcc_ast_argument *, void *userData);
 typedef void (*mcc_ast_visit_program_cb)(struct mcc_ast_program *, void *userData);
 
 struct mcc_ast_visitor {
@@ -62,9 +63,14 @@ struct mcc_ast_visitor {
 	mcc_ast_visit_statement_list_cb statement_list;
 
 	mcc_ast_visit_literal_cb literal;
+	mcc_ast_visit_literal_cb literal_bool;
+	mcc_ast_visit_literal_cb literal_int;
+	mcc_ast_visit_literal_cb literal_float;
+	mcc_ast_visit_literal_cb literal_string;
 	mcc_ast_visit_declaration_cb declaration;
 	mcc_ast_visit_assignment_cb assignment;
 	mcc_ast_visit_identifier_cb identifier;
+	mcc_ast_visit_argument_cb argument;
 
 	mcc_ast_visit_function_cb function;
 	mcc_ast_visit_parameter_cb parameter;
@@ -86,6 +92,8 @@ void mcc_ast_visit_statement(struct mcc_ast_statement *statement,struct mcc_ast_
 void mcc_ast_visit_statement_list(struct mcc_ast_statement_list *statement_list,struct mcc_ast_visitor *visitor);
 
 void mcc_ast_visit_parameter(struct mcc_ast_parameter *parameter, struct mcc_ast_visitor *visitor);
+
+void mcc_ast_visit_argument(struct mcc_ast_argument *argument, struct mcc_ast_visitor *visitor);
 
 void mcc_ast_visit_function(struct mcc_ast_function *function, struct mcc_ast_visitor *visitor);
 

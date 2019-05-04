@@ -31,10 +31,10 @@ void mcc_parser_error();
 %locations
 
 %token END 0 "EOF"
-%token <char*>  INT_LITERAL   	"integer literal"
-%token <char*> 	FLOAT_LITERAL 	"float literal"
-%token <char*>  STRING_LITERAL	"string literal"
-%token <char*> 	BOOL_LITERAL 	"bool literal"
+%token <bool>   BOOL_LITERAL        "bool literal"
+%token <long>   INT_LITERAL         "integer literal"
+%token <double> FLOAT_LITERAL       "float literal"
+%token <char*>   STRING_LITERAL     "string literal"
 
 %token <char*> IDENTIFIER "identifier"
 
@@ -168,10 +168,10 @@ expression : binary_op    	{ $$ = $1; }
            ;
 
 
-literal : BOOL_LITERAL    { $$ = mcc_ast_new_literal(MCC_AST_DATA_TYPE_INT, $1); loc($$, @1); }
-        | INT_LITERAL     { $$ = mcc_ast_new_literal(MCC_AST_DATA_TYPE_INT, $1); loc($$, @1); }
-        | FLOAT_LITERAL   { $$ = mcc_ast_new_literal(MCC_AST_DATA_TYPE_FLOAT, $1); loc($$, @1); }
-        | STRING_LITERAL  { $$ = mcc_ast_new_literal(MCC_AST_DATA_TYPE_STRING, $1); loc($$, @1); }
+literal : BOOL_LITERAL    { $$ = mcc_ast_new_literal_bool($1); loc($$, @1); }
+        | INT_LITERAL     { $$ = mcc_ast_new_literal_int($1); loc($$, @1); }
+        | FLOAT_LITERAL   { $$ = mcc_ast_new_literal_float($1); loc($$, @1); }
+        | STRING_LITERAL  { $$ = mcc_ast_new_literal_string($1); loc($$, @1); }
         ;
 
 identifier : IDENTIFIER { $$ = mcc_ast_new_identifier($1); loc($$, @1); }
@@ -229,7 +229,7 @@ argument: expression COMMA argument { $$ = mcc_ast_add_new_argument($1, $3); loc
 	    | expression                { $$ = mcc_ast_new_argument($1) ; loc($$, @1); }
 
 
-parameters: declaration COMMA parameters 	{ $$ = mcc_ast_new_parameter($1, $3); loc($$, @1); }
+parameters: parameters COMMA declaration 	{ $$ = mcc_ast_new_parameter($3, $1); loc($$, @1); }
 	      | declaration 			        { $$ = mcc_ast_new_parameter($1, NULL); loc($$, @1); }
           ;
 

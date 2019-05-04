@@ -176,28 +176,54 @@ mcc_ast_new_expression_call_expression(struct mcc_ast_identifier *function_name,
 
 // ------------------------------------------------------------------- Literals
 
-struct mcc_ast_literal *mcc_ast_new_literal(enum mcc_ast_data_type type, char* value)
+struct mcc_ast_literal *mcc_ast_new_literal_bool(bool value)
 {
 	struct mcc_ast_literal *lit = malloc(sizeof(*lit));
-	if (!lit) {
-		return NULL;
-	}
+	assert(lit);
 
-	lit->type = type;
-	lit->value = value;
+	lit->type = MCC_AST_LITERAL_TYPE_BOOL;
+	lit->b_value = value;
 	return lit;
 }
 
+struct mcc_ast_literal *mcc_ast_new_literal_int(long value)
+{
+	struct mcc_ast_literal *lit = malloc(sizeof(*lit));
+	assert(lit);
+
+	lit->type = MCC_AST_LITERAL_TYPE_INT;
+	lit->i_value = value;
+	return lit;
+}
+
+struct mcc_ast_literal *mcc_ast_new_literal_float(double value)
+{
+	struct mcc_ast_literal *lit = malloc(sizeof(*lit));
+	assert(lit);
+
+	lit->type = MCC_AST_LITERAL_TYPE_FLOAT;
+	lit->f_value = value;
+	return lit;
+}
+
+struct mcc_ast_literal *mcc_ast_new_literal_string(char *value)
+{
+	struct mcc_ast_literal *lit = malloc(sizeof(*lit));
+	assert(lit);
+
+	lit->type = MCC_AST_LITERAL_TYPE_STRING;
+	lit->s_value = value;
+	return lit;
+}
 
 void mcc_ast_delete_literal(struct mcc_ast_literal *literal)
 {
 	assert(literal);
-	if (literal->value) {
-		free(literal->value);
+	if (literal->type == MCC_AST_LITERAL_TYPE_STRING) {
+		free(literal->s_value);
 	}
 	free(literal);
 }
-
 // ------------------------------------------------------------------- Identifier
 
 struct mcc_ast_identifier *mcc_ast_new_identifier(char *value)
@@ -485,14 +511,14 @@ struct mcc_ast_parameter *mcc_ast_new_parameter(struct mcc_ast_declaration *decl
     }
 
     // add to previous params list
-    if ((params -> size) == (params -> max)) {
+    if ((params -> size) > (params -> max)) {
         int size = params -> size;
         struct mcc_ast_parameter *new_params = realloc(params, sizeof(*params) + sizeof(struct mcc_ast_declaration*) * PARAMETER_DECLARATION_SIZE);
-        new_params -> parameters[size -1] = declaration;
+        new_params -> parameters[size] = declaration;
         new_params -> size += 1;
         new_params -> max += PARAMETER_DECLARATION_SIZE;
     } else {
-        params -> parameters[(params -> size) - 1] = declaration;
+        params -> parameters[(params -> size)] = declaration;
         params -> size += 1;
     }
 

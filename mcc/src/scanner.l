@@ -117,21 +117,13 @@ string_literal \"(\\.|[^"\\])*\"
                     yylval->TK_IDENTIFIER = strdup(yytext);
                     return TK_IDENTIFIER;
                   }
-{bool_literal}    {
-                    yylval->TK_BOOL_LITERAL = strdup(yytext);
-                    return TK_BOOL_LITERAL;
-                  }
+{int_literal}     { yylval->TK_INT_LITERAL = atol(yytext); return TK_INT_LITERAL; }
 
-{int_literal}     { yylval->TK_INT_LITERAL = strdup(yytext);
-                    return TK_INT_LITERAL; }
+{float_literal}   { yylval->TK_FLOAT_LITERAL = atof(yytext); return TK_FLOAT_LITERAL; }
 
-{float_literal}   { yylval->TK_FLOAT_LITERAL = strdup(yytext);
-                    return TK_FLOAT_LITERAL; }
+{string_literal}  { yylval->TK_STRING_LITERAL = yytext; return TK_STRING_LITERAL; }
 
-{string_literal}  { int len = strlen(yytext) - 1; yylval->TK_STRING_LITERAL = malloc(len);
-                    memcpy(yylval->TK_STRING_LITERAL, &yytext[1], len);
-                    yylval->TK_STRING_LITERAL[len - 1] = '\0';
-                    return TK_STRING_LITERAL; }
+{bool_literal}    { yylval->TK_BOOL_LITERAL = strcmp(yytext, "true") == 0; return TK_BOOL_LITERAL; }
 
 
 
