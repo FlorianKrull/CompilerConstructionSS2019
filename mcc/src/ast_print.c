@@ -190,6 +190,28 @@ static void print_dot_expression_parenth(struct mcc_ast_expression *expression, 
 	print_dot_edge(out, expression, expression->expression, "expression");
 }
 
+static void print_dot_expression_call_expression( struct mcc_ast_expression *expression,  void *data)
+{
+	assert(expression);
+	assert(data);
+
+	char label[LABEL_SIZE] = { 0 };
+	snprintf(label, sizeof(label), "expr: call");
+
+	FILE *out = data;
+	print_dot_node(out, expression, label);
+	print_dot_edge(out, expression, expression->call_identifier, "id");
+
+	if (expression->argument != NULL) {
+		print_dot_edge(out, expression, expression->argument, "argument");
+	}
+
+	// for (int i = 0; i < program->size; i++) {
+	// 	print_dot_edge(out, program, program->function_def[i],
+	// 	               "function_definition");
+	// }
+}
+
 // ------------------------------------------------------------------- Literal
 
 static void print_dot_literal_bool(struct mcc_ast_literal *literal,void *data)
@@ -401,6 +423,24 @@ static void print_dot_parameter(struct mcc_ast_parameter *parameter, void *data)
 	}
 }
 
+// ------------------------------------------------------------------- Argument
+
+static void print_dot_argument(struct mcc_ast_argument *argument, void *data)
+{
+	assert(argument);
+	assert(data);
+
+	FILE *out = data;
+	print_dot_node(out, argument, "arguments ");
+    for (int i = 0; i <= argument->size; ++i) {
+		if(argument->expressions[i] != NULL){
+			print_dot_edge(out, argument, argument->expressions[i], "arg expression");
+		}
+		
+	}
+}
+
+
 // ------------------------------------------------------------------- Function
 
 static void print_dot_function(struct mcc_ast_function *function, void *data)
@@ -454,6 +494,7 @@ static struct mcc_ast_visitor print_dot_visitor(FILE *out)
 	    .expression_binary_op = print_dot_expression_binary_op,
 	    .expression_parenth = print_dot_expression_parenth,
 		.expression_identifier = print_dot_expression_identifier,
+		.expression_call_expression = print_dot_expression_call_expression,
 
 		.literal_bool = print_dot_literal_bool,
 		.literal_int = print_dot_literal_int,
@@ -474,6 +515,7 @@ static struct mcc_ast_visitor print_dot_visitor(FILE *out)
 
 		.function = print_dot_function,
 		.parameter = print_dot_parameter,
+		.argument = print_dot_argument,
 		.program = print_dot_program,
 	};
 }

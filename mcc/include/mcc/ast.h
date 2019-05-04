@@ -125,8 +125,8 @@ struct mcc_ast_expression {
 		};
 
 		struct {
-			struct mCc_ast_identifier *call_identifier;
-			struct mCc_ast_argument_list *call_arguments;
+			struct mcc_ast_identifier *call_identifier;
+			struct mcc_ast_argument *call_arguments;
 		} ;
 	};
 };
@@ -164,10 +164,8 @@ void mcc_ast_delete_expression(struct mcc_ast_expression *expression);
 
 struct mcc_ast_argument {
 	struct mcc_ast_node node;
-
 	int size;
 	int max;
-
 	struct mcc_ast_expression *expressions[];
 };
 
