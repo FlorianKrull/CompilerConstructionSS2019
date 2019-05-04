@@ -1,6 +1,7 @@
 project('mcc', 'c',
     default_options: [ 'buildtype=release',
                        'c_std=c11',
+                       'cpp_std=c++14',
                        'warning_level=3' ],
     meson_version: '>=0.44.0'
 )

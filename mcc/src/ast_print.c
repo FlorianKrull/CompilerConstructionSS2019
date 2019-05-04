@@ -192,13 +192,49 @@ static void print_dot_expression_parenth(struct mcc_ast_expression *expression, 
 
 // ------------------------------------------------------------------- Literal
 
-static void print_dot_literal(struct mcc_ast_literal *literal, void *data)
+static void print_dot_literal_bool(struct mcc_ast_literal *literal,void *data)
 {
 	assert(literal);
 	assert(data);
 
 	char label[LABEL_SIZE] = { 0 };
-	snprintf(label, sizeof(label), "%s", literal->value);
+	snprintf(label, sizeof(label), literal->b_value ? "true" : "false");
+
+	FILE *out = data;
+	print_dot_node(out, literal, label);
+}
+
+static void print_dot_literal_int(struct mcc_ast_literal *literal, void *data)
+{
+	assert(literal);
+	assert(data);
+
+	char label[LABEL_SIZE] = { 0 };
+	snprintf(label, sizeof(label), "%ld", literal->i_value);
+
+	FILE *out = data;
+	print_dot_node(out, literal, label);
+}
+
+static void print_dot_literal_float(struct mcc_ast_literal *literal,void *data)
+{
+	assert(literal);
+	assert(data);
+
+	char label[LABEL_SIZE] = { 0 };
+	snprintf(label, sizeof(label), "%f", literal->f_value);
+
+	FILE *out = data;
+	print_dot_node(out, literal, label);
+}
+
+static void print_dot_literal_string(struct mcc_ast_literal *literal, void *data)
+{
+	assert(literal);
+	assert(data);
+
+	char label[LABEL_SIZE] = { 0 };
+	snprintf(label, sizeof(label), "%s", literal->s_value);
 
 	FILE *out = data;
 	print_dot_node(out, literal, label);
@@ -419,7 +455,10 @@ static struct mcc_ast_visitor print_dot_visitor(FILE *out)
 	    .expression_parenth = print_dot_expression_parenth,
 		.expression_identifier = print_dot_expression_identifier,
 
-		.literal = print_dot_literal,
+		.literal_bool = print_dot_literal_bool,
+		.literal_int = print_dot_literal_int,
+		.literal_float = print_dot_literal_float,
+		.literal_string = print_dot_literal_string,
 		.identifier = print_dot_identifier,
 
 		.statement_expression = print_dot_statement_expression,

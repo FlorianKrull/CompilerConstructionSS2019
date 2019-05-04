@@ -65,7 +65,7 @@ int mcc_symbol_table_add_array_declaration(
     struct mcc_symbol *vs = mcc_symbol_new_symbol_array(
             declaration->ident->i_value,
             declaration->type,
-            atoi(declaration->arr_literal->value));
+            atoi(declaration->arr_literal->i_value));
 
     // check if already declared
     if(mcc_symbol_table_get_symbol(symbol_table, vs->variable_name) == NULL) {
