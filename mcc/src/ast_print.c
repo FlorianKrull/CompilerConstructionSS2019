@@ -428,7 +428,7 @@ static void print_dot_argument(struct mcc_ast_argument *argument, void *data)
 
 	FILE *out = data;
 	print_dot_node(out, argument, "arguments ");
-    for (int i = 0; i <= argument->size; ++i) {
+    for (int i = 0; i < argument->size; ++i) {
 		if(argument->expressions[i] != NULL){
 			print_dot_edge(out, argument, argument->expressions[i], "arg expression");
 		}
@@ -524,20 +524,7 @@ void mcc_ast_print_dot_expression(FILE *out, struct mcc_ast_expression *expressi
 	print_dot_begin(out);
 
 	struct mcc_ast_visitor visitor = print_dot_visitor(out);
-	mcc_ast_visit(expression, &visitor);
-
-	print_dot_end(out);
-}
-
-void mcc_ast_print_dot_literal(FILE *out, struct mcc_ast_literal *literal)
-{
-	assert(out);
-	assert(literal);
-
-	print_dot_begin(out);
-
-	struct mcc_ast_visitor visitor = print_dot_visitor(out);
-	mcc_ast_visit(literal, &visitor);
+	mcc_ast_visit_expression(expression, &visitor);
 
 	print_dot_end(out);
 }
@@ -563,7 +550,7 @@ void mcc_ast_print_dot_declaration(FILE *out, struct mcc_ast_declaration *declar
 	print_dot_begin(out);
 
 	struct mcc_ast_visitor visitor = print_dot_visitor(out);
-	mcc_ast_visit(declaration, &visitor);
+	mcc_ast_visit_declaration(declaration, &visitor);
 
 	print_dot_end(out);
 }
@@ -576,7 +563,7 @@ void mcc_ast_print_dot_program(FILE *out, struct mcc_ast_program *program)
 	print_dot_begin(out);
 
 	struct mcc_ast_visitor visitor = print_dot_visitor(out);
-	mcc_ast_visit(program, &visitor);
+	mcc_ast_visit_program(program, &visitor);
 
 	print_dot_end(out);
 }

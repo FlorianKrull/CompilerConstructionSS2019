@@ -7,7 +7,9 @@ int a() {
 
         }
     }else{
-        int b;
+        string b;
+        string f;
+        f = "a";
     }
     
 

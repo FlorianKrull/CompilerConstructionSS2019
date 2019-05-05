@@ -35,15 +35,12 @@ int line_num = 1;
 int comment_caller;
 %}
 
-alpha         [a-zA-Z_]
-alpha_num     [a-zA-Z0-9_]
-digit         [0-9]
-
-int_literal   {digit}+
-float_literal {digit}+\.{digit}+
+int_literal   [0-9]+
+float_literal [0-9]+\.[0-9]+
 bool_literal  true|false
-identifier {alpha}{alpha_num}*
-string_literal \"(\\.|[^"\\])*\"
+string_literal \"[^\"]*\"
+
+identifier   [a-zA-Z_][a-zA-Z0-9_]*
 
 %x comment foo
 

@@ -208,8 +208,11 @@ struct mcc_ast_literal *mcc_ast_new_literal_string(char *value)
 	struct mcc_ast_literal *lit = malloc(sizeof(*lit));
 	assert(lit);
 
+	char *copyValue = malloc(sizeof(char) * (strlen(value) + 4));
+    strcpy(copyValue, value);
+
 	lit->type = MCC_AST_LITERAL_TYPE_STRING;
-	lit->s_value = value;
+	lit->s_value = copyValue;
 	return lit;
 }
 

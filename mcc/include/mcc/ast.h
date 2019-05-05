@@ -331,7 +331,7 @@ enum mcc_ast_literal_type {
 struct mcc_ast_literal {
 	struct mcc_ast_node node;
 
-	enum mcc_ast_data_type type;
+	enum mcc_ast_literal_type type;
 	union {
 		// MCC_AST_LITERAL_TYPE_INT
 		long i_value;

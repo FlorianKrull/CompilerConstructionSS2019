@@ -225,7 +225,7 @@ call_expression: identifier LPARENTH RPARENTH 		{ $$ = mcc_ast_new_expression_ca
 	       | identifier LPARENTH argument RPARENTH  { $$ = mcc_ast_new_expression_call_expression($1, $3); loc($$, @1); }
 	       ;
 
-argument: expression COMMA argument { $$ = mcc_ast_add_new_argument($1, $3); loc($$, @1); }
+argument: argument COMMA expression { $$ = mcc_ast_add_new_argument($3, $1); loc($$, @1); }
 	    | expression                { $$ = mcc_ast_new_argument($1) ; loc($$, @1); }
 
 

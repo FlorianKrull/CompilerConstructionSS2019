@@ -62,7 +62,6 @@ struct mcc_ast_visitor {
 
 	mcc_ast_visit_statement_list_cb statement_list;
 
-	mcc_ast_visit_literal_cb literal;
 	mcc_ast_visit_literal_cb literal_bool;
 	mcc_ast_visit_literal_cb literal_int;
 	mcc_ast_visit_literal_cb literal_float;
