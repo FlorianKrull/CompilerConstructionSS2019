@@ -123,11 +123,6 @@ struct mcc_ast_expression {
 			struct mcc_ast_identifier *bracket_identifier;
 			struct mcc_ast_expression *bracket_expression;
 		};
-
-		struct {
-			struct mcc_ast_identifier *call_identifier;
-			struct mcc_ast_argument *call_arguments;
-		} ;
 	};
 };
 

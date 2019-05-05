@@ -108,6 +108,7 @@ void mcc_ast_visit_program(struct mcc_ast_program *program, struct mcc_ast_visit
 		struct mcc_ast_identifier *:	mcc_ast_visit_identifier, \
 		struct mcc_ast_statement *:		mcc_ast_visit_statement, \
 		struct mcc_ast_parameter *: 	mcc_ast_visit_parameter, \
+		struct mcc_ast_argument *: 		mcc_ast_visit_argument, \
 		struct mcc_ast_function *: 		mcc_ast_visit_function, \
 		struct mcc_ast_program *:		mcc_ast_visit_program \
 	)(x, visitor)

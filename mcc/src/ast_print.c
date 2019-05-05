@@ -200,16 +200,11 @@ static void print_dot_expression_call_expression( struct mcc_ast_expression *exp
 
 	FILE *out = data;
 	print_dot_node(out, expression, label);
-	print_dot_edge(out, expression, expression->call_identifier, "id");
+	print_dot_edge(out, expression, expression->function_name, "id");
 
 	if (expression->argument != NULL) {
 		print_dot_edge(out, expression, expression->argument, "argument");
 	}
-
-	// for (int i = 0; i < program->size; i++) {
-	// 	print_dot_edge(out, program, program->function_def[i],
-	// 	               "function_definition");
-	// }
 }
 
 // ------------------------------------------------------------------- Literal
@@ -296,6 +291,9 @@ static void print_dot_statement_if(struct mcc_ast_statement *statement, void *da
 	FILE *out = data;
 	print_dot_edge(out, statement, statement -> if_condition, "if_condition");
 	print_dot_edge(out, statement, statement -> if_stmt, "if_statement");
+	if (statement->else_stmt != NULL) {
+		print_dot_edge(out, statement, statement->else_stmt, "else");
+	}
 
 }
 
@@ -310,11 +308,9 @@ static void print_dot_statement_assignment( struct mcc_ast_statement *statement,
 	print_dot_edge(out, statement, statement->assignment->identifier,
 	               "identifier");
 	if (statement->assignment->type == MCC_AST_ASSIGNMENT_TYPE_NORMAL) {
-		/* snprintf(label, sizeof(label), "="); */
 		print_dot_edge(out, statement, statement->assignment->normal_ass.rhs,
 		               "rhs");
 	} else {
-		/* snprintf(label, sizeof(label), "[]="); */
 		print_dot_edge(out, statement, statement->assignment->array_ass.index,
 		               "index");
 		print_dot_edge(out, statement, statement->assignment->array_ass.rhs,
@@ -439,7 +435,6 @@ static void print_dot_argument(struct mcc_ast_argument *argument, void *data)
 		
 	}
 }
-
 
 // ------------------------------------------------------------------- Function
 

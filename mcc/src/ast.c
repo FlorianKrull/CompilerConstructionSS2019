@@ -165,8 +165,8 @@ mcc_ast_new_expression_call_expression(struct mcc_ast_identifier *function_name,
     struct mcc_ast_expression *expression = malloc(sizeof(*expression));
 
     expression -> type = MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION;
-	expression -> call_identifier = function_name;
-    expression -> call_arguments = argument;
+	expression -> function_name = function_name;
+    expression -> argument = argument;
 
     return expression;
 }
@@ -347,10 +347,7 @@ struct mcc_ast_statement *mcc_ast_new_statement_if(struct mcc_ast_expression *co
     stmt -> type = MCC_AST_STATEMENT_TYPE_IF;
     stmt->if_condition = condition;
     stmt -> if_stmt = if_stmt;
-    if (else_stmt != NULL) {
-        stmt -> else_stmt = else_stmt;
-        assert(else_stmt);
-    }
+    stmt->else_stmt = else_stmt;
     return stmt;
 }
 

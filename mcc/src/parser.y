@@ -195,8 +195,8 @@ statement : expression SEMICOLON        { $$ = mcc_ast_new_statement_expression(
           | RETURN SEMICOLON            { $$ = mcc_ast_new_statement_return(NULL); loc($$,@1);}
 	      ;
 
-if_statement: IF LPARENTH expression RPARENTH statement                 { $$ = mcc_ast_new_statement_if($3, $5,NULL);  loc($$, @1); }
-            | IF LPARENTH expression RPARENTH statement ELSE statement  { $$ = mcc_ast_new_statement_if($3, $5, $7);  loc($$, @1); }
+if_statement: IF LPARENTH expression RPARENTH statement                             { $$ = mcc_ast_new_statement_if($3, $5,NULL);  loc($$, @1); }
+            | IF LPARENTH expression RPARENTH statement ELSE statement              { $$ = mcc_ast_new_statement_if($3, $5, $7);  loc($$, @1); }
             ;
 
 declaration:    type identifier                             { $$ = mcc_ast_new_declaration($1,NULL, $2); loc($$, @1); }
