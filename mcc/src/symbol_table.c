@@ -13,7 +13,6 @@ const int SYMBOL_TABLE_CHILDREN_SIZE = 5;
 
 struct mcc_symbol *mcc_symbol_new_symbol_variable(char* variable_name, enum mcc_ast_data_type data_type) {
     assert(variable_name);
-    assert(data_type);
 
     struct mcc_symbol *symbol = malloc(sizeof(*symbol));
 
@@ -43,8 +42,6 @@ struct mcc_symbol *mcc_symbol_new_symbol_function(
         enum mcc_ast_data_type data_type,
         struct mcc_ast_parameter *parameter) {
     assert(variable_name);
-    assert(data_type);
-    // assert(parameter);
 
     struct mcc_symbol *symbol = malloc(sizeof(*symbol));
 
@@ -122,7 +119,7 @@ struct mcc_symbol_table *mcc_symbol_table_create_inner_table(struct mcc_symbol_t
     if (children_size < children_max) {
         parent -> inner_tables[children_size] = child;
         parent -> inner_tables_size++;
-        return 0;
+        return child;
     } else {
         int next_children_max = children_max + SYMBOL_TABLE_CHILDREN_SIZE;
         int mem_children = sizeof(struct mcc_symbol_table*) * SYMBOL_TABLE_CHILDREN_SIZE;

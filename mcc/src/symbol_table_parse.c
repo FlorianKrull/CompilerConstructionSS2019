@@ -213,6 +213,7 @@ int mcc_symbol_table_add_function_declaration(
     assert(ec);
     assert(func_def);
 
+    printf("%d \n", func_def -> return_type);
     printf("mcc_symbol_table_add_function_declaration \n");
 
     struct mcc_symbol *fs = mcc_symbol_new_symbol_function(
@@ -235,6 +236,7 @@ int mcc_symbol_table_add_function_declaration(
         // add params to sub table
         if (func_def -> parameter != NULL && func_def -> parameter -> size > 0) {
             struct mcc_ast_parameter *p = func_def -> parameter;
+
             for (int i = 0; i < p -> size; i++) {
                 struct mcc_ast_declaration *declaration = p -> parameters[i];
 
@@ -250,8 +252,7 @@ int mcc_symbol_table_add_function_declaration(
         }
 
         // add compound statement to symbol table
-        // mcc_symbol_table_parse_compound_statement(func_def->statement->statement_list, symbol_table, ec);
-        return 0;
+        return mcc_symbol_table_check_statement(func_def -> statement, symbol_table, ec);
     } else {
         // already declared - create already declared error message
         mcc_symbol_table_add_error(ec, mcc_symbol_table_new_error(&(func_def->node.sloc),
