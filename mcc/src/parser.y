@@ -250,6 +250,7 @@ program : function_def { $$ = mcc_ast_new_program($1); loc($$, @1);}
 void mcc_parser_error(struct MCC_PARSER_LTYPE *yylloc, yyscan_t *scanner,struct mcc_parser_result *result, const char *msg)
 {
 
+    UNUSED(scanner);
 	struct mcc_ast_source_location *loc = malloc(sizeof(*loc));
 
 	loc -> start_line = yylloc -> first_line;
