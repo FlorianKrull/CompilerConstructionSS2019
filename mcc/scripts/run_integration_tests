@@ -18,7 +18,7 @@ readonly INTEGRATION_DIR="${INTEGRATION_DIR:-$SCRIPTS_DIR/../test/integration}"
 readonly OUTPUT_DIR="${OUTPUT_DIR:-integration_tests}"
 
 # mc compiler binary
-readonly MCC="${MCC:-./mcc}"
+readonly MCC="${MCC:-./../builddir/mcc}"
 
 # colour support
 if [[ -t 1 ]]; then

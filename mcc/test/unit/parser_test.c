@@ -141,6 +141,13 @@ void StatementIfElse(CuTest *tc){
 
 	CuAssertTrue(tc, NULL == result.statement);
 
+	struct mcc_ast_statement *expr = result.expression;
+
+	CuAssertIntEquals(tc, MCC_AST_STATEMENT_TYPE_IF, expr -> type );
+	CuAssertTrue(tc, NULL == result.expression);
+
+	
+
 }
 
 void StatementDeclarationInt(CuTest *tc){
