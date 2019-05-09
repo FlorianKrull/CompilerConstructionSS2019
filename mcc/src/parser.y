@@ -119,6 +119,9 @@ void mcc_parser_error();
 %%
 
 toplevel : program { result -> program = $1; }
+            /*  Cases below only for parser testing purpose*/
+         | expression {result -> expression = $1; }
+         | statement {result -> statement = $1; }
          ;
 
 
