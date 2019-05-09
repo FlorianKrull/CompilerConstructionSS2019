@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <mcc/ast.h>
 #include "mcc/symbol_table_validate.h"
+#include "utils/unused.h"
 
 // --------------------------------------- Expression
 
@@ -293,13 +294,18 @@ int mcc_symbol_table_validate_assignemt_semantic(
 
 // Array
 
-//int mcc_symbol_table_validate_assignemt_array_semantic(
-//        struct mcc_ast_assignment *assignment,
-//        struct mcc_symbol_table *symbol_table,
-//        struct mcc_symbol_table_error_collector *ec
-//) {
-//// TODO array validation
-//}
+int mcc_symbol_table_validate_assignemt_array_semantic(
+        struct mcc_ast_assignment *assignment,
+        struct mcc_symbol_table *symbol_table,
+        struct mcc_symbol_table_error_collector *ec
+) {
+    UNUSED(assignment);
+    UNUSED(symbol_table);
+    UNUSED(ec);
+    // TODO array validation
+
+    return 0;
+}
 
 // --------------------------------------- Statement
 
@@ -310,8 +316,10 @@ int mcc_symbol_table_validate_main(
         struct mcc_ast_program *program,
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec
-) { 
-   struct mcc_symbol *s = mcc_symbol_table_get_symbol(symbol_table, "main");
+) {
+   UNUSED(symbol_table);
+   UNUSED(ec);
+   struct mcc_symbol *s = mcc_symbol_table_get_symbol(symbol_table,"main");
 
     if(!s){
         mcc_symbol_table_add_error(

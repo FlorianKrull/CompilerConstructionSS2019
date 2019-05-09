@@ -1,7 +1,16 @@
-int a (int param1) {}
+int a() {
+    if (b){
+        
+        while(a){
+            int d;
+            d = 3;
 
-int b () {}
+        }
+    }else{
+        string b;
+        string f;
+        f = "a";
+    }
+    
 
-bool c () {}
-
-void main () {}
+}

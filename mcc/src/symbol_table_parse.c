@@ -5,6 +5,7 @@
 #include "mcc/ast.h"
 #include "mcc/symbol_table_parse.h"
 #include "mcc/symbol_table_semantic_error.h"
+#include "utils/unused.h"
 
 // ------------------------------------------------------------ Variable
 
@@ -267,6 +268,8 @@ int mcc_symbol_table_parse_program(
         struct mcc_ast_program *program,
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec) {
+    
+    UNUSED(symbol_table);
     assert(program);
 
     printf("mcc_symbol_table_parse_program \n");

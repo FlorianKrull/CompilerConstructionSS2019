@@ -165,11 +165,8 @@ mcc_ast_new_expression_call_expression(struct mcc_ast_identifier *function_name,
     struct mcc_ast_expression *expression = malloc(sizeof(*expression));
 
     expression -> type = MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION;
-    expression -> function_name = function_name;
-
-    if (argument != NULL) {
-        expression -> argument = argument;
-    }
+	expression -> function_name = function_name;
+    expression -> argument = argument;
 
     return expression;
 }
@@ -211,8 +208,11 @@ struct mcc_ast_literal *mcc_ast_new_literal_string(char *value)
 	struct mcc_ast_literal *lit = malloc(sizeof(*lit));
 	assert(lit);
 
+	char *copyValue = malloc(sizeof(char) * (strlen(value) + 4));
+    strcpy(copyValue, value);
+
 	lit->type = MCC_AST_LITERAL_TYPE_STRING;
-	lit->s_value = value;
+	lit->s_value = copyValue;
 	return lit;
 }
 
@@ -350,10 +350,7 @@ struct mcc_ast_statement *mcc_ast_new_statement_if(struct mcc_ast_expression *co
     stmt -> type = MCC_AST_STATEMENT_TYPE_IF;
     stmt->if_condition = condition;
     stmt -> if_stmt = if_stmt;
-    if (else_stmt != NULL) {
-        stmt -> else_stmt = else_stmt;
-        assert(else_stmt);
-    }
+    stmt->else_stmt = else_stmt;
     return stmt;
 }
 

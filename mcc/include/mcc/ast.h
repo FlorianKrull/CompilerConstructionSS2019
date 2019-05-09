@@ -123,11 +123,6 @@ struct mcc_ast_expression {
 			struct mcc_ast_identifier *bracket_identifier;
 			struct mcc_ast_expression *bracket_expression;
 		};
-
-		struct {
-			struct mCc_ast_identifier *call_identifier;
-			struct mCc_ast_argument_list *call_arguments;
-		} ;
 	};
 };
 
@@ -164,10 +159,8 @@ void mcc_ast_delete_expression(struct mcc_ast_expression *expression);
 
 struct mcc_ast_argument {
 	struct mcc_ast_node node;
-
 	int size;
 	int max;
-
 	struct mcc_ast_expression *expressions[];
 };
 
@@ -338,7 +331,7 @@ enum mcc_ast_literal_type {
 struct mcc_ast_literal {
 	struct mcc_ast_node node;
 
-	enum mcc_ast_data_type type;
+	enum mcc_ast_literal_type type;
 	union {
 		// MCC_AST_LITERAL_TYPE_INT
 		long i_value;

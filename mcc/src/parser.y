@@ -119,6 +119,9 @@ void mcc_parser_error();
 %%
 
 toplevel : program { result -> program = $1; }
+            /*  Cases below only for parser testing purpose*/
+         | expression {result -> expression = $1; }
+         | statement {result -> statement = $1; }
          ;
 
 
@@ -195,8 +198,8 @@ statement : expression SEMICOLON        { $$ = mcc_ast_new_statement_expression(
           | RETURN SEMICOLON            { $$ = mcc_ast_new_statement_return(NULL); loc($$,@1);}
 	      ;
 
-if_statement: IF LPARENTH expression RPARENTH statement                 { $$ = mcc_ast_new_statement_if($3, $5,NULL);  loc($$, @1); }
-            | IF LPARENTH expression RPARENTH statement ELSE statement  { $$ = mcc_ast_new_statement_if($3, $5, $7);  loc($$, @1); }
+if_statement: IF LPARENTH expression RPARENTH statement                             { $$ = mcc_ast_new_statement_if($3, $5,NULL);  loc($$, @1); }
+            | IF LPARENTH expression RPARENTH statement ELSE statement              { $$ = mcc_ast_new_statement_if($3, $5, $7);  loc($$, @1); }
             ;
 
 declaration:    type identifier                             { $$ = mcc_ast_new_declaration($1,NULL, $2); loc($$, @1); }
@@ -225,7 +228,7 @@ call_expression: identifier LPARENTH RPARENTH 		{ $$ = mcc_ast_new_expression_ca
 	       | identifier LPARENTH argument RPARENTH  { $$ = mcc_ast_new_expression_call_expression($1, $3); loc($$, @1); }
 	       ;
 
-argument: expression COMMA argument { $$ = mcc_ast_add_new_argument($1, $3); loc($$, @1); }
+argument: argument COMMA expression { $$ = mcc_ast_add_new_argument($3, $1); loc($$, @1); }
 	    | expression                { $$ = mcc_ast_new_argument($1) ; loc($$, @1); }
 
 
@@ -250,6 +253,7 @@ program : function_def { $$ = mcc_ast_new_program($1); loc($$, @1);}
 void mcc_parser_error(struct MCC_PARSER_LTYPE *yylloc, yyscan_t *scanner,struct mcc_parser_result *result, const char *msg)
 {
 
+    UNUSED(scanner);
 	struct mcc_ast_source_location *loc = malloc(sizeof(*loc));
 
 	loc -> start_line = yylloc -> first_line;

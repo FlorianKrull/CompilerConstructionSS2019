@@ -62,7 +62,6 @@ struct mcc_ast_visitor {
 
 	mcc_ast_visit_statement_list_cb statement_list;
 
-	mcc_ast_visit_literal_cb literal;
 	mcc_ast_visit_literal_cb literal_bool;
 	mcc_ast_visit_literal_cb literal_int;
 	mcc_ast_visit_literal_cb literal_float;
@@ -108,6 +107,7 @@ void mcc_ast_visit_program(struct mcc_ast_program *program, struct mcc_ast_visit
 		struct mcc_ast_identifier *:	mcc_ast_visit_identifier, \
 		struct mcc_ast_statement *:		mcc_ast_visit_statement, \
 		struct mcc_ast_parameter *: 	mcc_ast_visit_parameter, \
+		struct mcc_ast_argument *: 		mcc_ast_visit_argument, \
 		struct mcc_ast_function *: 		mcc_ast_visit_function, \
 		struct mcc_ast_program *:		mcc_ast_visit_program \
 	)(x, visitor)

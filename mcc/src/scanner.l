@@ -35,15 +35,12 @@ int line_num = 1;
 int comment_caller;
 %}
 
-alpha         [a-zA-Z_]
-alpha_num     [a-zA-Z0-9_]
-digit         [0-9]
-
-int_literal   {digit}+
-float_literal {digit}+\.{digit}+
+int_literal   [0-9]+
+float_literal [0-9]+\.[0-9]+
 bool_literal  true|false
-identifier {alpha}{alpha_num}*
-string_literal \"(\\.|[^"\\])*\"
+string_literal  \"(\\.|[^"\\])*\"
+
+identifier   [a-zA-Z_][a-zA-Z0-9_]*
 
 %x comment foo
 
@@ -51,6 +48,7 @@ string_literal \"(\\.|[^"\\])*\"
  * Documentation: ftp://ftp.gnu.org/old-gnu/Manuals/flex-2.5.4/html_mono/flex.html */
 
 %%
+
 
 "/*"         {
                 comment_caller = INITIAL;
@@ -121,7 +119,14 @@ string_literal \"(\\.|[^"\\])*\"
 
 {float_literal}   { yylval->TK_FLOAT_LITERAL = atof(yytext); return TK_FLOAT_LITERAL; }
 
-{string_literal}  { yylval->TK_STRING_LITERAL = yytext; return TK_STRING_LITERAL; }
+{string_literal}  { /* https://stackoverflow.com/questions/14185172/lex-how-to-eliminate-double-quotes-from-a-string-literal */
+                    char* str = (char*)calloc(strlen(yytext)-1, sizeof(char));
+                    strcpy(str, "\\");
+                    strncpy(str+1, yytext, yyleng-1);
+                    strcpy(str+yyleng, "\\\"");
+                    str[yyleng+2] = '\0';
+                    yylval->TK_STRING_LITERAL = str;
+                    return TK_STRING_LITERAL; }
 
 {bool_literal}    { yylval->TK_BOOL_LITERAL = strcmp(yytext, "true") == 0; return TK_BOOL_LITERAL; }
 

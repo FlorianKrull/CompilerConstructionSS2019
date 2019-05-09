@@ -190,6 +190,23 @@ static void print_dot_expression_parenth(struct mcc_ast_expression *expression, 
 	print_dot_edge(out, expression, expression->expression, "expression");
 }
 
+static void print_dot_expression_call_expression( struct mcc_ast_expression *expression,  void *data)
+{
+	assert(expression);
+	assert(data);
+
+	char label[LABEL_SIZE] = { 0 };
+	snprintf(label, sizeof(label), "expr: call");
+
+	FILE *out = data;
+	print_dot_node(out, expression, label);
+	print_dot_edge(out, expression, expression->function_name, "id");
+
+	if (expression->argument != NULL) {
+		print_dot_edge(out, expression, expression->argument, "argument");
+	}
+}
+
 // ------------------------------------------------------------------- Literal
 
 static void print_dot_literal_bool(struct mcc_ast_literal *literal,void *data)
@@ -274,6 +291,9 @@ static void print_dot_statement_if(struct mcc_ast_statement *statement, void *da
 	FILE *out = data;
 	print_dot_edge(out, statement, statement -> if_condition, "if_condition");
 	print_dot_edge(out, statement, statement -> if_stmt, "if_statement");
+	if (statement->else_stmt != NULL) {
+		print_dot_edge(out, statement, statement->else_stmt, "else");
+	}
 
 }
 
@@ -288,11 +308,9 @@ static void print_dot_statement_assignment( struct mcc_ast_statement *statement,
 	print_dot_edge(out, statement, statement->assignment->identifier,
 	               "identifier");
 	if (statement->assignment->type == MCC_AST_ASSIGNMENT_TYPE_NORMAL) {
-		/* snprintf(label, sizeof(label), "="); */
 		print_dot_edge(out, statement, statement->assignment->normal_ass.rhs,
 		               "rhs");
 	} else {
-		/* snprintf(label, sizeof(label), "[]="); */
 		print_dot_edge(out, statement, statement->assignment->array_ass.index,
 		               "index");
 		print_dot_edge(out, statement, statement->assignment->array_ass.rhs,
@@ -401,6 +419,23 @@ static void print_dot_parameter(struct mcc_ast_parameter *parameter, void *data)
 	}
 }
 
+// ------------------------------------------------------------------- Argument
+
+static void print_dot_argument(struct mcc_ast_argument *argument, void *data)
+{
+	assert(argument);
+	assert(data);
+
+	FILE *out = data;
+	print_dot_node(out, argument, "arguments ");
+    for (int i = 0; i < argument->size; ++i) {
+		if(argument->expressions[i] != NULL){
+			print_dot_edge(out, argument, argument->expressions[i], "arg expression");
+		}
+		
+	}
+}
+
 // ------------------------------------------------------------------- Function
 
 static void print_dot_function(struct mcc_ast_function *function, void *data)
@@ -454,6 +489,7 @@ static struct mcc_ast_visitor print_dot_visitor(FILE *out)
 	    .expression_binary_op = print_dot_expression_binary_op,
 	    .expression_parenth = print_dot_expression_parenth,
 		.expression_identifier = print_dot_expression_identifier,
+		.expression_call_expression = print_dot_expression_call_expression,
 
 		.literal_bool = print_dot_literal_bool,
 		.literal_int = print_dot_literal_int,
@@ -474,6 +510,7 @@ static struct mcc_ast_visitor print_dot_visitor(FILE *out)
 
 		.function = print_dot_function,
 		.parameter = print_dot_parameter,
+		.argument = print_dot_argument,
 		.program = print_dot_program,
 	};
 }
@@ -487,20 +524,7 @@ void mcc_ast_print_dot_expression(FILE *out, struct mcc_ast_expression *expressi
 	print_dot_begin(out);
 
 	struct mcc_ast_visitor visitor = print_dot_visitor(out);
-	mcc_ast_visit(expression, &visitor);
-
-	print_dot_end(out);
-}
-
-void mcc_ast_print_dot_literal(FILE *out, struct mcc_ast_literal *literal)
-{
-	assert(out);
-	assert(literal);
-
-	print_dot_begin(out);
-
-	struct mcc_ast_visitor visitor = print_dot_visitor(out);
-	mcc_ast_visit(literal, &visitor);
+	mcc_ast_visit_expression(expression, &visitor);
 
 	print_dot_end(out);
 }
@@ -526,7 +550,7 @@ void mcc_ast_print_dot_declaration(FILE *out, struct mcc_ast_declaration *declar
 	print_dot_begin(out);
 
 	struct mcc_ast_visitor visitor = print_dot_visitor(out);
-	mcc_ast_visit(declaration, &visitor);
+	mcc_ast_visit_declaration(declaration, &visitor);
 
 	print_dot_end(out);
 }
@@ -539,7 +563,7 @@ void mcc_ast_print_dot_program(FILE *out, struct mcc_ast_program *program)
 	print_dot_begin(out);
 
 	struct mcc_ast_visitor visitor = print_dot_visitor(out);
-	mcc_ast_visit(program, &visitor);
+	mcc_ast_visit_program(program, &visitor);
 
 	print_dot_end(out);
 }

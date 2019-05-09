@@ -45,3 +45,12 @@ Taken from the [Meson Documentation](https://mesonbuild.com/Unit-tests.html#cove
 ## Known Issues
 
 - Parser leaks memory on invalid inputs.
+
+
+## Sources used 
+
+-Blog Post from Nora Sandle "Writing a C Compiler"
+https://norasandler.com/2017/12/05/Write-a-Compiler-2.html
+
+-Compilers Principles,Techniques, and Tools
+Alfred V. Aho, Ravi Sethi et al.

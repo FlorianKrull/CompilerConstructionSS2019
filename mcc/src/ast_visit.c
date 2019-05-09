@@ -62,9 +62,9 @@ void mcc_ast_visit_expression(struct mcc_ast_expression *expression, struct mcc_
 		break;
 	case MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION:
          visit_if_pre_order(expression, visitor->expression_call_expression, visitor);
-		 mcc_ast_visit_identifier(expression->call_identifier,visitor);
-        if (expression->call_arguments != NULL) {
-			mcc_ast_visit_argument(expression->call_arguments, visitor);
+		 mcc_ast_visit_identifier(expression->function_name,visitor);
+        if (expression->argument != NULL) {
+			mcc_ast_visit_argument(expression->argument, visitor);
 		}
          visit_if_post_order(expression, visitor->expression_parenth, visitor);
          break;
@@ -140,6 +140,9 @@ void mcc_ast_visit_statement(struct mcc_ast_statement *statement,
 			visit_if_pre_order(statement, visitor->statement_if, visitor);
 			mcc_ast_visit_expression(statement->if_condition, visitor);
 			mcc_ast_visit_statement(statement->if_stmt, visitor);
+			if (statement->else_stmt != NULL) {
+			mcc_ast_visit_statement(statement->else_stmt, visitor);
+			}
 			visit_if_post_order(statement, visitor->statement_if, visitor);
 			break;
 
