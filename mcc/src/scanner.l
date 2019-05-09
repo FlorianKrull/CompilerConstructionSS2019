@@ -120,14 +120,13 @@ identifier   [a-zA-Z_][a-zA-Z0-9_]*
 {float_literal}   { yylval->TK_FLOAT_LITERAL = atof(yytext); return TK_FLOAT_LITERAL; }
 
 {string_literal}  { /* https://stackoverflow.com/questions/14185172/lex-how-to-eliminate-double-quotes-from-a-string-literal */
-                    char* str = (char*)calloc(strlen(yytext)-1, sizeof(char));
+                    char* str = (char*)malloc(strlen(yytext));
                     strcpy(str, "\\");
-                    strncpy(str+1, yytext, yyleng-1);
-                    strcpy(str+yyleng, "\\\"");
+                    strncpy(str, yytext, yyleng-1);
                     str[yyleng+2] = '\0';
                     yylval->TK_STRING_LITERAL = str;
                     return TK_STRING_LITERAL; }
-
+                    
 {bool_literal}    { yylval->TK_BOOL_LITERAL = strcmp(yytext, "true") == 0; return TK_BOOL_LITERAL; }
 
 
