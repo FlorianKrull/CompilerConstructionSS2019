@@ -567,3 +567,16 @@ void mcc_ast_print_dot_program(FILE *out, struct mcc_ast_program *program)
 
 	print_dot_end(out);
 }
+
+void mcc_ast_print_dot_function(FILE *out, struct mcc_ast_function *function)
+{
+	assert(out);
+	assert(function);
+
+	print_dot_begin(out);
+
+	struct mcc_ast_visitor visitor = print_dot_visitor(out);
+	mcc_ast_visit_function(function, &visitor);
+
+	print_dot_end(out);
+}
