@@ -38,7 +38,7 @@ int comment_caller;
 int_literal   [0-9]+
 float_literal [0-9]+\.[0-9]+
 bool_literal  true|false
-string_literal \"[^\"]*\"
+string_literal  \"(\\.|[^"\\])*\"
 
 identifier   [a-zA-Z_][a-zA-Z0-9_]*
 
@@ -48,6 +48,7 @@ identifier   [a-zA-Z_][a-zA-Z0-9_]*
  * Documentation: ftp://ftp.gnu.org/old-gnu/Manuals/flex-2.5.4/html_mono/flex.html */
 
 %%
+
 
 "/*"         {
                 comment_caller = INITIAL;
@@ -118,7 +119,14 @@ identifier   [a-zA-Z_][a-zA-Z0-9_]*
 
 {float_literal}   { yylval->TK_FLOAT_LITERAL = atof(yytext); return TK_FLOAT_LITERAL; }
 
-{string_literal}  { yylval->TK_STRING_LITERAL = yytext; return TK_STRING_LITERAL; }
+{string_literal}  { /* https://stackoverflow.com/questions/14185172/lex-how-to-eliminate-double-quotes-from-a-string-literal */
+                    char* str = (char*)calloc(strlen(yytext)-1, sizeof(char));
+                    strcpy(str, "\\");
+                    strncpy(str+1, yytext, yyleng-1);
+                    strcpy(str+yyleng, "\\\"");
+                    str[yyleng+2] = '\0';
+                    yylval->TK_STRING_LITERAL = str;
+                    return TK_STRING_LITERAL; }
 
 {bool_literal}    { yylval->TK_BOOL_LITERAL = strcmp(yytext, "true") == 0; return TK_BOOL_LITERAL; }
 
