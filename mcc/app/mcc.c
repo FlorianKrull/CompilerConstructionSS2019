@@ -7,8 +7,9 @@
 
 void print_usage(const char *prg)
 {
-	printf("usage: %s <FILE>\n\n", prg);
-	printf("  <FILE>        Input filepath or - for stdin\n");
+	printf("\n\nusage: %s [OPTIONS] file...s\n\n", prg);
+    printf("The mC compiler. It takes mC input files and produces an executable.\n\n");
+	printf("<FILE> Input filepath or - for stdin\n\n");
 }
 
 

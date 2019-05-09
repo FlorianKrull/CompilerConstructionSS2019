@@ -28,7 +28,10 @@ pgen = generator(bison,
 
 mcc_inc = include_directories('include')
 
-mcc_src = [ 'src/ast.c',
+mcc_src = [
+            'src/utils/printer.c',
+            'src/utils/mcc_scope.c',
+            'src/ast.c',
             'src/ast_print.c',
             'src/ast_visit.c',
             'src/parser.c',
