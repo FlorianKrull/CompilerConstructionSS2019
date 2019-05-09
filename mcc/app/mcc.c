@@ -11,6 +11,7 @@ void print_usage(const char *prg)
 	printf("  <FILE>        Input filepath or - for stdin\n");
 }
 
+
 int main(int argc, char *argv[])
 {
 	if (argc < 2) {
@@ -30,7 +31,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	struct mcc_ast_expression *expr = NULL;
+	struct mcc_ast_program *prog = NULL;
 
 	// parsing phase
 	{
@@ -40,17 +41,22 @@ int main(int argc, char *argv[])
 			 printf("NOT OK");
 			return EXIT_FAILURE;
 		}
-		expr = result.expression;
+		prog = result.program;
 	}
 
 	// TODO:
 	// - run semantic checks
+	{
+		
+	}
+
+
 	// - create three-address code
 	// - output assembly code
 	// - invoke backend compiler
 
 	// cleanup
-	mcc_ast_delete(expr);
+	mcc_ast_delete_program(prog);
 
 	return EXIT_SUCCESS;
 }
