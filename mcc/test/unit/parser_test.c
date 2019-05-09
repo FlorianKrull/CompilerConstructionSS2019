@@ -22,14 +22,14 @@ void BinaryOp_1(CuTest *tc)
 	CuAssertIntEquals(tc, MCC_AST_EXPRESSION_TYPE_LITERAL, expr->lhs->type);
 
 	// root -> lhs -> literal
-	CuAssertIntEquals(tc, MCC_AST_LITERAL_TYPE_INT, expr->lhs->literal->type);
+	CuAssertIntEquals(tc, MCC_AST_DATA_TYPE_INT, expr->lhs->literal->type);
 	CuAssertIntEquals(tc, 192, expr->lhs->literal->i_value);
 
 	// root -> rhs
 	CuAssertIntEquals(tc, MCC_AST_EXPRESSION_TYPE_LITERAL, expr->rhs->type);
 
 	// root -> rhs -> literal
-	CuAssertIntEquals(tc, MCC_AST_LITERAL_TYPE_FLOAT, expr->rhs->literal->type);
+	CuAssertIntEquals(tc, MCC_AST_DATA_TYPE_FLOAT, expr->rhs->literal->type);
 	CuAssertDblEquals(tc, 3.14, expr->rhs->literal->f_value, EPS);
 
 	mcc_ast_delete(expr);
@@ -52,7 +52,7 @@ void NestedExpression_1(CuTest *tc)
 	CuAssertIntEquals(tc, MCC_AST_EXPRESSION_TYPE_LITERAL, expr->lhs->type);
 
 	// root -> lhs -> literal
-	CuAssertIntEquals(tc, MCC_AST_LITERAL_TYPE_INT, expr->lhs->literal->type);
+	CuAssertIntEquals(tc, MCC_AST_DATA_TYPE_INT, expr->lhs->literal->type);
 	CuAssertIntEquals(tc, 42, expr->lhs->literal->i_value);
 
 	// root -> rhs
@@ -68,14 +68,14 @@ void NestedExpression_1(CuTest *tc)
 	CuAssertIntEquals(tc, MCC_AST_EXPRESSION_TYPE_LITERAL, subexpr->lhs->type);
 
 	// subexpr -> lhs -> literal
-	CuAssertIntEquals(tc, MCC_AST_LITERAL_TYPE_INT, subexpr->lhs->literal->type);
+	CuAssertIntEquals(tc, MCC_AST_DATA_TYPE_INT, subexpr->lhs->literal->type);
 	CuAssertIntEquals(tc, 192, subexpr->lhs->literal->i_value);
 
 	// subexpr -> rhs
 	CuAssertIntEquals(tc, MCC_AST_EXPRESSION_TYPE_LITERAL, subexpr->rhs->type);
 
 	// subexpr -> rhs -> literal
-	CuAssertIntEquals(tc, MCC_AST_LITERAL_TYPE_FLOAT, subexpr->rhs->literal->type);
+	CuAssertIntEquals(tc, MCC_AST_DATA_TYPE_FLOAT, subexpr->rhs->literal->type);
 	CuAssertIntEquals(tc, 3.14, subexpr->rhs->literal->f_value);
 
 	mcc_ast_delete(expr);
@@ -125,7 +125,7 @@ void If_Statement(CuTest *tc)
 						stmt->if_stmt->expression->type);
 
 	// root -> if_statement -> expression -> literal
-	CuAssertIntEquals(tc,MCC_AST_LITERAL_TYPE_INT,
+	CuAssertIntEquals(tc,MCC_AST_DATA_TYPE_INT,
 						stmt->if_stmt->expression->literal->type);
 	CuAssertTrue(tc,strcmp("1", stmt->if_stmt->expression->literal->s_value));
 

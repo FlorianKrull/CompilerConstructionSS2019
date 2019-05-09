@@ -281,9 +281,9 @@ int mcc_symbol_table_parse_program(
     return 0;
 }
 
-struct mcc_symbol_table *mcc_smybol_table_build(struct mcc_ast_program *program) {
+struct mcc_symbol_table *mcc_symbol_table_build(struct mcc_ast_program *program,struct mcc_symbol_table_error_collector *ec) {
     assert(program);
-    struct mcc_symbol_table *st = mcc_symbol_table_new_table(NULL);
+    struct mcc_symbol_table *st = mcc_symbol_table_new_table(NULL,ec);
     struct mcc_symbol_table_error_collector *ec = mcc_symbol_table_new_error_collector();
 
     // TODO: insert built-ins

@@ -48,6 +48,7 @@ struct mcc_ast_visitor {
 	mcc_ast_visit_expression_cb expression_unary_op;
 	mcc_ast_visit_expression_cb expression_identifier;
 	mcc_ast_visit_expression_cb expression_parenth;
+	mcc_ast_visit_expression_cb expression_bracket;
 	mcc_ast_visit_expression_cb expression_call_expression;
 
 	mcc_ast_visit_statement_cb statement;

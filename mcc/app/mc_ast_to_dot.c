@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
     mcc_ast_print_dot(stdout, prog);
 
     // cleanup
-    mcc_ast_delete(prog);
+    mcc_ast_delete_program(prog);
 
     // TODO free result
 
