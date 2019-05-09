@@ -249,6 +249,6 @@ int mcc_symbol_table_parse_program(
     }
 }
 
-void build_symbol_table(struct mcc_ast_program *program) {
-    struct mcc_symbol_table *st = mcc_symbol_table_new_table(NULL);
+struct mcc_symbol_table* build_symbol_table(struct mcc_ast_program *program, struct mcc_symbol_table_error_collector *ec) {
+    struct mcc_symbol_table *st = mcc_symbol_table_new_table(NULL,ec);
 }

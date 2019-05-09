@@ -51,6 +51,7 @@ struct mcc_symbol_table {
     int symbols_size;
     int symbols_max;
     struct mcc_symbol **symbols;
+    struct mcc_symbol_table_error_collector *ec;
 
     // every symbol table has one parent and can have multiple inner_tables
     struct mcc_symbol_table *parent;
@@ -60,7 +61,7 @@ struct mcc_symbol_table {
     struct mcc_symbol_table *inner_tables[];
 };
 
-struct mcc_symbol_table *mcc_symbol_table_new_table(struct mcc_symbol_table *parent);
+struct mcc_symbol_table *mcc_symbol_table_new_table(struct mcc_symbol_table *parent,struct mcc_symbol_table_error_collector *ec);
 
 void mcc_symbol_table_delete_table(struct mcc_symbol_table *parent);
 
