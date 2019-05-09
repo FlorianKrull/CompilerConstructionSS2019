@@ -70,7 +70,7 @@ int mcc_symbol_table_add_array_declaration(
 
     // check if already declared
     if(mcc_symbol_table_get_symbol(symbol_table, vs->variable_name) == NULL) {
-        
+
         // add array declaration to symbol table
         mcc_symbol_table_insert_symbol(symbol_table, vs);
 

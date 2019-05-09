@@ -34,12 +34,15 @@ enum mcc_ast_data_type mcc_symbol_table_get_expression_return_type_binary_op(
                 return MCC_AST_DATA_TYPE_FLOAT;
             } else if(lhs_type == MCC_AST_DATA_TYPE_INT && rhs_type == MCC_AST_DATA_TYPE_FLOAT) {
                 return MCC_AST_DATA_TYPE_FLOAT;
+            }else{
+                return MCC_AST_DATA_TYPE_INT;
             }
         case MCC_AST_BINARY_OP_EQUALS:
         case MCC_AST_BINARY_OP_NOT_EQUALS:
         case MCC_AST_BINARY_OP_AND:
         case MCC_AST_BINARY_OP_OR:
             return MCC_AST_DATA_TYPE_BOOL;
+
     }
 }
 
@@ -153,6 +156,8 @@ int mcc_symbol_table_validate_binary_operator(
         case MCC_AST_BINARY_OP_AND:
         case MCC_AST_BINARY_OP_OR:
             return mcc_symbol_table_validate_binary_operator_handside_bool_type_check(expression, symbol_table);
+        default:
+            return 1;
     }
 }
 

@@ -321,17 +321,11 @@ void mcc_ast_delete_statement(struct mcc_ast_statement *statement);
 
 // ------------------------------------------------------------------- Literals
 
-enum mcc_ast_literal_type {
-	MCC_AST_LITERAL_TYPE_INT,
-	MCC_AST_LITERAL_TYPE_FLOAT,
-	MCC_AST_LITERAL_TYPE_STRING,
-	MCC_AST_LITERAL_TYPE_BOOL
-};
 
 struct mcc_ast_literal {
 	struct mcc_ast_node node;
 
-	enum mcc_ast_literal_type type;
+	enum mcc_ast_data_type type;
 	union {
 		// MCC_AST_LITERAL_TYPE_INT
 		long i_value;

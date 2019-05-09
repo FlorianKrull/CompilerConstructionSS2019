@@ -178,7 +178,7 @@ struct mcc_ast_literal *mcc_ast_new_literal_bool(bool value)
 	struct mcc_ast_literal *lit = malloc(sizeof(*lit));
 	assert(lit);
 
-	lit->type = MCC_AST_LITERAL_TYPE_BOOL;
+	lit->type = MCC_AST_DATA_TYPE_BOOL;
 	lit->b_value = value;
 	return lit;
 }
@@ -188,7 +188,7 @@ struct mcc_ast_literal *mcc_ast_new_literal_int(long value)
 	struct mcc_ast_literal *lit = malloc(sizeof(*lit));
 	assert(lit);
 
-	lit->type = MCC_AST_LITERAL_TYPE_INT;
+	lit->type = MCC_AST_DATA_TYPE_INT;
 	lit->i_value = value;
 	return lit;
 }
@@ -198,7 +198,7 @@ struct mcc_ast_literal *mcc_ast_new_literal_float(double value)
 	struct mcc_ast_literal *lit = malloc(sizeof(*lit));
 	assert(lit);
 
-	lit->type = MCC_AST_LITERAL_TYPE_FLOAT;
+	lit->type = MCC_AST_DATA_TYPE_FLOAT;
 	lit->f_value = value;
 	return lit;
 }
@@ -211,7 +211,7 @@ struct mcc_ast_literal *mcc_ast_new_literal_string(char *value)
 	char *copyValue = malloc(sizeof(char) * (strlen(value) + 4));
     strcpy(copyValue, value);
 
-	lit->type = MCC_AST_LITERAL_TYPE_STRING;
+	lit->type = MCC_AST_DATA_TYPE_STRING;
 	lit->s_value = copyValue;
 	return lit;
 }
@@ -219,7 +219,7 @@ struct mcc_ast_literal *mcc_ast_new_literal_string(char *value)
 void mcc_ast_delete_literal(struct mcc_ast_literal *literal)
 {
 	assert(literal);
-	if (literal->type == MCC_AST_LITERAL_TYPE_STRING) {
+	if (literal->type == MCC_AST_DATA_TYPE_STRING) {
 		free(literal->s_value);
 	}
 	free(literal);

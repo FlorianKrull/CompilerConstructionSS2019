@@ -85,19 +85,19 @@ void mcc_ast_visit_literal(struct mcc_ast_literal *literal,struct mcc_ast_visito
 	assert(visitor);
 
 	switch (literal->type) {
-	case MCC_AST_LITERAL_TYPE_BOOL:
+	case MCC_AST_DATA_TYPE_BOOL:
 		visit(literal, visitor->literal_bool, visitor);
 		break;
 
-	case MCC_AST_LITERAL_TYPE_INT:
+	case MCC_AST_DATA_TYPE_INT:
 		visit(literal, visitor->literal_int, visitor);
 		break;
 
-	case MCC_AST_LITERAL_TYPE_FLOAT:
+	case MCC_AST_DATA_TYPE_FLOAT:
 		visit(literal, visitor->literal_float, visitor);
 		break;
 
-	case MCC_AST_LITERAL_TYPE_STRING:
+	case MCC_AST_DATA_TYPE_STRING:
 		visit(literal, visitor->literal_string, visitor);
 		break;
 	}
