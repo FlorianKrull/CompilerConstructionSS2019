@@ -49,7 +49,8 @@ int main(int argc, char *argv[]) {
     }
 
     // create symbol table
-    struct mcc_symbol_table *symbol_table = mcc_smybol_table_build(prog);
+    struct mcc_symbol_table_error_collector *ec =  mcc_symbol_table_new_error_collector(); 
+    struct mcc_symbol_table *symbol_table = mcc_symbol_table_build(prog,ec);
     if (symbol_table != NULL) {
         // proceed with symbol table
     }
