@@ -95,52 +95,13 @@ void MissingClosingParenthesis_1(CuTest *tc)
 }
 
 
-void If_Statement(CuTest *tc)
-{
 
-	const char input[] = "if (i == iterations) 1;";
-	struct mcc_parser_result result = mcc_parse_string(input);
-
-	CuAssertIntEquals(tc, MCC_PARSER_STATUS_OK, result.status);
-
-
-	struct mcc_ast_statement *stmt = result.statement;
-
-	// root
-	CuAssertIntEquals(tc,MCC_AST_STATEMENT_TYPE_IF, stmt->type);
-
-	// root -> if_expression
-	CuAssertIntEquals(tc, MCC_AST_EXPRESSION_TYPE_BINARY_OP, stmt->if_condition->type);
-
-
-	CuAssertIntEquals(tc,MCC_AST_EXPRESSION_TYPE_IDENTIFIER, stmt->if_condition->lhs->type);
-	CuAssertIntEquals(tc,MCC_AST_EXPRESSION_TYPE_IDENTIFIER, stmt->if_condition->rhs->type);
-	CuAssertIntEquals(tc,MCC_AST_BINARY_OP_EQUALS, stmt->if_condition->op);
-
-	// root -> if_statement
-	CuAssertIntEquals(tc,MCC_AST_STATEMENT_TYPE_EXPRESSION, stmt->if_stmt->type);
-
-	// root -> if_statement -> expression
-	CuAssertIntEquals(tc,MCC_AST_EXPRESSION_TYPE_LITERAL,
-						stmt->if_stmt->expression->type);
-
-	// root -> if_statement -> expression -> literal
-	CuAssertIntEquals(tc,MCC_AST_DATA_TYPE_INT,
-						stmt->if_stmt->expression->literal->type);
-	CuAssertTrue(tc,strcmp("1", stmt->if_stmt->expression->literal->s_value));
-
-	// root -> else_statement
-	CuAssertIntEquals(tc, NULL, stmt->else_stmt);
-
-	
-}
 
 
 #define TESTS \
     TEST(MissingClosingParenthesis_1) \
 		TEST(BinaryOp_1) \
 		TEST(NestedExpression_1) \
-		TEST(If_Statement) \
     
   
 
