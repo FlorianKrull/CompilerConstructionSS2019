@@ -27,7 +27,7 @@ struct mcc_parser_error {
 
 struct mcc_parser_error *new_parser_error(struct mcc_ast_source_location *loc, char *msg);
 
-void delete_parser_error(struct mcc_parser_error *error);
+void mcc_delete_parser_error(struct mcc_parser_error *error);
 
 // -------------------- Parser Result
 

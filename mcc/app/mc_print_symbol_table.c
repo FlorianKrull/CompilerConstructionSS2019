@@ -16,6 +16,18 @@ void print_usage(const char *prg) {
     printf("  <FILE>  Input filepath or - for stdin\n");
 }
 
+static const char *type_to_string(enum mcc_ast_data_type type){
+    switch (type)
+    {
+    case MCC_AST_DATA_TYPE_INT: return "int";
+    case MCC_AST_DATA_TYPE_STRING: return "string";
+    case MCC_AST_DATA_TYPE_BOOL: return "bool";
+    case MCC_AST_DATA_TYPE_FLOAT: return "float";
+    case MCC_AST_DATA_TYPE_VOID : return "void";
+    default: return "unknown";
+    }
+}
+
 int main(int argc, char *argv[]) {
     if (argc < 2) {
         print_usage(argv[0]);
@@ -53,6 +65,19 @@ int main(int argc, char *argv[]) {
     struct mcc_symbol_table *symbol_table = mcc_symbol_table_build(prog,ec);
     if (symbol_table != NULL) {
         // proceed with symbol table
+        for(int i = 0; i < symbol_table->symbol_container->size; i++){
+            struct mcc_symbol *sym = symbol_table->symbol_container->symbols[i];
+            printf("%s ", type_to_string(sym->data_type));
+            printf("%s\n" , sym->variable_name);
+            if(symbol_table->inner_tables != NULL){
+                for(int j = 0; j  < symbol_table->inner_tables_size ; j++){
+                    struct mcc_symbol *inner_sym = symbol_table->inner_tables[j];
+                    printf("\t %s ",  type_to_string(inner_sym->data_type));
+                    printf("\t %s\n" , inner_sym->variable_name);
+                }
+            }
+           
+        }
     }
 
     // cleanup

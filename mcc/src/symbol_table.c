@@ -37,6 +37,7 @@ struct mcc_symbol *mcc_symbol_new_symbol_array(char* variable_name, enum mcc_ast
     return symbol;
 }
 
+
 struct mcc_symbol *mcc_symbol_new_symbol_function(
         char* variable_name,
         enum mcc_ast_data_type data_type,
@@ -124,10 +125,15 @@ struct mcc_symbol_table *mcc_symbol_table_create_inner_table(struct mcc_symbol_t
         int mem_children = sizeof(struct mcc_symbol_table*) * SYMBOL_TABLE_CHILDREN_SIZE;
 
         parent = realloc(parent, sizeof(*parent) + mem_children);
-
+        
+         if (parent == NULL) {
+            return 1;
+        }
+        
         parent -> inner_tables_max = next_children_max;
         parent -> inner_tables[children_size] = child;
-
+        
+       
     }
 
     return child;

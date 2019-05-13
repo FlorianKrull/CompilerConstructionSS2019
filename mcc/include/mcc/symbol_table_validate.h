@@ -99,6 +99,13 @@ int mcc_symbol_table_validate_assignemt_semantic(
         struct mcc_symbol_table_error_collector *ec
 );
 
+// --------------------------------------- Statement
+
+int mcc_symbol_table_validate_statement_return(
+        struct mcc_ast_statement *statement,
+        struct mcc_symbol_table *symbol_table,
+        struct mcc_symbol_table_error_collector *ec
+);
 
 // --------------------------------------- Program
 

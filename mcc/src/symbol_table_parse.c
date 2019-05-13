@@ -139,8 +139,9 @@ int mcc_symbol_table_parse_compound_statement(
         if(statement_result == 1) {
             return 1;
         }
-
+        
         compound = compound->next;
+
     } while(compound->next != NULL);
 
     return 0;
