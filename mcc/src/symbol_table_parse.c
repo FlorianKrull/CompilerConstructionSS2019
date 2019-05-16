@@ -117,21 +117,45 @@ int mcc_symbol_table_check_expression(
 // ---------------------------------------------------------- Statement
 
 int mcc_symbol_table_parse_compound_statement(
-        struct mcc_ast_statement_list *compound,
+        struct mcc_ast_statement *statement,
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec
 ) {
-    assert(compound);
+    assert(statement);
+    assert(statement->type == MCC_AST_STATEMENT_TYPE_COMPOUND);
     assert(symbol_table);
     assert(ec);
 
     // create it's own inner scope
     struct mcc_symbol_table *sub_table = mcc_symbol_table_create_inner_table(symbol_table);
 
-    do {
-        struct mcc_ast_statement *st = compound->statement;
+    if(sub_table == NULL){
+        printf("Subtable is null");
+    }
+
+    if(ec == NULL){
+        printf("EC is null");
+    }
+    // int statement_result = mcc_symbol_table_check_statement(
+    //             statement->statement_list->next->statement,
+    //             sub_table,
+    //             ec
+    // );
+
+    // if(statement_result == 1) {
+    //         return 1;
+    // }
+
+    struct mcc_ast_statement_list *stl = statement->statement_list;
+
+    if(stl == NULL){
+        return 0;
+    }
+
+    while(stl->statement != NULL ) {
+       
         int statement_result = mcc_symbol_table_check_statement(
-                st,
+                stl->statement,
                 sub_table,
                 ec
         );
@@ -139,10 +163,13 @@ int mcc_symbol_table_parse_compound_statement(
         if(statement_result == 1) {
             return 1;
         }
-        
-        compound = compound->next;
-
-    } while(compound->next != NULL);
+        if(stl->next == NULL){
+            break;
+        }else{
+            stl = stl->next;
+        }
+       
+    } 
 
     return 0;
 }
@@ -175,7 +202,7 @@ int mcc_symbol_table_check_statement(
             break;
         case MCC_AST_STATEMENT_TYPE_DECL:
             // TODO check for shadowing
-            if(mcc_symbol_table_get_symbol(symbol_table, statement->id_decl->i_value) != NULL) {
+            if(mcc_symbol_table_get_symbol(symbol_table, statement->declaration->ident->i_value) != NULL) {
                 mcc_symbol_table_add_error(ec, mcc_symbol_table_new_error(&(statement->node.sloc),
                                                                           MCC_SEMANTIC_ERROR_VARIABLE_ALREADY_DECLARED));
             }
@@ -193,7 +220,7 @@ int mcc_symbol_table_check_statement(
         case MCC_AST_STATEMENT_TYPE_COMPOUND:
             // TODO create new symbol table as child
             return mcc_symbol_table_parse_compound_statement(
-                    statement->statement_list,
+                    statement,
                     symbol_table,
                     ec
             );
