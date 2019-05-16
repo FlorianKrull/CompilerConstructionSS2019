@@ -3,6 +3,7 @@
 //
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <assert.h>
 #include <mcc/ast.h>
 #include "mcc/symbol_table_validate.h"
@@ -10,10 +11,9 @@
 
 // --------------------------------------- Expression
 
-int mcc_symbol_table_validate_validate_identifier(
+int mcc_symbol_table_validate_identifier(
         struct mcc_ast_identifier *identifier,
         struct mcc_symbol_table *symbol_table,
-        bool with_shadowing,
         struct mcc_symbol_table_error_collector *ec
 ) {
     assert(identifier);
@@ -34,10 +34,9 @@ int mcc_symbol_table_validate_validate_identifier(
     return 0;
 }
 
-int mcc_symbol_table_validate_validate_call_expression(
+int mcc_symbol_table_validate_call_expression(
         struct mcc_ast_expression *expression,
         struct mcc_symbol_table *symbol_table,
-        bool with_shadowing,
         struct mcc_symbol_table_error_collector *ec
 ) {
     assert(expression);
@@ -81,6 +80,22 @@ int mcc_symbol_table_validate_validate_call_expression(
 
         return 0;
     }
+}
+
+int mcc_symbol_table_validate_unary_op(
+        struct mcc_ast_expression *expression,
+        struct mcc_symbol_table *symbol_table,
+        struct mcc_symbol_table_error_collector *ec
+) {
+    assert(symbol_table);
+    assert(ec);
+
+    // TODO: should we assume that expression is unary?
+
+    enum mcc_ast_unary_op unary_type = expression -> unary_op;
+
+
+
 }
 
 enum mcc_ast_data_type mcc_symbol_table_get_expression_return_type_binary_op(
@@ -196,13 +211,13 @@ int mcc_symbol_table_validate_binary_operator_handside_bool_type_check(
 
 int mcc_symbol_table_validate_binary_operator(
         struct mcc_ast_expression *expression,
-        struct mcc_symbol_table *symbol_table
+        struct mcc_symbol_table *symbol_table,
+        struct mcc_symbol_table_error_collector *ec
 ) {
 
     // check if both handsides exist (or have any other errors
-    if(mcc_symbol_table_validate_expression_semantic(expression->lhs, symbol_table) == 1 ||
-       mcc_symbol_table_validate_expression_semantic(expression->rhs, symbol_table) == 1) {
-        // i wi
+    if(mcc_symbol_table_validate_expression(expression->lhs, symbol_table, ec) == 1 ||
+       mcc_symbol_table_validate_expression(expression->rhs, symbol_table, ec) == 1) {
         return 1;
     }
 
@@ -231,26 +246,46 @@ int mcc_symbol_table_validate_binary_operator(
     }
 }
 
-int mcc_symbol_table_validate_expression_semantic(
+int mcc_symbol_table_validate_expression(
         struct mcc_ast_expression *expression,
-        struct mcc_symbol_table *symbol_table
+        struct mcc_symbol_table *symbol_table,
+        struct mcc_symbol_table_error_collector *ec
 ) {
+    assert(expression);
+    assert(symbol_table);
+    assert(ec);
+
+    printf("--- Symbol table parse expression --- \n");
     switch(expression->type) {
         case MCC_AST_EXPRESSION_TYPE_IDENTIFIER:
-            return mcc_symbol_table_get_symbol(symbol_table, expression->identifier->i_value) == NULL ? 1 : 0;
+            return mcc_symbol_table_validate_identifier(expression -> identifier, symbol_table, ec);
         case MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION:
-            return mcc_symbol_table_get_symbol(symbol_table, expression->function_name->i_value) == NULL ? 1 : 0;
+            return mcc_symbol_table_validate_call_expression(
+                    expression,
+                    symbol_table,
+                    ec
+            );
         case MCC_AST_EXPRESSION_TYPE_UNARY_OP:
-            // not sure yet
-            return 0;
+            // first check unary expression
+            if (mcc_symbol_table_validate_expression(expression -> unary_expression, symbol_table, ec) == 0) {
+                // expression seems to be valid -> check unary
+                return mcc_symbol_table_validate_unary_op(
+                        expression,
+                        symbol_table,
+                        ec
+                );
+            }
+
+            return 1;
         case MCC_AST_EXPRESSION_TYPE_BINARY_OP:
-            return mcc_symbol_table_validate_binary_operator(expression, symbol_table);
+            return mcc_symbol_table_validate_binary_operator(expression, symbol_table, ec);
         case MCC_AST_EXPRESSION_TYPE_PARENTH:
-            return mcc_symbol_table_validate_expression_semantic(expression, symbol_table);
+            return mcc_symbol_table_validate_expression(expression, symbol_table, ec);
         case MCC_AST_EXPRESSION_TYPE_BRACKET:
             // Don't know what to do yet
         default:
             return 0;
+
     }
 }
 
@@ -276,7 +311,7 @@ int mcc_symbol_table_validate_assignemt_semantic(
         return 1;
     }
 
-    if (mcc_symbol_table_validate_expression_semantic(assignment -> normal_ass.rhs, symbol_table) == 0) {
+    if (mcc_symbol_table_validate_expression(assignment -> normal_ass.rhs, symbol_table, ec) == 0) {
         enum mcc_ast_data_type expected_type = s -> data_type;
         int ret_type = mcc_symbol_table_validate_expression_return_type(
                 assignment -> normal_ass.rhs,
@@ -323,7 +358,7 @@ int mcc_symbol_table_validate_statement_return(
         switch(statement->type) {
 
             case MCC_AST_STATEMENT_TYPE_IF:
-                mcc_symbol_table_validate_expression_semantic(statement->if_condition,symbol_table);
+                mcc_symbol_table_validate_expression(statement->if_condition,symbol_table, ec);
                 mcc_symbol_table_validate_statement_return(statement->if_stmt,symbol_table,ec);
                 if(statement->else_stmt != NULL){
                     mcc_symbol_table_validate_statement_return(statement->else_stmt,symbol_table,ec);
@@ -331,7 +366,7 @@ int mcc_symbol_table_validate_statement_return(
             case MCC_AST_STATEMENT_TYPE_RETURN:
                 return 1;
             case MCC_AST_STATEMENT_TYPE_WHILE:
-                mcc_symbol_table_validate_expression_semantic(statement->while_condition,symbol_table);
+                mcc_symbol_table_validate_expression(statement->while_condition,symbol_table, ec);
                 mcc_symbol_table_validate_statement_return(statement->while_stmt,symbol_table,ec);
 
             case MCC_AST_STATEMENT_TYPE_COMPOUND:

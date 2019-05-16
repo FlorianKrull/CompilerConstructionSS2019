@@ -1,16 +1,4 @@
 int a() {
-    if (b){
-        
-        while(a){
-            int d;
-            d = 3;
-
-        }
-    }else{
-        string b;
-        string f;
-        f = "a";
-    }
-    
-
+    int b;
+    b;
 }

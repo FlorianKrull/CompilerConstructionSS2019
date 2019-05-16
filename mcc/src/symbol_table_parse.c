@@ -82,38 +82,6 @@ int mcc_symbol_table_add_array_declaration(
     }
 }
 
-// ---------------------------------------------------------- Expression
-
-int mcc_symbol_table_check_expression(
-        struct mcc_ast_expression *expression,
-        struct mcc_symbol_table *symbol_table,
-        struct mcc_symbol_table_error_collector *ec
-) {
-    assert(expression);
-    assert(symbol_table);
-    assert(ec);
-
-    switch(expression->type) {
-        case MCC_AST_EXPRESSION_TYPE_IDENTIFIER:
-            return mcc_symbol_table_validate_validate_identifier(expression -> identifier, symbol_table, true, ec);
-        case MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION:
-            return mcc_symbol_table_validate_validate_call_expression(
-                    expression,
-                    symbol_table,
-                    true,
-                    ec
-            );
-        case MCC_AST_EXPRESSION_TYPE_UNARY_OP:
-        case MCC_AST_EXPRESSION_TYPE_BINARY_OP:
-
-        case MCC_AST_EXPRESSION_TYPE_PARENTH:
-        case MCC_AST_EXPRESSION_TYPE_BRACKET:
-        default:
-            return 0;
-
-    }
-}
-
 // ---------------------------------------------------------- Statement
 
 int mcc_symbol_table_parse_compound_statement(
@@ -128,23 +96,6 @@ int mcc_symbol_table_parse_compound_statement(
 
     // create it's own inner scope
     struct mcc_symbol_table *sub_table = mcc_symbol_table_create_inner_table(symbol_table);
-
-    if(sub_table == NULL){
-        printf("Subtable is null");
-    }
-
-    if(ec == NULL){
-        printf("EC is null");
-    }
-    // int statement_result = mcc_symbol_table_check_statement(
-    //             statement->statement_list->next->statement,
-    //             sub_table,
-    //             ec
-    // );
-
-    // if(statement_result == 1) {
-    //         return 1;
-    // }
 
     struct mcc_ast_statement_list *stl = statement->statement_list;
 
@@ -185,23 +136,28 @@ int mcc_symbol_table_check_statement(
 
     switch(statement->type) {
         case MCC_AST_STATEMENT_TYPE_EXPRESSION:
-            return mcc_symbol_table_check_expression(statement->expression, symbol_table, ec);
+            return mcc_symbol_table_validate_expression(statement->expression, symbol_table, ec);
         case MCC_AST_STATEMENT_TYPE_WHILE:
-            if(mcc_symbol_table_check_expression(
-                    statement->while_condition, symbol_table, ec)) {
+            // TODO extract to separate validate while function
+            if(mcc_symbol_table_validate_expression(
+                    statement->while_condition, symbol_table, ec) == 0) {
                 return mcc_symbol_table_check_statement(
                         statement->while_stmt, symbol_table, ec);
+            } else {
+                return 1;
             }
-            break;
         case MCC_AST_STATEMENT_TYPE_IF:
-            if(mcc_symbol_table_check_expression(
-                    statement->if_condition, symbol_table, ec)) {
+            // TODO extract to separate validate if function
+            if(mcc_symbol_table_validate_expression(
+                    statement->if_condition, symbol_table, ec) == 0) {
                 return mcc_symbol_table_check_statement(
                         statement->if_stmt, symbol_table, ec);
+            } else {
+                return 1;
             }
-            break;
+
         case MCC_AST_STATEMENT_TYPE_DECL:
-            // TODO check for shadowing
+            // TODO extract to separate function
             if(mcc_symbol_table_get_symbol(symbol_table, statement->declaration->ident->i_value) != NULL) {
                 mcc_symbol_table_add_error(ec, mcc_symbol_table_new_error(&(statement->node.sloc),
                                                                           MCC_SEMANTIC_ERROR_VARIABLE_ALREADY_DECLARED));
@@ -216,9 +172,8 @@ int mcc_symbol_table_check_statement(
         case MCC_AST_STATEMENT_TYPE_ASSGN:
             return mcc_symbol_table_validate_assignemt_semantic(statement->assignment, symbol_table, ec);
         case MCC_AST_STATEMENT_TYPE_ASSGN_ARR:
-            // Array validation
+            return 0;
         case MCC_AST_STATEMENT_TYPE_COMPOUND:
-            // TODO create new symbol table as child
             return mcc_symbol_table_parse_compound_statement(
                     statement,
                     symbol_table,
@@ -243,7 +198,6 @@ int mcc_symbol_table_add_function_declaration(
     assert(func_def);
 
     printf("%d \n", func_def -> return_type);
-    printf("mcc_symbol_table_add_function_declaration \n");
 
     struct mcc_symbol *fs = mcc_symbol_new_symbol_function(
             func_def->identifier->i_value,
@@ -302,11 +256,14 @@ int mcc_symbol_table_parse_program(
 
     printf("mcc_symbol_table_parse_program \n");
 
+    int function_parse = 0;
     for(int i = 0; i < program->size; i++) {
-        mcc_symbol_table_add_function_declaration(program->function_def[i], symbol_table, ec);
+        function_parse = mcc_symbol_table_add_function_declaration(program->function_def[i], symbol_table, ec);
+
+        if (function_parse) break;
     }
 
-    return 0;
+    return function_parse;
 }
 
 struct mcc_symbol_table *mcc_symbol_table_build(struct mcc_ast_program *program,struct mcc_symbol_table_error_collector *ec) {

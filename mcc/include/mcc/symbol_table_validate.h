@@ -11,6 +11,13 @@
 
 // --------------------------------------- Expression
 
+
+int mcc_symbol_table_validate_expression(
+        struct mcc_ast_expression *expression,
+        struct mcc_symbol_table *symbol_table,
+        struct mcc_symbol_table_error_collector *ec
+);
+
 /**
  * Validate identifier (check if exists in symbol table
  * @param expression
@@ -18,21 +25,24 @@
  * @return enum mcc_ast_data_type
  * @return 1 if error, 0 if ok
  */
-int mcc_symbol_table_validate_validate_identifier(
+int mcc_symbol_table_validate_identifier(
         struct mcc_ast_identifier *identifier,
         struct mcc_symbol_table *symbol_table,
-        bool with_shadowing,
         struct mcc_symbol_table_error_collector *ec
         );
 
 
-int mcc_symbol_table_validate_validate_call_expression(
+int mcc_symbol_table_validate_call_expression(
         struct mcc_ast_expression *expression,
         struct mcc_symbol_table *symbol_table,
-        bool with_shadowing,
         struct mcc_symbol_table_error_collector *ec
 );
 
+int mcc_symbol_table_validate_unary_op(
+        struct mcc_ast_expression *expression,
+        struct mcc_symbol_table *symbol_table,
+        struct mcc_symbol_table_error_collector *ec
+);
 
 /**
  * Returns binary-op expression return type
@@ -76,19 +86,8 @@ int mcc_symbol_table_validate_expression_return_type(
  */
 int mcc_symbol_table_validate_binary_operator(
         struct mcc_ast_expression *expression,
-        struct mcc_symbol_table *symbol_table
-);
-
-/**
- * Checks if an expression is semantically correct (identifier exist, binary op between string + inteeger, etc)
- * @param expression
- * @param symbol_table
- * @return 1 if error , 0 if ok
- */
-
-int mcc_symbol_table_validate_expression_semantic(
-        struct mcc_ast_expression *expression,
-        struct mcc_symbol_table *symbol_table
+        struct mcc_symbol_table *symbol_table,
+        struct mcc_symbol_table_error_collector *ec
 );
 
 // --------------------------------------- Assignment
