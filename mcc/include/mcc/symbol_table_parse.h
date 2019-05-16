@@ -37,7 +37,7 @@ int mcc_symbol_table_add_variable_declaration(
 
 // ------------------------------------------------------------ Expression
 
-int mcc_symbol_table_check_expression(
+int mcc_symbol_table_parse_expression(
         struct mcc_ast_expression *expression,
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec);
@@ -50,7 +50,7 @@ int mcc_symbol_table_parse_compound_statement(
         struct mcc_symbol_table_error_collector *ec
 );
 
-int mcc_symbol_table_check_statement(
+int mcc_symbol_table_parse_statement(
         struct mcc_ast_statement *statement,
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec);

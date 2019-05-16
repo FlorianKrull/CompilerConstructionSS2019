@@ -154,7 +154,7 @@ int mcc_symbol_table_parse_compound_statement(
 
     while(stl->statement != NULL ) {
        
-        int statement_result = mcc_symbol_table_check_statement(
+        int statement_result = mcc_symbol_table_parse_statement(
                 stl->statement,
                 sub_table,
                 ec
@@ -174,7 +174,7 @@ int mcc_symbol_table_parse_compound_statement(
     return 0;
 }
 
-int mcc_symbol_table_check_statement(
+int mcc_symbol_table_parse_statement(
         struct mcc_ast_statement *statement,
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec) {
@@ -189,14 +189,14 @@ int mcc_symbol_table_check_statement(
         case MCC_AST_STATEMENT_TYPE_WHILE:
             if(mcc_symbol_table_check_expression(
                     statement->while_condition, symbol_table, ec)) {
-                return mcc_symbol_table_check_statement(
+                return mcc_symbol_table_parse_statement(
                         statement->while_stmt, symbol_table, ec);
             }
             break;
         case MCC_AST_STATEMENT_TYPE_IF:
             if(mcc_symbol_table_check_expression(
                     statement->if_condition, symbol_table, ec)) {
-                return mcc_symbol_table_check_statement(
+                return mcc_symbol_table_parse_statement(
                         statement->if_stmt, symbol_table, ec);
             }
             break;
@@ -227,6 +227,7 @@ int mcc_symbol_table_check_statement(
         default:
             return 0;
     }
+
 
     return 0;
 }
@@ -281,7 +282,7 @@ int mcc_symbol_table_add_function_declaration(
         }
 
         // add compound statement to symbol table
-        return mcc_symbol_table_check_statement(func_def -> statement, symbol_table, ec);
+        return mcc_symbol_table_parse_statement(func_def -> statement, symbol_table, ec);
     } else {
         // already declared - create already declared error message
         mcc_symbol_table_add_error(ec, mcc_symbol_table_new_error(&(func_def->node.sloc),
