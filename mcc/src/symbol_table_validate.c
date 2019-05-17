@@ -90,12 +90,41 @@ int mcc_symbol_table_validate_unary_op(
     assert(symbol_table);
     assert(ec);
 
-    // TODO: should we assume that expression is unary?
+    enum mcc_ast_unary_op u_type = expression -> unary_op;
+    struct mcc_ast_expression *u_exp = expression -> unary_expression;
 
-    enum mcc_ast_unary_op unary_type = expression -> unary_op;
+    // check if unary expression is semantically valid
+    if (mcc_symbol_table_validate_expression(u_exp, symbol_table, ec) == 0) {
+        enum mcc_ast_data_type data_type;
+        if (u_type == MCC_AST_UNARY_OP_NOT) {
+            // check if expression return type is boolean
+            data_type = mcc_symbol_table_get_expression_return_type(u_exp, symbol_table);
 
+            if (data_type != MCC_AST_DATA_TYPE_BOOL) {
+                mcc_symbol_table_add_error(
+                        ec,
+                        mcc_symbol_table_new_error(&(expression -> node.sloc), MCC_SEMANTIC_ERROR_UNARY_OP_EXPECTED_BOOL));
 
+                return 1;
+            }
+        } else {
+            // check if expression return type is number type
+            data_type = mcc_symbol_table_get_expression_return_type(u_exp, symbol_table);
 
+            if (data_type != MCC_AST_DATA_TYPE_INT && data_type != MCC_AST_DATA_TYPE_FLOAT) {
+                mcc_symbol_table_add_error(
+                        ec,
+                        mcc_symbol_table_new_error(&(expression -> node.sloc), MCC_SEMANTIC_ERROR_UNARY_OP_EXPECTED_NUMBER_TYPE));
+
+                return 1;
+            }
+        }
+
+        return 0;
+    }
+
+    // unary op expression is not valid
+    return 1;
 }
 
 enum mcc_ast_data_type mcc_symbol_table_get_expression_return_type_binary_op(
@@ -106,7 +135,8 @@ enum mcc_ast_data_type mcc_symbol_table_get_expression_return_type_binary_op(
     enum mcc_ast_data_type lhs_type = mcc_symbol_table_get_expression_return_type(expression->lhs, symbol_table);
     enum mcc_ast_data_type rhs_type = mcc_symbol_table_get_expression_return_type(expression->rhs, symbol_table);
 
-    // TODO maybe do it better - idk how
+    // since there is no implicit type conversion AND we expect the binary op to be valid (see comments in mcc_symbol_table_get_expression_return_type)
+    // we can just check lhs expression
     switch(expression->op) {
         case MCC_AST_BINARY_OP_ADD:
         case MCC_AST_BINARY_OP_SUB:
@@ -116,21 +146,19 @@ enum mcc_ast_data_type mcc_symbol_table_get_expression_return_type_binary_op(
         case MCC_AST_BINARY_OP_GREATER:
         case MCC_AST_BINARY_OP_GREATER_EQUALS:
         case MCC_AST_BINARY_OP_DIV:
-            if(lhs_type == MCC_AST_DATA_TYPE_INT && rhs_type == MCC_AST_DATA_TYPE_INT) {
+            if(lhs_type == MCC_AST_DATA_TYPE_INT) {
                 return MCC_AST_DATA_TYPE_INT;
-            } else if(lhs_type == MCC_AST_DATA_TYPE_FLOAT && rhs_type == MCC_AST_DATA_TYPE_INT) {
+            } else{
                 return MCC_AST_DATA_TYPE_FLOAT;
-            } else if(lhs_type == MCC_AST_DATA_TYPE_INT && rhs_type == MCC_AST_DATA_TYPE_FLOAT) {
-                return MCC_AST_DATA_TYPE_FLOAT;
-            }else{
-                return MCC_AST_DATA_TYPE_INT;
             }
         case MCC_AST_BINARY_OP_EQUALS:
         case MCC_AST_BINARY_OP_NOT_EQUALS:
         case MCC_AST_BINARY_OP_AND:
         case MCC_AST_BINARY_OP_OR:
             return MCC_AST_DATA_TYPE_BOOL;
-
+        default:
+            // invalid return type for binary op
+            return MCC_AST_DATA_TYPE_VOID;
     }
 }
 
@@ -145,14 +173,15 @@ enum mcc_ast_data_type mcc_symbol_table_get_expression_return_type(
             return mcc_symbol_table_get_symbol(symbol_table, expression->identifier->i_value)->data_type;
         case MCC_AST_EXPRESSION_TYPE_CALL_EXPRESSION:
             return mcc_symbol_table_get_symbol(symbol_table, expression->function_name->i_value)->data_type;
-        case MCC_AST_EXPRESSION_TYPE_UNARY_OP:
         case MCC_AST_EXPRESSION_TYPE_BINARY_OP:
+            // must be a valid binary operation already! (e.g. no string + number -> invalid binary operation will result in type void)
             return mcc_symbol_table_get_expression_return_type_binary_op(expression, symbol_table);
+        case MCC_AST_EXPRESSION_TYPE_UNARY_OP:
+            return mcc_symbol_table_get_expression_return_type(expression -> unary_expression, symbol_table);
         case MCC_AST_EXPRESSION_TYPE_PARENTH:
             return mcc_symbol_table_get_expression_return_type(expression->expression, symbol_table);
         case MCC_AST_EXPRESSION_TYPE_BRACKET:
-            // array index ? - should that alway be INT?
-            return MCC_AST_DATA_TYPE_INT;
+            return mcc_symbol_table_get_expression_return_type(expression->bracket_expression, symbol_table);
     }
 }
 
@@ -180,7 +209,8 @@ int mcc_symbol_table_validate_binary_operator_handside_equals_type_check(
 // both handsides of number type
 int mcc_symbol_table_validate_binary_operator_handside_number_type_check(
         struct mcc_ast_expression *expression,
-        struct mcc_symbol_table *symbol_table
+        struct mcc_symbol_table *symbol_table,
+        struct mcc_symbol_table_error_collector *ec
 ) {
     if(((mcc_symbol_table_get_expression_return_type(expression->lhs, symbol_table) == MCC_AST_DATA_TYPE_INT) ||
         (mcc_symbol_table_get_expression_return_type(expression->lhs, symbol_table) == MCC_AST_DATA_TYPE_FLOAT))
@@ -190,6 +220,9 @@ int mcc_symbol_table_validate_binary_operator_handside_number_type_check(
         // both sides are number types
         return 0;
     } else {
+        mcc_symbol_table_add_error(
+                ec,
+                mcc_symbol_table_new_error(&(expression -> node.sloc), MCC_SEMANTIC_ERROR_BINARY_OP_HANDSIDE_NUMBER_TYPE));
         return 1;
     }
 }
@@ -197,13 +230,17 @@ int mcc_symbol_table_validate_binary_operator_handside_number_type_check(
 // both handsides of bool type
 int mcc_symbol_table_validate_binary_operator_handside_bool_type_check(
         struct mcc_ast_expression *expression,
-        struct mcc_symbol_table *symbol_table
+        struct mcc_symbol_table *symbol_table,
+        struct mcc_symbol_table_error_collector *ec
 ) {
     if((mcc_symbol_table_get_expression_return_type(expression->lhs, symbol_table) == MCC_AST_DATA_TYPE_BOOL) &&
         (mcc_symbol_table_get_expression_return_type(expression->rhs, symbol_table) == MCC_AST_DATA_TYPE_BOOL)) {
         // both sides are bool types
         return 0;
     } else {
+        mcc_symbol_table_add_error(
+                ec,
+                mcc_symbol_table_new_error(&(expression -> node.sloc), MCC_SEMANTIC_ERROR_BINARY_OP_HANDSIDE_BOOL_TYPE));
         return 1;
     }
 }
@@ -215,14 +252,34 @@ int mcc_symbol_table_validate_binary_operator(
         struct mcc_symbol_table_error_collector *ec
 ) {
 
-    // check if both handsides exist (or have any other errors
+    // check if both handsides are semnatically correct expressions
     if(mcc_symbol_table_validate_expression(expression->lhs, symbol_table, ec) == 1 ||
        mcc_symbol_table_validate_expression(expression->rhs, symbol_table, ec) == 1) {
         return 1;
     }
 
-    // check if both side exist in symbol table and check types
-    // TODO maybe do it better - idk how
+    // check if both handsides have the same return type
+    if (mcc_symbol_table_get_expression_return_type(expression -> lhs, symbol_table) !=
+            mcc_symbol_table_get_expression_return_type(expression -> rhs, symbol_table)) {
+        mcc_symbol_table_add_error(
+                ec,
+                mcc_symbol_table_new_error(&(expression -> node.sloc), MCC_SEMANTIC_ERROR_BINARY_OP_HANDSIDE_SAME_TYPE));
+
+        return 1;
+    }
+
+    // handle division by 0 separately
+    if (expression -> op == MCC_AST_BINARY_OP_DIV) {
+        if (mcc_symbol_table_get_expression_return_type(expression -> rhs, symbol_table) == 0) {
+            mcc_symbol_table_add_error(
+                    ec,
+                    mcc_symbol_table_new_error(&(expression -> node.sloc), MCC_SEMANTIC_ERROR_BINARY_OP_DIV_BY_0));
+
+            return 1;
+        }
+    }
+    
+    // check if handsides have valid types
     switch(expression->op) {
         case MCC_AST_BINARY_OP_ADD:
         case MCC_AST_BINARY_OP_SUB:
@@ -231,19 +288,17 @@ int mcc_symbol_table_validate_binary_operator(
         case MCC_AST_BINARY_OP_LESS_EQUALS:
         case MCC_AST_BINARY_OP_GREATER:
         case MCC_AST_BINARY_OP_GREATER_EQUALS:
-            return mcc_symbol_table_validate_binary_operator_handside_number_type_check(expression, symbol_table);
-
         case MCC_AST_BINARY_OP_DIV:
-            // TODO: checck for devicion by zero right mustnt be 0
+            return mcc_symbol_table_validate_binary_operator_handside_number_type_check(expression, symbol_table, ec);
         case MCC_AST_BINARY_OP_EQUALS:
         case MCC_AST_BINARY_OP_NOT_EQUALS:
-            return mcc_symbol_table_validate_binary_operator_handside_equals_type_check(expression, symbol_table);
         case MCC_AST_BINARY_OP_AND:
         case MCC_AST_BINARY_OP_OR:
-            return mcc_symbol_table_validate_binary_operator_handside_bool_type_check(expression, symbol_table);
-        default:
-            return 1;
+            return mcc_symbol_table_validate_binary_operator_handside_bool_type_check(expression, symbol_table, ec);
     }
+
+    // all ok
+    return 0;
 }
 
 int mcc_symbol_table_validate_expression(

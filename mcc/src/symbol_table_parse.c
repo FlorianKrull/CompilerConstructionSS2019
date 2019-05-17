@@ -138,7 +138,6 @@ int mcc_symbol_table_parse_statement(
         case MCC_AST_STATEMENT_TYPE_EXPRESSION:
             return mcc_symbol_table_validate_expression(statement->expression, symbol_table, ec);
         case MCC_AST_STATEMENT_TYPE_WHILE:
-            // TODO extract to separate validate while function
             if(mcc_symbol_table_validate_expression(
                     statement->while_condition, symbol_table, ec) == 0) {
                 return mcc_symbol_table_parse_statement(
@@ -147,7 +146,6 @@ int mcc_symbol_table_parse_statement(
                 return 1;
             }
         case MCC_AST_STATEMENT_TYPE_IF:
-            // TODO extract to separate validate if function
             if(mcc_symbol_table_validate_expression(
                     statement->if_condition, symbol_table, ec) == 0) {
                 return mcc_symbol_table_parse_statement(
