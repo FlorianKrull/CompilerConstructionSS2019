@@ -39,6 +39,7 @@ mcc_src = [
             'src/symbol_table_validate.c',
             'src/symbol_table_parse.c',
             'src/symbol_table_semantic_error.c',
+            'src/symbol_table_print.c',
             lgen.process('src/scanner.l'),
             pgen.process('src/parser.y') ]
 

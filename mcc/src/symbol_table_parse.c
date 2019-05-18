@@ -140,20 +140,35 @@ int mcc_symbol_table_parse_statement(
         case MCC_AST_STATEMENT_TYPE_WHILE:
             if(mcc_symbol_table_validate_expression(
                     statement->while_condition, symbol_table, ec) == 0) {
-                return mcc_symbol_table_parse_statement(
-                        statement->while_stmt, symbol_table, ec);
+                if (mcc_symbol_table_validate_condition_to_type_bool(
+                        statement -> while_condition,
+                        symbol_table,
+                        ec
+                ) == 0) {
+                    return mcc_symbol_table_parse_statement(
+                            statement->while_stmt, symbol_table, ec);
+                } else {
+                    return 1;
+                }
             } else {
                 return 1;
             }
         case MCC_AST_STATEMENT_TYPE_IF:
             if(mcc_symbol_table_validate_expression(
                     statement->if_condition, symbol_table, ec) == 0) {
-                return mcc_symbol_table_parse_statement(
-                        statement->if_stmt, symbol_table, ec);
+                if (mcc_symbol_table_validate_condition_to_type_bool(
+                        statement -> if_condition,
+                        symbol_table,
+                        ec
+                ) == 0) {
+                    return mcc_symbol_table_parse_statement(
+                            statement->if_stmt, symbol_table, ec);
+                } else {
+                    return 1;
+                }
             } else {
                 return 1;
             }
-
         case MCC_AST_STATEMENT_TYPE_DECL:
             // TODO extract to separate function
             if(mcc_symbol_table_get_symbol(symbol_table, statement->declaration->ident->i_value) != NULL) {
@@ -180,9 +195,6 @@ int mcc_symbol_table_parse_statement(
         default:
             return 0;
     }
-
-
-    return 0;
 }
 
 // ---------------------------------------------------------- Function
@@ -272,9 +284,7 @@ struct mcc_symbol_table *mcc_symbol_table_build(struct mcc_ast_program *program,
     assert(program);
 
     struct mcc_symbol_table *st = mcc_symbol_table_new_table(NULL,ec);
-    
 
-    // TODO: insert built-ins
     if (mcc_symbol_table_parse_program(program, st, ec) == 0) {
         printf("Symbol table created successfully \n");
         return st;

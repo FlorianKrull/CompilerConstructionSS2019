@@ -283,6 +283,21 @@ void BinaryOpHandsideDivisionByZero(CuTest *ct) {
     }
 }
 
+void ConditionBoolExpected(CuTest *ct) {
+    struct mcc_ast_program *prog = get_result_from_program("../test/semantic/condition_bool_expected.mc");
+
+    if(prog != NULL) {
+        struct mcc_symbol_table_error_collector *ec = mcc_symbol_table_new_error_collector();
+        struct mcc_symbol_table *symbol_table = mcc_symbol_table_build(prog, ec);
+
+        CuAssertIntEquals(ct, MCC_SEMANTIC_ERROR_CONDITION_BOOL_EXPECTED, ec->errors[0]->error_type);
+        clean_pointers(prog, symbol_table, ec);
+    } else {
+        perror("AST is NULL");
+    }
+}
+
+
 #define TESTS \
         TEST(BinaryOPDifferentTypes) \
         TEST(ArrayAlreadyDeclared) \
@@ -301,6 +316,7 @@ void BinaryOpHandsideDivisionByZero(CuTest *ct) {
         TEST(BinaryOpHandsideBoolType) \
         TEST(BinaryOpHandsideNumberType) \
         TEST(BinaryOpHandsideDivisionByZero) \
+        TEST(ConditionBoolExpected) \
 
 #include "main_stub.inc"
 #undef TESTS

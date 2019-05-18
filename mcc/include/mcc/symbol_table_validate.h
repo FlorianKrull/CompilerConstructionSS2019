@@ -18,6 +18,12 @@ int mcc_symbol_table_validate_expression(
         struct mcc_symbol_table_error_collector *ec
 );
 
+int mcc_symbol_table_validate_condition_to_type_bool(
+        struct mcc_ast_expression *condition,
+        struct mcc_symbol_table *symbol_table,
+        struct mcc_symbol_table_error_collector *ec
+);
+
 /**
  * Validate identifier (check if exists in symbol table
  * @param expression

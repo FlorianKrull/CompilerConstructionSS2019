@@ -1,7 +1,3 @@
-//
-// Created by Clemens Paumgarten on 04.05.19.
-//
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,6 +6,7 @@
 #include "mcc/parser.h"
 #include "mcc/symbol_table.h"
 #include "mcc/symbol_table_parse.h"
+#include "mcc/symbol_table_print.h"
 
 void print_usage(const char *prg) {
     printf("usage: %s <FILE>\n\n", prg);
@@ -78,6 +75,8 @@ int main(int argc, char *argv[]) {
             }
            
         }
+    } else {
+        mcc_symbol_table_print_error(ec, stdout);
     }
 
     // cleanup

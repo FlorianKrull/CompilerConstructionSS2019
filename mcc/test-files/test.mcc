@@ -1,10 +1,15 @@
-int main() {
-    int a;
-    int b;
-    a = 2;
-    b = 2;
+int main () {
+    float a;
+    float b;
+    float fy;
+    fy = 4.5;
+    a = ((1.0) - ((1.0) - (-1.0)) * (fy / 50.0)) * 2.0;
+    b = 7.0;
 
-    if (a && b) {
-        /* Not in here */
+    if (a + b) {
+        float c;
+        c = a + b;
     }
+
+
 }
