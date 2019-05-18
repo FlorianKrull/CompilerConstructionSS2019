@@ -280,6 +280,10 @@ int mcc_symbol_table_parse_program(
     return function_parse;
 }
 
+void addBuiltinFunction(){
+    
+}
+
 struct mcc_symbol_table *mcc_symbol_table_build(struct mcc_ast_program *program,struct mcc_symbol_table_error_collector *ec) {
     assert(program);
 
