@@ -34,7 +34,6 @@ void mcc_symbol_table_delete_error_collector(struct mcc_symbol_table_error_colle
 
 struct mcc_semantic_error *mcc_symbol_table_new_error(struct mcc_ast_source_location *loc, enum mcc_semantic_error_type type) {
     assert(loc);
-    assert(type);
 
     struct mcc_semantic_error *error = malloc(sizeof(*error));
 

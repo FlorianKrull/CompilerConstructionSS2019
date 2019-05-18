@@ -25,7 +25,7 @@ int mcc_symbol_table_add_variable_declaration(
         return 0;
     } else {
         mcc_symbol_table_add_error(ec, mcc_symbol_table_new_error(&(declaration->node.sloc),
-                                                                  MCC_SEMANTIC_ERROR_VARIABLE_NOT_DECLARED));
+                                                                  MCC_SEMANTIC_ERROR_VARIABLE_ALREADY_DECLARED));
         return 1;
     }
 }
@@ -66,7 +66,7 @@ int mcc_symbol_table_add_array_declaration(
     struct mcc_symbol *vs = mcc_symbol_new_symbol_array(
             declaration->ident->i_value,
             declaration->type,
-            atoi(declaration->arr_literal->i_value));
+            declaration->arr_literal->i_value);
 
     // check if already declared
     if(mcc_symbol_table_get_symbol(symbol_table, vs->variable_name) == NULL) {
@@ -196,8 +196,6 @@ int mcc_symbol_table_add_function_declaration(
     assert(ec);
     assert(func_def);
 
-    printf("%d \n", func_def -> return_type);
-
     struct mcc_symbol *fs = mcc_symbol_new_symbol_function(
             func_def->identifier->i_value,
             func_def->return_type,
@@ -260,6 +258,11 @@ int mcc_symbol_table_parse_program(
         function_parse = mcc_symbol_table_add_function_declaration(program->function_def[i], symbol_table, ec);
 
         if (function_parse) break;
+    }
+
+    // check if main exists
+    if (function_parse == 0) {
+        function_parse = mcc_symbol_table_validate_main(program, symbol_table, ec);
     }
 
     return function_parse;

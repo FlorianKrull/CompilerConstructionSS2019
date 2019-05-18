@@ -27,14 +27,14 @@ struct mcc_symbol {
     enum mcc_ast_data_type data_type;
 
     union {
-        int array_size;
+        long array_size;
         struct mcc_symbol_function_arguments *func_arguments;
     };
 };
 
 struct mcc_symbol *mcc_symbol_new_symbol_variable(char* variable_name, enum mcc_ast_data_type data_type);
 
-struct mcc_symbol *mcc_symbol_new_symbol_array(char* variable_name, enum mcc_ast_data_type data_type, int array_size);
+struct mcc_symbol *mcc_symbol_new_symbol_array(char* variable_name, enum mcc_ast_data_type data_type, long array_size);
 
 struct mcc_symbol *mcc_symbol_new_symbol_function(
         char* variable_name,
@@ -65,7 +65,7 @@ struct mcc_symbol_table {
     struct mcc_symbol_table *inner_tables[];
 };
 
-struct mcc_symbol_table *mcc_symbol_table_new_table(struct mcc_symbol_table *parent,struct mcc_symbol_table_error_collector *ec);
+struct mcc_symbol_table *mcc_symbol_table_new_table(struct mcc_symbol_table *parent, struct mcc_symbol_table_error_collector *ec);
 
 void mcc_symbol_table_delete_table(struct mcc_symbol_table *parent);
 

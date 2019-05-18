@@ -22,10 +22,8 @@ struct mcc_symbol *mcc_symbol_new_symbol_variable(char* variable_name, enum mcc_
     return symbol;
 }
 
-struct mcc_symbol *mcc_symbol_new_symbol_array(char* variable_name, enum mcc_ast_data_type data_type, int array_size) {
+struct mcc_symbol *mcc_symbol_new_symbol_array(char* variable_name, enum mcc_ast_data_type data_type, long array_size) {
     assert(variable_name);
-    assert(data_type);
-    assert(array_size);
 
     struct mcc_symbol *symbol = malloc(sizeof(*symbol));
 
@@ -49,16 +47,22 @@ struct mcc_symbol *mcc_symbol_new_symbol_function(
     symbol -> variable_name = variable_name;
     symbol -> data_type = data_type;
 
+    struct mcc_symbol_function_arguments *fp;
     if (parameter != NULL) {
-        struct mcc_symbol_function_arguments *fp = malloc(sizeof(*fp) + sizeof(enum mcc_ast_data_type*) * parameter -> size);
+        fp = malloc(sizeof(*fp) + sizeof(enum mcc_ast_data_type*) * parameter -> size);
         fp -> arg_size = parameter -> size;
 
         for (int i = 0; i < parameter -> size; i++) {
             fp -> arg_types[i] = parameter -> parameters[i] -> type;
         }
+    } else {
+        fp = malloc(sizeof(*fp));
 
-        // symbol -> func_params = fp;
+        fp -> arg_max = 0;
+        fp -> arg_size = 0;
     }
+
+    symbol -> func_arguments = fp;
 
     return symbol;
 }
@@ -213,6 +217,7 @@ struct mcc_symbol *mcc_symbol_table_get_symbol(struct mcc_symbol_table *symbol_t
 
     return NULL;
 }
+
 
 
 

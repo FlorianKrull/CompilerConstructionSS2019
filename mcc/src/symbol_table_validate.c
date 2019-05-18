@@ -56,6 +56,14 @@ int mcc_symbol_table_validate_call_expression(
         struct mcc_ast_argument *argument = expression -> argument;
         struct mcc_symbol_function_arguments *func_args = s -> func_arguments;
 
+        if ((argument == NULL && func_args != NULL) || (argument != NULL && func_args == NULL)) {
+            mcc_symbol_table_add_error(
+                    ec,
+                    mcc_symbol_table_new_error(&(expression -> node.sloc), MCC_SEMANTIC_ERROR_WRONG_NUM_OF_ARGUMENTS));
+
+            return 1;
+        }
+
         if (argument -> size != func_args -> arg_size) {
             mcc_symbol_table_add_error(
                     ec,
@@ -114,7 +122,7 @@ int mcc_symbol_table_validate_unary_op(
             if (data_type != MCC_AST_DATA_TYPE_INT && data_type != MCC_AST_DATA_TYPE_FLOAT) {
                 mcc_symbol_table_add_error(
                         ec,
-                        mcc_symbol_table_new_error(&(expression -> node.sloc), MCC_SEMANTIC_ERROR_UNARY_OP_EXPECTED_NUMBER_TYPE));
+                        mcc_symbol_table_new_error(&(expression -> node.sloc), MCC_SEMANTIC_ERROR_UNARY_OP_EXPECTED_NUMBER));
 
                 return 1;
             }
@@ -278,7 +286,7 @@ int mcc_symbol_table_validate_binary_operator(
             return 1;
         }
     }
-    
+
     // check if handsides have valid types
     switch(expression->op) {
         case MCC_AST_BINARY_OP_ADD:
@@ -310,7 +318,7 @@ int mcc_symbol_table_validate_expression(
     assert(symbol_table);
     assert(ec);
 
-    printf("--- Symbol table parse expression --- \n");
+    printf("--- Symbol table validate expression --- \n");
     switch(expression->type) {
         case MCC_AST_EXPRESSION_TYPE_IDENTIFIER:
             return mcc_symbol_table_validate_identifier(expression -> identifier, symbol_table, ec);
@@ -335,12 +343,11 @@ int mcc_symbol_table_validate_expression(
         case MCC_AST_EXPRESSION_TYPE_BINARY_OP:
             return mcc_symbol_table_validate_binary_operator(expression, symbol_table, ec);
         case MCC_AST_EXPRESSION_TYPE_PARENTH:
-            return mcc_symbol_table_validate_expression(expression, symbol_table, ec);
+            return mcc_symbol_table_validate_expression(expression -> expression, symbol_table, ec);
         case MCC_AST_EXPRESSION_TYPE_BRACKET:
-            // Don't know what to do yet
+            return mcc_symbol_table_validate_expression(expression -> bracket_expression, symbol_table, ec);
         default:
             return 0;
-
     }
 }
 
@@ -453,7 +460,7 @@ int mcc_symbol_table_validate_main(
     if(!s){
         mcc_symbol_table_add_error(
                         ec,
-                        mcc_symbol_table_new_error(&(program ->node.sloc), MCC_SEMANTIC_ERROR_MAIN_MISSINIG)
+                        mcc_symbol_table_new_error(&(program ->node.sloc), MCC_SEMANTIC_ERROR_MAIN_MISSING)
         );
         return 1;
     }
