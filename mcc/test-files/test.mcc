@@ -9,6 +9,7 @@ int main () {
     if (1 > 0) {
         float c;
         c = a + b;
+        print_nl();
     }
 
 

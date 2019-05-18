@@ -264,7 +264,6 @@ struct mcc_ast_statement {
     enum mcc_ast_statement_type  type;
 
     union {
-        // struct mcc_ast_expression *expression;
 
 		struct {
             enum mcc_ast_data_type data_type;

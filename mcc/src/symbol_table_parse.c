@@ -255,6 +255,27 @@ int mcc_symbol_table_add_function_declaration(
 
 // ---------------------------------------------------------- Program
 
+struct mcc_symbol_table *addBuiltinFunction(struct mcc_symbol_table *symbol_table,char * variable_name, enum mcc_ast_data_type data_type, int param_size ){
+
+
+    struct mcc_symbol *symbol = malloc(sizeof(*symbol));
+
+    symbol -> variable_name = variable_name;
+    symbol -> data_type = data_type;
+    struct mcc_symbol_function_arguments *fp;
+    if(param_size == 0){
+        fp = malloc(sizeof(*fp));
+        fp -> arg_max = 0;
+        fp -> arg_size = 0;
+    }else{
+        fp = malloc(sizeof(*fp) + sizeof(enum mcc_ast_data_type*) * param_size);
+    }
+    symbol -> func_arguments = fp;
+    mcc_symbol_table_insert_symbol(symbol_table, symbol);
+
+    return symbol_table;
+}
+
 int mcc_symbol_table_parse_program(
         struct mcc_ast_program *program,
         struct mcc_symbol_table *symbol_table,
@@ -266,6 +287,9 @@ int mcc_symbol_table_parse_program(
     printf("mcc_symbol_table_parse_program \n");
 
     int function_parse = 0;
+
+    symbol_table = addBuiltinFunction(symbol_table,"print_nl",MCC_AST_DATA_TYPE_VOID,0);
+
     for(int i = 0; i < program->size; i++) {
         function_parse = mcc_symbol_table_add_function_declaration(program->function_def[i], symbol_table, ec);
 
@@ -278,10 +302,6 @@ int mcc_symbol_table_parse_program(
     }
 
     return function_parse;
-}
-
-void addBuiltinFunction(){
-    
 }
 
 struct mcc_symbol_table *mcc_symbol_table_build(struct mcc_ast_program *program,struct mcc_symbol_table_error_collector *ec) {
