@@ -255,25 +255,46 @@ int mcc_symbol_table_add_function_declaration(
 
 // ---------------------------------------------------------- Program
 
-struct mcc_symbol_table *addBuiltinFunction(struct mcc_symbol_table *symbol_table,char * variable_name, enum mcc_ast_data_type data_type, int param_size ){
+void addBuiltinFunction(struct mcc_symbol_table *symbol_table,char *variable_name, enum mcc_ast_data_type return_type, enum mcc_ast_data_type param_type , char *param_id){
 
+//    struct mcc_ast_declaration *decl = malloc(sizeof(*decl));
+// 	if (!decl) {
+// 		return NULL;
+// 	}
 
-    struct mcc_symbol *symbol = malloc(sizeof(*symbol));
+// 	decl -> type = param_type;
+// 	decl -> ident = param_id;
+//     decl -> arr_literal = NULL;
+
+//     struct mcc_ast_parameter *param = malloc(sizeof(*param) + sizeof(struct mcc_ast_declaration*) * 4);
+//     param -> size = 0;
+//     param -> max = 0;
+   
+
+//     struct mcc_symbol *fs = mcc_symbol_new_symbol_function(
+//             variable_name,
+//             return_type,
+//             param);
+   
+   struct mcc_symbol *symbol = malloc(sizeof(*symbol));
 
     symbol -> variable_name = variable_name;
-    symbol -> data_type = data_type;
-    struct mcc_symbol_function_arguments *fp;
-    if(param_size == 0){
-        fp = malloc(sizeof(*fp));
-        fp -> arg_max = 0;
+    symbol -> data_type = return_type;
+    symbol -> symbol_type = MCC_SYMBOL_TYPE_FUNCTION;
+
+    struct mcc_symbol_function_arguments *fp  = malloc(sizeof(*fp) + sizeof(enum mcc_ast_data_type*) * 4);
+
+    if(param_type == MCC_AST_DATA_TYPE_VOID){
         fp -> arg_size = 0;
+        fp -> arg_types[0] = param_type;
     }else{
-        fp = malloc(sizeof(*fp) + sizeof(enum mcc_ast_data_type*) * param_size);
+        fp -> arg_size = 1;
+        fp -> arg_types[0] = param_type;
     }
     symbol -> func_arguments = fp;
-    mcc_symbol_table_insert_symbol(symbol_table, symbol);
 
-    return symbol_table;
+    mcc_symbol_table_insert_symbol(symbol_table,symbol);
+
 }
 
 int mcc_symbol_table_parse_program(
@@ -288,7 +309,7 @@ int mcc_symbol_table_parse_program(
 
     int function_parse = 0;
 
-    symbol_table = addBuiltinFunction(symbol_table,"print_nl",MCC_AST_DATA_TYPE_VOID,0);
+    addBuiltinFunction(symbol_table,"print_nl",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_VOID,"");
 
     for(int i = 0; i < program->size; i++) {
         function_parse = mcc_symbol_table_add_function_declaration(program->function_def[i], symbol_table, ec);

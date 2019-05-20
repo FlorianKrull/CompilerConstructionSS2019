@@ -55,16 +55,17 @@ int mcc_symbol_table_validate_call_expression(
     } else {
         struct mcc_ast_argument *argument = expression->argument;
         struct mcc_symbol_function_arguments *func_args = s->func_arguments;
-
-        if((argument == NULL && func_args != NULL) || (argument != NULL && func_args == NULL)) {
+        if((argument == NULL && func_args->arg_size != 0) || (argument != NULL && func_args == NULL)) {
+            printf("Argument is null");
             mcc_symbol_table_add_error(
                     ec,
                     mcc_symbol_table_new_error(&(expression->node.sloc), MCC_SEMANTIC_ERROR_WRONG_NUM_OF_ARGUMENTS));
 
             return 1;
         }
-
+        printf("Skipped first test");
         if(argument->size != func_args->arg_size) {
+            printf("Different argument size");
             mcc_symbol_table_add_error(
                     ec,
                     mcc_symbol_table_new_error(&(expression->node.sloc), MCC_SEMANTIC_ERROR_WRONG_NUM_OF_ARGUMENTS));
@@ -329,7 +330,7 @@ int mcc_symbol_table_validate_expression(
     assert(symbol_table);
     assert(ec);
 
-    printf("--- Symbol table validate expression --- \n");
+    
     switch(expression->type) {
         case MCC_AST_EXPRESSION_TYPE_IDENTIFIER:
             return mcc_symbol_table_validate_identifier(expression->identifier, symbol_table, ec);
