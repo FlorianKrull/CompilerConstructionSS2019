@@ -64,7 +64,7 @@ int mcc_symbol_table_validate_call_expression(
             return 1;
         }
         printf("Skipped first test");
-        if(argument->size != func_args->arg_size) {
+        if(argument != NULL && (argument->size != func_args->arg_size)) {
             printf("Different argument size");
             mcc_symbol_table_add_error(
                     ec,

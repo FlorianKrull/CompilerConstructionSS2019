@@ -255,27 +255,8 @@ int mcc_symbol_table_add_function_declaration(
 
 // ---------------------------------------------------------- Program
 
-void addBuiltinFunction(struct mcc_symbol_table *symbol_table,char *variable_name, enum mcc_ast_data_type return_type, enum mcc_ast_data_type param_type , char *param_id){
+void addBuiltinFunction(struct mcc_symbol_table *symbol_table,char *variable_name, enum mcc_ast_data_type return_type, enum mcc_ast_data_type param_type){
 
-//    struct mcc_ast_declaration *decl = malloc(sizeof(*decl));
-// 	if (!decl) {
-// 		return NULL;
-// 	}
-
-// 	decl -> type = param_type;
-// 	decl -> ident = param_id;
-//     decl -> arr_literal = NULL;
-
-//     struct mcc_ast_parameter *param = malloc(sizeof(*param) + sizeof(struct mcc_ast_declaration*) * 4);
-//     param -> size = 0;
-//     param -> max = 0;
-   
-
-//     struct mcc_symbol *fs = mcc_symbol_new_symbol_function(
-//             variable_name,
-//             return_type,
-//             param);
-   
    struct mcc_symbol *symbol = malloc(sizeof(*symbol));
 
     symbol -> variable_name = variable_name;
@@ -309,7 +290,17 @@ int mcc_symbol_table_parse_program(
 
     int function_parse = 0;
 
-    addBuiltinFunction(symbol_table,"print_nl",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_VOID,"");
+    addBuiltinFunction(symbol_table,"print_nl",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_VOID);
+
+    addBuiltinFunction(symbol_table,"print",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_STRING);
+
+    addBuiltinFunction(symbol_table,"print_int",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_INT);
+
+    addBuiltinFunction(symbol_table,"print_float",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_FLOAT);
+
+    addBuiltinFunction(symbol_table,"read_int",MCC_AST_DATA_TYPE_INT,MCC_AST_DATA_TYPE_VOID);
+
+    addBuiltinFunction(symbol_table,"read_float",MCC_AST_DATA_TYPE_FLOAT,MCC_AST_DATA_TYPE_VOID);
 
     for(int i = 0; i < program->size; i++) {
         function_parse = mcc_symbol_table_add_function_declaration(program->function_def[i], symbol_table, ec);

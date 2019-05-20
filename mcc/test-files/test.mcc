@@ -10,7 +10,15 @@ int main () {
         float c;
         c = a + b;
         print_nl();
+        print_int(1);
     }
 
 
 }
+float transform_x(float x)
+{
+	float fx;
+	fx = x;
+	return (-2.0) + ((1.0) - (-2.0)) * (fx / 80.0);
+}
+
