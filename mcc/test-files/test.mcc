@@ -1,24 +1,7 @@
 int main () {
-    float a;
-    float b;
-    float fy;
-    fy = 4.5;
-    a = ((1.0) - ((1.0) - (-1.0)) * (fy / 50.0)) * 2.0;
-    b = 7.0;
-
-    if (1 > 0) {
-        float c;
-        c = a + b;
-        print_nl();
-        print_int(1);
-    }
-
-
-}
-float transform_x(int b)
-{
-	float fx;
-	
-	return (-2.0) + ((1.0) - (-2.0)) * (fx / 80.0);
+    a(1, "112");
 }
 
+int a (int b, string c) {
+    b;
+}

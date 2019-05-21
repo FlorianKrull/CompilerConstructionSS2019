@@ -55,12 +55,21 @@ int mcc_symbol_table_parse_statement(
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec);
 
+
+void mcc_symbol_table_add_builtins(struct mcc_symbol_table *symbol_table);
+
 // ------------------------------------------------------------ Function
 
 int mcc_symbol_table_add_function_declaration(
         struct mcc_ast_function *func_def,
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec);
+
+int mcc_symbol_table_parse_function(
+        struct mcc_ast_function *func_def,
+        struct mcc_symbol_table *symbol_table,
+        struct mcc_symbol_table_error_collector *ec
+);
 
 /**
  * Parses program and containing functions

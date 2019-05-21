@@ -199,6 +199,45 @@ int mcc_symbol_table_parse_statement(
 
 // ---------------------------------------------------------- Function
 
+int mcc_symbol_table_parse_function(
+        struct mcc_ast_function *func_def,
+        struct mcc_symbol_table *symbol_table,
+        struct mcc_symbol_table_error_collector *ec
+) {
+    assert(func_def);
+    assert(symbol_table);
+    assert(ec);
+
+    // verify semantic of function (validate return type)
+    if(func_def->return_type != MCC_AST_DATA_TYPE_VOID) {
+        // mcc_symbol_table_validate_statement_return
+        // TODO validate function return
+    }
+
+    // create new scope and parse function
+    struct mcc_symbol_table *sub_table = mcc_symbol_table_create_inner_table(symbol_table);
+
+    // add params to sub table
+    if (func_def -> parameter != NULL && func_def -> parameter -> size > 0) {
+        struct mcc_ast_parameter *p = func_def -> parameter;
+
+        for (int i = 0; i < p -> size; i++) {
+            struct mcc_ast_declaration *declaration = p -> parameters[i];
+
+            // at this point symbol table is still empty -> adding won't result in an error
+            if (declaration -> arr_literal != NULL) {
+                // array declaration
+                mcc_symbol_table_add_array_declaration(declaration, sub_table, ec);
+            } else {
+                // variable declaration
+                mcc_symbol_table_add_variable_declaration(declaration, sub_table, ec);
+            }
+        }
+    }
+
+    return mcc_symbol_table_parse_statement(func_def -> statement, sub_table, ec);
+}
+
 // TODO: break up function into smaller pieces
 int mcc_symbol_table_add_function_declaration(
         struct mcc_ast_function *func_def,
@@ -215,37 +254,8 @@ int mcc_symbol_table_add_function_declaration(
 
     // check if already declared
     if(mcc_symbol_table_get_symbol(symbol_table, fs -> variable_name) == NULL) {
-        // verify semantic of function (validate return type)
-        if(func_def->return_type != MCC_AST_DATA_TYPE_VOID) {
-            // mcc_symbol_table_validate_statement_return
-        }
-
         mcc_symbol_table_insert_symbol(symbol_table, fs);
-
-        // create new scope and parse function
-        struct mcc_symbol_table *sub_table = mcc_symbol_table_create_inner_table(symbol_table);
-
-        // add params to sub table
-        if (func_def -> parameter != NULL && func_def -> parameter -> size > 0) {
-            struct mcc_ast_parameter *p = func_def -> parameter;
-           
-            for (int i = 0; i < p -> size; i++) {
-                struct mcc_ast_declaration *declaration = p -> parameters[i];
-
-                // at this point symbol table is still empty -> adding won't result in an error
-                if (declaration -> arr_literal != NULL) {
-                    // array declaration
-                    mcc_symbol_table_add_array_declaration(declaration, sub_table, ec);
-                } else {
-                    // variable declaration
-                    printf("Adds variable declaration in function head");
-                    mcc_symbol_table_add_variable_declaration(declaration, sub_table, ec);
-                }
-            }
-        }
-
-        // add compound statement to symbol table
-        return mcc_symbol_table_parse_statement(func_def -> statement, symbol_table, ec);
+        return 0;
     } else {
         // already declared - create already declared error message
         mcc_symbol_table_add_error(ec, mcc_symbol_table_new_error(&(func_def->node.sloc),
@@ -256,7 +266,7 @@ int mcc_symbol_table_add_function_declaration(
 
 // ---------------------------------------------------------- Program
 
-void addBuiltinFunction(struct mcc_symbol_table *symbol_table,char *variable_name, enum mcc_ast_data_type return_type, enum mcc_ast_data_type param_type){
+void add_builtin_function(struct mcc_symbol_table *symbol_table,char *variable_name, enum mcc_ast_data_type return_type, enum mcc_ast_data_type param_type){
 
    struct mcc_symbol *symbol = malloc(sizeof(*symbol));
 
@@ -279,6 +289,15 @@ void addBuiltinFunction(struct mcc_symbol_table *symbol_table,char *variable_nam
 
 }
 
+void mcc_symbol_table_add_builtins(struct mcc_symbol_table *symbol_table) {
+    add_builtin_function(symbol_table,"print_nl",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_VOID);
+    add_builtin_function(symbol_table,"print",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_STRING);
+    add_builtin_function(symbol_table,"print_int",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_INT);
+    add_builtin_function(symbol_table,"print_float",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_FLOAT);
+    add_builtin_function(symbol_table,"read_int",MCC_AST_DATA_TYPE_INT,MCC_AST_DATA_TYPE_VOID);
+    add_builtin_function(symbol_table,"read_float",MCC_AST_DATA_TYPE_FLOAT,MCC_AST_DATA_TYPE_VOID);
+};
+
 int mcc_symbol_table_parse_program(
         struct mcc_ast_program *program,
         struct mcc_symbol_table *symbol_table,
@@ -291,22 +310,21 @@ int mcc_symbol_table_parse_program(
 
     int function_parse = 0;
 
-    addBuiltinFunction(symbol_table,"print_nl",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_VOID);
-
-    addBuiltinFunction(symbol_table,"print",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_STRING);
-
-    addBuiltinFunction(symbol_table,"print_int",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_INT);
-
-    addBuiltinFunction(symbol_table,"print_float",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_FLOAT);
-
-    addBuiltinFunction(symbol_table,"read_int",MCC_AST_DATA_TYPE_INT,MCC_AST_DATA_TYPE_VOID);
-
-    addBuiltinFunction(symbol_table,"read_float",MCC_AST_DATA_TYPE_FLOAT,MCC_AST_DATA_TYPE_VOID);
-
     for(int i = 0; i < program->size; i++) {
         function_parse = mcc_symbol_table_add_function_declaration(program->function_def[i], symbol_table, ec);
 
         if (function_parse) break;
+    }
+
+    // if everything so far ok
+    if (function_parse == 0) {
+
+        // parse all functions
+        for(int i = 0; i < program->size; i++) {
+            function_parse = mcc_symbol_table_parse_function(program->function_def[i], symbol_table, ec);
+
+            if (function_parse) break;
+        }
     }
 
     // check if main exists
@@ -321,6 +339,8 @@ struct mcc_symbol_table *mcc_symbol_table_build(struct mcc_ast_program *program,
     assert(program);
 
     struct mcc_symbol_table *st = mcc_symbol_table_new_table(NULL,ec);
+
+    mcc_symbol_table_add_builtins(st);
 
     if (mcc_symbol_table_parse_program(program, st, ec) == 0) {
         printf("Symbol table created successfully \n");
