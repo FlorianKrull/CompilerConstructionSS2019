@@ -422,38 +422,69 @@ int mcc_symbol_table_validate_assignemt_array_semantic(
 
 // --------------------------------------- Statement
 
+int mcc_symbol_table_validate_compound_has_return(
+        struct mcc_ast_statement *statement
+) {
+    return 0;
+//    if (statement -> type == MCC_AST_STATEMENT_TYPE_COMPOUND) {
+//        struct mcc_ast_statement_list *stl = statement -> statement_list;
+//        struct mcc_ast_statement *st;
+//        enum mcc_ast_statement_type type;
+//
+//        while (stl) {
+//            st = stl -> statement;
+//            type = st -> type;
+//
+//            switch(type) {
+//                case MCC_AST_STATEMENT_TYPE_RETURN:
+//                    return 0;
+//                case MCC_AST_STATEMENT_TYPE_IF:
+//
+//            }
+//
+//
+//            if (type == MCC_AST_STATEMENT_TYPE_RETURN) {
+//                return 1;
+//            } else if (type == 0)
+//
+//            stl = stl -> next;
+//        }
+//
+//        return 0;
+//    } else {
+//        return 0;
+//    }
+}
+
 int mcc_symbol_table_validate_statement_return(
         struct mcc_ast_statement *statement,
+        enum mcc_ast_data_type return_type,
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec) {
     if(statement != NULL) {
         switch(statement->type) {
-
             case MCC_AST_STATEMENT_TYPE_IF:
-                mcc_symbol_table_validate_expression(statement->if_condition, symbol_table, ec);
-                mcc_symbol_table_validate_statement_return(statement->if_stmt, symbol_table, ec);
+                mcc_symbol_table_validate_compound_has_return(statement->if_stmt);
+
                 if(statement->else_stmt != NULL) {
-                    mcc_symbol_table_validate_statement_return(statement->else_stmt, symbol_table, ec);
+                    mcc_symbol_table_validate_statement_return(statement->else_stmt, return_type, symbol_table, ec);
                 }
             case MCC_AST_STATEMENT_TYPE_RETURN:
                 return 1;
             case MCC_AST_STATEMENT_TYPE_WHILE:
-                mcc_symbol_table_validate_expression(statement->while_condition, symbol_table, ec);
-                mcc_symbol_table_validate_statement_return(statement->while_stmt, symbol_table, ec);
+                mcc_symbol_table_validate_statement_return(statement->while_stmt, return_type, symbol_table, ec);
 
             case MCC_AST_STATEMENT_TYPE_COMPOUND:
-                do {
-                    mcc_symbol_table_validate_statement_return(statement->statement_list->statement, symbol_table, ec);
-                    statement = statement->statement_list->next;
+                if (mcc_symbol_table_validate_compound_has_return(statement) == 0) {
 
-                } while(statement->statement_list->next != NULL);
+                };
             default:
                 return 0;
         }
 
+    } else {
+        return 1;
     }
-
-    return 0;
 }
 
 // Program

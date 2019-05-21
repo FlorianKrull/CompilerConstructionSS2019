@@ -85,7 +85,25 @@ int mcc_symbol_table_parse_program(
         struct mcc_symbol_table_error_collector *ec
 );
 
-struct mcc_symbol_table* mcc_symbol_table_build(struct mcc_ast_program *program, struct mcc_symbol_table_error_collector *ec);
+struct mcc_symbol_table* mcc_symbol_table_build_program(
+		struct mcc_ast_program *program,
+		struct mcc_symbol_table_error_collector *ec
+);
+
+struct mcc_symbol_table* mcc_symbol_table_build_function(
+		struct mcc_ast_function *function,
+		struct mcc_symbol_table_error_collector *ec
+);
+
+// clang-format off
+
+#define mcc_symbol_table_build(x, ec) _Generic((x), \
+		struct mcc_ast_function *:   mcc_symbol_table_build_function, \
+        struct mcc_ast_program *:    mcc_symbol_table_build_program \
+	)(x, ec)
+
+// clang-format on
+
 
 #endif //MCC_SUMBOL_TABLE_BUILD_H
 

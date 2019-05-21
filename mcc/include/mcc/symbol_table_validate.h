@@ -35,7 +35,7 @@ int mcc_symbol_table_validate_identifier(
         struct mcc_ast_identifier *identifier,
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec
-        );
+);
 
 
 int mcc_symbol_table_validate_call_expression(
@@ -108,6 +108,7 @@ int mcc_symbol_table_validate_assignemt_semantic(
 
 int mcc_symbol_table_validate_statement_return(
         struct mcc_ast_statement *statement,
+        enum mcc_ast_data_type return_type,
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec
 );

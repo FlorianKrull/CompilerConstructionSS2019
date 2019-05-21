@@ -208,12 +208,6 @@ int mcc_symbol_table_parse_function(
     assert(symbol_table);
     assert(ec);
 
-    // verify semantic of function (validate return type)
-    if(func_def->return_type != MCC_AST_DATA_TYPE_VOID) {
-        // mcc_symbol_table_validate_statement_return
-        // TODO validate function return
-    }
-
     // create new scope and parse function
     struct mcc_symbol_table *sub_table = mcc_symbol_table_create_inner_table(symbol_table);
 
@@ -235,10 +229,19 @@ int mcc_symbol_table_parse_function(
         }
     }
 
-    return mcc_symbol_table_parse_statement(func_def -> statement, sub_table, ec);
+    int valid_function_body = mcc_symbol_table_parse_statement(func_def -> statement, sub_table, ec);
+
+    if (valid_function_body == 0) {
+        // verify if function returns right type
+        if(func_def->return_type != MCC_AST_DATA_TYPE_VOID) {
+            // mcc_symbol_table_validate_statement_return
+            // TODO validate function return
+        }
+    } else {
+      return valid_function_body;
+    }
 }
 
-// TODO: break up function into smaller pieces
 int mcc_symbol_table_add_function_declaration(
         struct mcc_ast_function *func_def,
         struct mcc_symbol_table *symbol_table,
@@ -327,15 +330,10 @@ int mcc_symbol_table_parse_program(
         }
     }
 
-    // check if main exists
-    if (function_parse == 0) {
-        function_parse = mcc_symbol_table_validate_main(program, symbol_table, ec);
-    }
-
     return function_parse;
 }
 
-struct mcc_symbol_table *mcc_symbol_table_build(struct mcc_ast_program *program,struct mcc_symbol_table_error_collector *ec) {
+struct mcc_symbol_table *mcc_symbol_table_build_program(struct mcc_ast_program *program, struct mcc_symbol_table_error_collector *ec) {
     assert(program);
 
     struct mcc_symbol_table *st = mcc_symbol_table_new_table(NULL,ec);
@@ -343,11 +341,45 @@ struct mcc_symbol_table *mcc_symbol_table_build(struct mcc_ast_program *program,
     mcc_symbol_table_add_builtins(st);
 
     if (mcc_symbol_table_parse_program(program, st, ec) == 0) {
-        printf("Symbol table created successfully \n");
-        return st;
+        // check if main exists
+
+        if (mcc_symbol_table_validate_main(program, st, ec) == 0) {
+            printf("Symbol table created successfully \n");
+            return st;
+        } else {
+            // handle error collection
+            printf("Symbol table not created due to errors \n");
+            return NULL;
+        }
+
     } else {
         // handle error collection
         printf("Symbol table not created due to errors \n");
         return NULL;
     }
 }
+
+struct mcc_symbol_table *mcc_symbol_table_build_function(struct mcc_ast_function *function, struct mcc_symbol_table_error_collector *ec) {
+    assert(function);
+
+    struct mcc_symbol_table *st = mcc_symbol_table_new_table(NULL,ec);
+
+    mcc_symbol_table_add_builtins(st);
+
+    int parse_function = mcc_symbol_table_add_function_declaration(function, st, ec);
+    if (parse_function == 0) {
+        if (mcc_symbol_table_parse_function(function, st, ec) == 0) {
+            printf("Symbol table created successfully \n");
+            return st;
+        } else {
+            // handle error collection
+            printf("Symbol table not created due to errors \n");
+            return NULL;
+        }
+    } else {
+        // handle error collection
+        printf("Symbol table not created due to errors \n");
+        return NULL;
+    }
+}
+

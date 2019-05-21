@@ -5,4 +5,6 @@
 
 void mcc_ast_to_dot_print_usage(const char *prg);
 
+void mcc_symbol_table_print_usage(const char *prg);
+
 #endif //MCC_PRINTER_H
