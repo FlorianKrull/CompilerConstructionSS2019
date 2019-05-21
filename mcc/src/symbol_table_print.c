@@ -19,17 +19,24 @@ static const char *type_to_string(enum mcc_ast_data_type type){
 
 void mcc_symbol_table_print(struct mcc_symbol_table *symbol_table){
      for(int i = 0; i < symbol_table->symbol_container->size; i++){
-            struct mcc_symbol *sym = symbol_table->symbol_container->symbols[i];
-            printf("%s ", type_to_string(sym->data_type));
-            printf("%s\n" , sym->variable_name);
-            if(symbol_table->inner_tables != NULL){
-                for(int j = 0; j  < symbol_table->inner_tables_size ; j++){
-                    struct mcc_symbol *inner_sym = symbol_table->inner_tables[j];
-                    printf("\t %s ",  type_to_string(inner_sym->data_type));
-                    printf("\t %s\n" , inner_sym->variable_name);
+                struct mcc_symbol *sym = symbol_table->symbol_container->symbols[i];
+                printf("%s ", type_to_string(sym->data_type));
+                printf("%s" , sym->variable_name);
+                for(int l = 0; l < sym->func_arguments->arg_size; l++){
+                    printf("%s\n" , type_to_string(sym->func_arguments->arg_types[l]));
                 }
-            }
-     }
+                if(symbol_table->inner_tables != NULL){
+                    for(int j = 0; j  < symbol_table->inner_tables_size ; j++){
+                        struct mcc_symbol_table *inner_sym = symbol_table->inner_tables[j];
+                        for(int k = 0; k < inner_sym->symbol_container->size; k++){
+                            struct mcc_symbol *sym_in = inner_sym->symbol_container->symbols[k];
+                            printf("\t%s ", type_to_string(sym_in->data_type));
+                            printf("\t%s\n" , sym_in->variable_name);
+                            }
+                        }   
+                    }
+           
+    }
 }
 
 void mcc_symbol_table_print_error(struct mcc_symbol_table_error_collector *ec, FILE *out) {

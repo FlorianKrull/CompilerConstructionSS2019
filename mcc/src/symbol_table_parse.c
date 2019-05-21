@@ -228,7 +228,7 @@ int mcc_symbol_table_add_function_declaration(
         // add params to sub table
         if (func_def -> parameter != NULL && func_def -> parameter -> size > 0) {
             struct mcc_ast_parameter *p = func_def -> parameter;
-
+           
             for (int i = 0; i < p -> size; i++) {
                 struct mcc_ast_declaration *declaration = p -> parameters[i];
 
@@ -238,6 +238,7 @@ int mcc_symbol_table_add_function_declaration(
                     mcc_symbol_table_add_array_declaration(declaration, sub_table, ec);
                 } else {
                     // variable declaration
+                    printf("Adds variable declaration in function head");
                     mcc_symbol_table_add_variable_declaration(declaration, sub_table, ec);
                 }
             }

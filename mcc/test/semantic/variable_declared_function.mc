@@ -1,9 +1,9 @@
 int main () {
-    a(1, 2);
+    a(1, "112");
 }
 
 int a (int b, string c) {
 
-    b = 1;
+    b;
 
 }
