@@ -30,6 +30,10 @@ void mcc_symbol_table_print(struct mcc_symbol_table *symbol_table){
      for(int i = 0; i < symbol_table->symbol_container->size; i++){
          
         struct mcc_symbol *sym = symbol_table->symbol_container->symbols[i];
+
+        if(sym->symbol_type != MCC_SYMBOL_TYPE_FUNCTION){
+            printf("\t");
+        }
        
         printf("%*s | ", 15, symbol_type_to_string(sym->symbol_type));
 		printf("%*s | ", 6, type_to_string(sym->data_type));
@@ -59,7 +63,6 @@ void mcc_symbol_table_print(struct mcc_symbol_table *symbol_table){
            
     }
     for (int i = 0; i < symbol_table->inner_tables_size; i++) {
-            
 		    mcc_symbol_table_print(symbol_table->inner_tables[i]);
 	    }
 }
