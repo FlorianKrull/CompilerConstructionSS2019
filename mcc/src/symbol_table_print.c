@@ -15,26 +15,53 @@ const static char *type_to_string(enum mcc_ast_data_type type){
     }
 }
 
+const static char *symbol_type_to_string(enum mcc_symbol_type type){
+    switch (type)
+    {
+    case MCC_SYMBOL_TYPE_VARIABLE: return "variable";
+    case MCC_SYMBOL_TYPE_ARRAY: return "array";
+    case MCC_SYMBOL_TYPE_FUNCTION: return "function";
+    default: return "unknown";
+    }
+}
+
 void mcc_symbol_table_print(struct mcc_symbol_table *symbol_table){
+
      for(int i = 0; i < symbol_table->symbol_container->size; i++){
-                struct mcc_symbol *sym = symbol_table->symbol_container->symbols[i];
-                printf("%s ", type_to_string(sym->data_type));
-                printf("%s" , sym->variable_name);
-                for(int l = 0; l < sym->func_arguments->arg_size; l++){
-                    printf("%s\n" , type_to_string(sym->func_arguments->arg_types[l]));
-                }
-                if(symbol_table-> inner_tables_size > 0){
-                    for(int j = 0; j  < symbol_table->inner_tables_size ; j++){
-                        struct mcc_symbol_table *inner_sym = symbol_table->inner_tables[j];
-                        for(int k = 0; k < inner_sym->symbol_container->size; k++){
-                            struct mcc_symbol *sym_in = inner_sym->symbol_container->symbols[k];
-                            printf("\t%s ", type_to_string(sym_in->data_type));
-                            printf("\t%s\n" , sym_in->variable_name);
-                            }
-                        }   
+         
+        struct mcc_symbol *sym = symbol_table->symbol_container->symbols[i];
+       
+        printf("%*s | ", 15, symbol_type_to_string(sym->symbol_type));
+		printf("%*s | ", 6, type_to_string(sym->data_type));
+
+        switch(sym->symbol_type){
+            case MCC_SYMBOL_TYPE_VARIABLE: 
+                printf("%s", sym->variable_name); 
+                break;
+            case MCC_SYMBOL_TYPE_ARRAY: 
+                printf("%s[%ld]", sym->variable_name, sym->array_size);
+			    break;
+            case MCC_SYMBOL_TYPE_FUNCTION:
+                if(sym->func_arguments){
+                    printf("%s(", sym->variable_name);
+                    for(int j = 0; j < sym->func_arguments->arg_size; j++){
+                        printf("%s", type_to_string(sym->func_arguments->arg_types[j]));
+                        if (j + 1 < sym->func_arguments->arg_size) {
+						printf(", ");
+					    }
                     }
+                   printf(")");
+                }else{
+				    printf("%s()", sym->variable_name);
+                }
+        }
+        printf("\n");
            
     }
+    for (int i = 0; i < symbol_table->inner_tables_size; i++) {
+            
+		    mcc_symbol_table_print(symbol_table->inner_tables[i]);
+	    }
 }
 
 void mcc_symbol_table_print_error(struct mcc_symbol_table_error_collector *ec, FILE *out) {

@@ -18,6 +18,7 @@ struct mcc_symbol *mcc_symbol_new_symbol_variable(char* variable_name, enum mcc_
 
     symbol -> variable_name = variable_name;
     symbol -> data_type = data_type;
+    symbol -> symbol_type = MCC_SYMBOL_TYPE_VARIABLE;
 
     return symbol;
 }
@@ -46,6 +47,7 @@ struct mcc_symbol *mcc_symbol_new_symbol_function(
 
     symbol -> variable_name = variable_name;
     symbol -> data_type = data_type;
+    symbol -> symbol_type = MCC_SYMBOL_TYPE_FUNCTION;
 
     struct mcc_symbol_function_arguments *fp;
     if (parameter != NULL) {
