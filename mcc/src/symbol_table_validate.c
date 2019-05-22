@@ -56,16 +56,13 @@ int mcc_symbol_table_validate_call_expression(
         struct mcc_ast_argument *argument = expression->argument;
         struct mcc_symbol_function_arguments *func_args = s->func_arguments;
         if((argument == NULL && func_args->arg_size != 0) || (argument != NULL && func_args == NULL)) {
-            printf("Argument is null");
             mcc_symbol_table_add_error(
                     ec,
                     mcc_symbol_table_new_error(&(expression->node.sloc), MCC_SEMANTIC_ERROR_WRONG_NUM_OF_ARGUMENTS));
 
             return 1;
         }
-        printf("Skipped first test");
         if(argument != NULL && (argument->size != func_args->arg_size)) {
-            printf("Different argument size");
             mcc_symbol_table_add_error(
                     ec,
                     mcc_symbol_table_new_error(&(expression->node.sloc), MCC_SEMANTIC_ERROR_WRONG_NUM_OF_ARGUMENTS));

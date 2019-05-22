@@ -311,8 +311,6 @@ int mcc_symbol_table_parse_program(
     UNUSED(symbol_table);
     assert(program);
 
-    printf("mcc_symbol_table_parse_program \n");
-
     int function_parse = 0;
 
     for(int i = 0; i < program->size; i++) {
