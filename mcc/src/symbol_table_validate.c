@@ -145,7 +145,7 @@ enum mcc_ast_data_type mcc_symbol_table_get_expression_return_type_binary_op(
 ) {
 
     enum mcc_ast_data_type lhs_type = mcc_symbol_table_get_expression_return_type(expression->lhs, symbol_table);
-    enum mcc_ast_data_type rhs_type = mcc_symbol_table_get_expression_return_type(expression->rhs, symbol_table);
+    // enum mcc_ast_data_type rhs_type = mcc_symbol_table_get_expression_return_type(expression->rhs, symbol_table);
 
     // since there is no implicit type conversion AND we expect the binary op to be valid (see comments in mcc_symbol_table_get_expression_return_type)
     // we can just check lhs expression
@@ -425,6 +425,7 @@ int mcc_symbol_table_validate_assignemt_array_semantic(
 int mcc_symbol_table_validate_compound_has_return(
         struct mcc_ast_statement *statement
 ) {
+    UNUSED(statement);
     return 0;
 //    if (statement -> type == MCC_AST_STATEMENT_TYPE_COMPOUND) {
 //        struct mcc_ast_statement_list *stl = statement -> statement_list;

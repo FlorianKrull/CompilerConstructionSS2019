@@ -3,9 +3,7 @@
 
 #include "mcc/symbol_table_print.h"
 
-
-
-static const char *type_to_string(enum mcc_ast_data_type type){
+const static char *type_to_string(enum mcc_ast_data_type type){
     switch (type)
     {
     case MCC_AST_DATA_TYPE_INT: return "int";
@@ -25,7 +23,7 @@ void mcc_symbol_table_print(struct mcc_symbol_table *symbol_table){
                 for(int l = 0; l < sym->func_arguments->arg_size; l++){
                     printf("%s\n" , type_to_string(sym->func_arguments->arg_types[l]));
                 }
-                if(symbol_table->inner_tables != NULL){
+                if(symbol_table-> inner_tables_size > 0){
                     for(int j = 0; j  < symbol_table->inner_tables_size ; j++){
                         struct mcc_symbol_table *inner_sym = symbol_table->inner_tables[j];
                         for(int k = 0; k < inner_sym->symbol_container->size; k++){
@@ -100,7 +98,6 @@ void mcc_symbol_table_print_error(struct mcc_symbol_table_error_collector *ec, F
         }
 
         fprintf(out, "Error in line %d and col %d \n", error ->sloc ->end_line, error -> sloc -> end_col);
-        fprintf(out, error_message);
+        fprintf(out, "%s \n", error_message);
     }
-
-};
+}

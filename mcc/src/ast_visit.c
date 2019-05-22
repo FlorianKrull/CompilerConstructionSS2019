@@ -100,6 +100,8 @@ void mcc_ast_visit_literal(struct mcc_ast_literal *literal,struct mcc_ast_visito
 	case MCC_AST_DATA_TYPE_STRING:
 		visit(literal, visitor->literal_string, visitor);
 		break;
+	default:
+		break;
 	}
 }
 

@@ -3,6 +3,7 @@
 #define MCC_SYMBOL_TABLE_H
 
 #include "mcc/ast.h"
+#include "mcc/symbol_table_semantic_error.h"
 
 // ---------------------------------------------------------- Symbol
 
@@ -74,5 +75,6 @@ struct mcc_symbol_table* mcc_symbol_table_create_inner_table(struct mcc_symbol_t
 int mcc_symbol_table_insert_symbol(struct mcc_symbol_table *table, struct mcc_symbol *symbol);
 
 struct mcc_symbol *mcc_symbol_table_get_symbol(struct mcc_symbol_table *symbol_table, char *symbol_name);
+
 
 #endif //MCC_SYMBOL_TABLE_H

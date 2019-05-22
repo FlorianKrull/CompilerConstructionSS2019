@@ -231,15 +231,17 @@ int mcc_symbol_table_parse_function(
 
     int valid_function_body = mcc_symbol_table_parse_statement(func_def -> statement, sub_table, ec);
 
-    if (valid_function_body == 0) {
-        // verify if function returns right type
-        if(func_def->return_type != MCC_AST_DATA_TYPE_VOID) {
-            // mcc_symbol_table_validate_statement_return
-            // TODO validate function return
-        }
-    } else {
-      return valid_function_body;
-    }
+    return valid_function_body;
+//    if (valid_function_body == 0) {
+//        return valid_function_body;
+//        // verify if function returns right type
+////        if(func_def->return_type != MCC_AST_DATA_TYPE_VOID) {
+////            // mcc_symbol_table_validate_statement_return
+////            // TODO validate function return
+////        }
+//    } else {
+//      return valid_function_body;
+//    }
 }
 
 int mcc_symbol_table_add_function_declaration(
@@ -299,7 +301,7 @@ void mcc_symbol_table_add_builtins(struct mcc_symbol_table *symbol_table) {
     add_builtin_function(symbol_table,"print_float",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_FLOAT);
     add_builtin_function(symbol_table,"read_int",MCC_AST_DATA_TYPE_INT,MCC_AST_DATA_TYPE_VOID);
     add_builtin_function(symbol_table,"read_float",MCC_AST_DATA_TYPE_FLOAT,MCC_AST_DATA_TYPE_VOID);
-};
+}
 
 int mcc_symbol_table_parse_program(
         struct mcc_ast_program *program,
