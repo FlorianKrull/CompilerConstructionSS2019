@@ -310,11 +310,12 @@ int mcc_symbol_table_validate_binary_operator(
         case MCC_AST_BINARY_OP_GREATER_EQUALS:
         case MCC_AST_BINARY_OP_DIV:
             return mcc_symbol_table_validate_binary_operator_handside_number_type_check(expression, symbol_table, ec);
-        case MCC_AST_BINARY_OP_EQUALS:
-        case MCC_AST_BINARY_OP_NOT_EQUALS:
         case MCC_AST_BINARY_OP_AND:
         case MCC_AST_BINARY_OP_OR:
             return mcc_symbol_table_validate_binary_operator_handside_bool_type_check(expression, symbol_table, ec);
+        default:
+            // eq and neq -> must have both sides same - is already check above in this function
+            return 0;
     }
 
     // all ok

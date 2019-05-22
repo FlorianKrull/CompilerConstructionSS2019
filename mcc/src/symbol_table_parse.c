@@ -153,7 +153,7 @@ int mcc_symbol_table_parse_statement(
             } else {
                 return 1;
             }
-        case MCC_AST_STATEMENT_TYPE_IF:
+        case MCC_AST_STATEMENT_TYPE_IF:;
             if(mcc_symbol_table_validate_expression(
                     statement->if_condition, symbol_table, ec) == 0) {
                 if (mcc_symbol_table_validate_condition_to_type_bool(
