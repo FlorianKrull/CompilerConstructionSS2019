@@ -327,7 +327,7 @@ struct mcc_ast_literal {
 	enum mcc_ast_data_type type;
 	union {
 		// MCC_AST_LITERAL_TYPE_INT
-		long i_value;
+		int i_value;
 
 		// MCC_AST_LITERAL_TYPE_FLOAT
 		double f_value;
