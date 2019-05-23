@@ -184,9 +184,8 @@ int mcc_symbol_table_parse_statement(
                 return mcc_symbol_table_add_variable_declaration(statement->declaration, symbol_table, ec);
             }
         case MCC_AST_STATEMENT_TYPE_ASSGN:
-            return mcc_symbol_table_validate_assignment_semantic(statement->assignment, symbol_table, ec);
         case MCC_AST_STATEMENT_TYPE_ASSGN_ARR:
-            return mcc_symbol_table_validate_assignment_array_semantic(statement->assignment,symbol_table,ec);
+            return mcc_symbol_table_validate_assignment_semantic(statement->assignment, symbol_table, ec);
         case MCC_AST_STATEMENT_TYPE_COMPOUND:
             return mcc_symbol_table_parse_compound_statement(
                     statement,
