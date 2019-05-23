@@ -365,7 +365,7 @@ int mcc_symbol_table_validate_expression(
 
 // Variable
 
-int mcc_symbol_table_validate_assignemt_semantic(
+int mcc_symbol_table_validate_assignment_semantic(
         struct mcc_ast_assignment *assignment,
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec
@@ -405,15 +405,34 @@ int mcc_symbol_table_validate_assignemt_semantic(
 
 // Array
 
-int mcc_symbol_table_validate_assignemt_array_semantic(
+int mcc_symbol_table_validate_assignment_array_semantic(
         struct mcc_ast_assignment *assignment,
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec
 ) {
-    UNUSED(assignment);
-    UNUSED(symbol_table);
-    UNUSED(ec);
-    // TODO array validation
+    
+    struct mcc_symbol *s = mcc_symbol_table_get_symbol(symbol_table, assignment->identifier->i_value);
+    if(mcc_symbol_table_validate_expression(assignment->array_ass.rhs, symbol_table, ec) == 0){
+         enum mcc_ast_data_type expected_type = s->data_type;
+         int ret_type = mcc_symbol_table_validate_expression_return_type(
+                assignment->array_ass.rhs,
+                symbol_table, expected_type);
+        if(ret_type == 1) {
+            mcc_symbol_table_add_error(
+                    ec,
+                    mcc_symbol_table_new_error(&(assignment->node.sloc), MCC_SEMANTIC_ERROR_TYPE_ASSIGNMENT)
+            );
+        }
+        
+    }
+    // check if rhs of assignment is binary op
+    if(assignment->array_ass.rhs->type == MCC_AST_EXPRESSION_TYPE_BINARY_OP){
+        mcc_symbol_table_add_error(
+                    ec,
+                    mcc_symbol_table_new_error(&(assignment->node.sloc), MCC_SEMANTIC_ERROR_ARRAY_OPERATIONS)
+            );
+        return 1;
+    }
 
     return 0;
 }

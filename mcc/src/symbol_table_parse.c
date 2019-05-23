@@ -68,6 +68,7 @@ int mcc_symbol_table_add_array_declaration(
             declaration->type,
             declaration->arr_literal->i_value);
 
+    vs->symbol_type = MCC_SYMBOL_TYPE_ARRAY;
     // check if already declared
     if(mcc_symbol_table_get_symbol(symbol_table, vs->variable_name) == NULL) {
 
@@ -183,9 +184,9 @@ int mcc_symbol_table_parse_statement(
                 return mcc_symbol_table_add_variable_declaration(statement->declaration, symbol_table, ec);
             }
         case MCC_AST_STATEMENT_TYPE_ASSGN:
-            return mcc_symbol_table_validate_assignemt_semantic(statement->assignment, symbol_table, ec);
+            return mcc_symbol_table_validate_assignment_semantic(statement->assignment, symbol_table, ec);
         case MCC_AST_STATEMENT_TYPE_ASSGN_ARR:
-            return 0;
+            return mcc_symbol_table_validate_assignment_array_semantic(statement->assignment,symbol_table,ec);
         case MCC_AST_STATEMENT_TYPE_COMPOUND:
             return mcc_symbol_table_parse_compound_statement(
                     statement,

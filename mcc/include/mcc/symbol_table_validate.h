@@ -98,7 +98,13 @@ int mcc_symbol_table_validate_binary_operator(
 
 // --------------------------------------- Assignment
 
-int mcc_symbol_table_validate_assignemt_semantic(
+int mcc_symbol_table_validate_assignment_semantic(
+        struct mcc_ast_assignment *assignment,
+        struct mcc_symbol_table *symbol_table,
+        struct mcc_symbol_table_error_collector *ec
+);
+
+int mcc_symbol_table_validate_assignment_array_semantic(
         struct mcc_ast_assignment *assignment,
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec

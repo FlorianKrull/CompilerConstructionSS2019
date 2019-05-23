@@ -98,6 +98,9 @@ void mcc_symbol_table_print_error(struct mcc_symbol_table_error_collector *ec, F
             case MCC_SEMANTIC_ERROR_ARRAY_SIZE_DEFINITION:
                 error_message = "Array size definition must be an int\n";
                 break;
+            case MCC_SEMANTIC_ERROR_ARRAY_OPERATIONS:
+                error_message = "Operations not allowed on array\n";
+                break;
             case MCC_SEMANTIC_ERROR_TYPE_ASSIGNMENT:
                 error_message = "Wrong type assigned\n";
                 break;
