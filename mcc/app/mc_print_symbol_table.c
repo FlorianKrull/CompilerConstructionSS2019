@@ -108,7 +108,7 @@ int main(int argc, char *argv[]) {
 
    
     if (symbol_table != NULL) {
-        mcc_symbol_table_print(symbol_table);
+        mcc_symbol_table_print(symbol_table,out);
     } else {
         mcc_symbol_table_print_error(ec, out);
     }

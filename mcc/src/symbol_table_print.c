@@ -25,45 +25,45 @@ const static char *symbol_type_to_string(enum mcc_symbol_type type){
     }
 }
 
-void mcc_symbol_table_print(struct mcc_symbol_table *symbol_table){
+void mcc_symbol_table_print(struct mcc_symbol_table *symbol_table, FILE *out){
 
      for(int i = 0; i < symbol_table->symbol_container->size; i++){
          
         struct mcc_symbol *sym = symbol_table->symbol_container->symbols[i];
 
         if(sym->symbol_type != MCC_SYMBOL_TYPE_FUNCTION){
-            printf("\t");
+            fprintf(out,"\t");
         }
        
-        printf("%*s | ", 15, symbol_type_to_string(sym->symbol_type));
-		printf("%*s | ", 6, type_to_string(sym->data_type));
+        fprintf(out,"%*s | ", 15, symbol_type_to_string(sym->symbol_type));
+		fprintf(out,"%*s | ", 6, type_to_string(sym->data_type));
 
         switch(sym->symbol_type){
             case MCC_SYMBOL_TYPE_VARIABLE: 
-                printf("%s", sym->variable_name); 
+                fprintf(out,"%s", sym->variable_name); 
                 break;
             case MCC_SYMBOL_TYPE_ARRAY: 
-                printf("%s[%ld]", sym->variable_name, sym->array_size);
+                fprintf(out,"%s[%ld]", sym->variable_name, sym->array_size);
 			    break;
             case MCC_SYMBOL_TYPE_FUNCTION:
                 if(sym->func_arguments){
-                    printf("%s(", sym->variable_name);
+                    fprintf(out,"%s(", sym->variable_name);
                     for(int j = 0; j < sym->func_arguments->arg_size; j++){
-                        printf("%s", type_to_string(sym->func_arguments->arg_types[j]));
+                        fprintf(out,"%s", type_to_string(sym->func_arguments->arg_types[j]));
                         if (j + 1 < sym->func_arguments->arg_size) {
-						printf(", ");
+						fprintf(out,", ");
 					    }
                     }
-                   printf(")");
+                   fprintf(out,")");
                 }else{
-				    printf("%s()", sym->variable_name);
+				    fprintf(out,"%s()", sym->variable_name);
                 }
         }
-        printf("\n");
+        fprintf(out,"\n");
            
     }
     for (int i = 0; i < symbol_table->inner_tables_size; i++) {
-		    mcc_symbol_table_print(symbol_table->inner_tables[i]);
+		    mcc_symbol_table_print(symbol_table->inner_tables[i],out);
 	    }
 }
 
@@ -97,6 +97,9 @@ void mcc_symbol_table_print_error(struct mcc_symbol_table_error_collector *ec, F
                 break;
             case MCC_SEMANTIC_ERROR_ARRAY_SIZE_DEFINITION:
                 error_message = "Array size definition must be an int\n";
+                break;
+            case MCC_SEMANTIC_ERROR_ARRAY_OPERATIONS:
+                error_message = "Operations not allowed on array\n";
                 break;
             case MCC_SEMANTIC_ERROR_TYPE_ASSIGNMENT:
                 error_message = "Wrong type assigned\n";

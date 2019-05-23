@@ -69,6 +69,7 @@ int mcc_symbol_table_add_array_declaration(
             declaration->type,
             declaration->arr_literal->i_value);
 
+    vs->symbol_type = MCC_SYMBOL_TYPE_ARRAY;
     // check if already declared
     if(mcc_symbol_table_get_symbol(symbol_table, vs->variable_name) == NULL) {
 
@@ -193,7 +194,7 @@ int mcc_symbol_table_parse_statement(
         case MCC_AST_STATEMENT_TYPE_ASSGN:
             return mcc_symbol_table_validate_assignment_semantic(statement->assignment, symbol_table, ec);
         case MCC_AST_STATEMENT_TYPE_ASSGN_ARR:
-            return 0;
+            return mcc_symbol_table_validate_assignment_array_semantic(statement->assignment, symbol_table, ec);
         case MCC_AST_STATEMENT_TYPE_COMPOUND:
             return mcc_symbol_table_parse_compound_statement(
                     statement,
@@ -240,8 +241,6 @@ int mcc_symbol_table_parse_function(
     int valid_function_body = mcc_symbol_table_parse_statement(func_def -> statement, sub_table, ec, 0);
 
     if (valid_function_body == 0) {
-        mcc_symbol_table_print(sub_table);
-
         // valid function body - check if return type of non-void function is correct
         if (func_def -> return_type != MCC_AST_DATA_TYPE_VOID) {
             valid_function_body = mcc_symbol_table_validate_statement_return(

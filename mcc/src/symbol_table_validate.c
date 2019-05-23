@@ -326,7 +326,7 @@ int mcc_symbol_table_validate_expression(
     assert(symbol_table);
     assert(ec);
 
-    
+
     switch(expression->type) {
         case MCC_AST_EXPRESSION_TYPE_IDENTIFIER:
             return mcc_symbol_table_validate_identifier(expression->identifier, symbol_table, ec);
@@ -374,12 +374,21 @@ int mcc_symbol_table_validate_assignment_semantic(
 
     // identifier not declare yet
     if(s == NULL) {
-        printf("Validate line 377 \n");
         mcc_symbol_table_add_error(
                 ec,
                 mcc_symbol_table_new_error(&(assignment->node.sloc), MCC_SEMANTIC_ERROR_VARIABLE_NOT_DECLARED));
 
         return 1;
+    }
+    if(s->symbol_type == MCC_SYMBOL_TYPE_ARRAY) {
+        if(assignment->normal_ass.rhs->type == MCC_AST_EXPRESSION_TYPE_BINARY_OP) {
+            mcc_symbol_table_add_error(
+                    ec,
+                    mcc_symbol_table_new_error(&(assignment->node.sloc), MCC_SEMANTIC_ERROR_ARRAY_OPERATIONS)
+            );
+            return 1;
+        }
+
     }
 
     if(mcc_symbol_table_validate_expression(assignment->normal_ass.rhs, symbol_table, ec) == 0) {
@@ -402,6 +411,39 @@ int mcc_symbol_table_validate_assignment_semantic(
     }
 }
 
+int mcc_symbol_table_validate_assignment_array_semantic(
+        struct mcc_ast_assignment *assignment,
+        struct mcc_symbol_table *symbol_table,
+        struct mcc_symbol_table_error_collector *ec
+) {
+
+    struct mcc_symbol *s = mcc_symbol_table_get_symbol(symbol_table, assignment->identifier->i_value);
+    if(mcc_symbol_table_validate_expression(assignment->array_ass.rhs, symbol_table, ec) == 0) {
+        enum mcc_ast_data_type expected_type = s->data_type;
+        int ret_type = mcc_symbol_table_validate_expression_return_type(
+                assignment->array_ass.rhs,
+                symbol_table, expected_type);
+        if(ret_type == 1) {
+            mcc_symbol_table_add_error(
+                    ec,
+                    mcc_symbol_table_new_error(&(assignment->node.sloc), MCC_SEMANTIC_ERROR_TYPE_ASSIGNMENT)
+            );
+        }
+
+    }
+
+
+    if(assignment->array_ass.rhs->type == MCC_AST_EXPRESSION_TYPE_BINARY_OP) {
+        mcc_symbol_table_add_error(
+                ec,
+                mcc_symbol_table_new_error(&(assignment->node.sloc), MCC_SEMANTIC_ERROR_ARRAY_OPERATIONS)
+        );
+        return 1;
+    }
+
+    return 0;
+}
+
 // --------------------------------------- Statement
 
 static int validate_return_expression(
@@ -412,10 +454,10 @@ static int validate_return_expression(
 ) {
     assert(expression);
     printf("Return type %d \n", return_type);
-    printf("expression type %d \n", expression -> type);
+    printf("expression type %d \n", expression->type);
 
     // expression is already validated
-    if (mcc_symbol_table_get_expression_return_type(expression, symbol_table) != return_type) {
+    if(mcc_symbol_table_get_expression_return_type(expression, symbol_table) != return_type) {
         printf("Here ? \n");
         mcc_symbol_table_add_error(
                 ec,
@@ -438,40 +480,40 @@ int mcc_symbol_table_validate_statement_return(
     struct mcc_ast_statement_list *next = NULL;
     assert(statement);
     // according to parser function can only have a statement list as a body - this should be safe
-    if (statement != NULL && statement -> type == MCC_AST_STATEMENT_TYPE_COMPOUND) {
-        st_l = statement -> statement_list;
+    if(statement != NULL && statement->type == MCC_AST_STATEMENT_TYPE_COMPOUND) {
+        st_l = statement->statement_list;
     }
 
-    while (st_l != NULL) {
-        next =st_l -> next;
+    while(st_l != NULL) {
+        next = st_l->next;
 
-        if (next == NULL) {
-            if (st_l -> statement -> type == MCC_AST_STATEMENT_TYPE_RETURN) {
+        if(next == NULL) {
+            if(st_l->statement->type == MCC_AST_STATEMENT_TYPE_RETURN) {
                 return validate_return_expression(
-                        st_l -> statement -> return_expression,
+                        st_l->statement->return_expression,
                         return_type,
                         symbol_table,
                         ec
                 );
-            } else if (st_l -> statement -> type == MCC_AST_STATEMENT_TYPE_WHILE) {
+            } else if(st_l->statement->type == MCC_AST_STATEMENT_TYPE_WHILE) {
                 return mcc_symbol_table_validate_statement_return(
-                        st_l -> statement -> while_stmt,
+                        st_l->statement->while_stmt,
                         return_type,
                         symbol_table,
                         ec
                 );
-            } else if (st_l -> statement -> type == MCC_AST_STATEMENT_TYPE_IF) {
+            } else if(st_l->statement->type == MCC_AST_STATEMENT_TYPE_IF) {
                 int valid_if = mcc_symbol_table_validate_statement_return(
-                        st_l -> statement -> if_stmt,
+                        st_l->statement->if_stmt,
                         return_type,
                         symbol_table,
                         ec
                 );
 
                 int valid_else = 0;
-                if (st_l -> statement -> else_stmt != NULL) {
+                if(st_l->statement->else_stmt != NULL) {
                     valid_else = mcc_symbol_table_validate_statement_return(
-                            st_l -> statement -> else_stmt,
+                            st_l->statement->else_stmt,
                             return_type,
                             symbol_table,
                             ec
@@ -489,7 +531,7 @@ int mcc_symbol_table_validate_statement_return(
             }
         } else {
             printf("test 2\n");
-            st_l = st_l -> next;
+            st_l = st_l->next;
         }
     }
 
