@@ -58,14 +58,14 @@ int mcc_symbol_table_validate_call_expression(
         if((argument == NULL && func_args->arg_size != 0) || (argument != NULL && func_args == NULL)) {
             mcc_symbol_table_add_error(
                     ec,
-                    mcc_symbol_table_new_error(&(expression->node.sloc), MCC_SEMANTIC_ERROR_WRONG_NUM_OF_ARGUMENTS));
+                    mcc_symbol_table_new_error(&(expression->node.sloc), MCC_SEMANTIC_ERROR_INVALID_NUM_OF_ARGUMENTS));
 
             return 1;
         }
         if(argument != NULL && (argument->size != func_args->arg_size)) {
             mcc_symbol_table_add_error(
                     ec,
-                    mcc_symbol_table_new_error(&(expression->node.sloc), MCC_SEMANTIC_ERROR_WRONG_NUM_OF_ARGUMENTS));
+                    mcc_symbol_table_new_error(&(expression->node.sloc), MCC_SEMANTIC_ERROR_INVALID_NUM_OF_ARGUMENTS));
 
             return 1;
         }
@@ -79,7 +79,7 @@ int mcc_symbol_table_validate_call_expression(
             if(func_arg_type != arg_typ) {
                 mcc_symbol_table_add_error(
                         ec,
-                        mcc_symbol_table_new_error(&(expression->node.sloc), MCC_SEMANTIC_ERROR_WRONG_ARGUMENT_TYPE));
+                        mcc_symbol_table_new_error(&(expression->node.sloc), MCC_SEMANTIC_ERROR_INVALID_ARGUMENT_TYPE));
 
                 return 1;
             }
@@ -175,6 +175,7 @@ enum mcc_ast_data_type mcc_symbol_table_get_expression_return_type(
         struct mcc_ast_expression *expression,
         struct mcc_symbol_table *symbol_table
 ) {
+    assert(expression);
     switch(expression->type) {
         case MCC_AST_EXPRESSION_TYPE_LITERAL:
             return expression->literal->type;
@@ -314,9 +315,6 @@ int mcc_symbol_table_validate_binary_operator(
             // eq and neq -> must have both sides same - is already check above in this function
             return 0;
     }
-
-    // all ok
-    return 0;
 }
 
 int mcc_symbol_table_validate_expression(
@@ -365,7 +363,7 @@ int mcc_symbol_table_validate_expression(
 
 // Variable
 
-int mcc_symbol_table_validate_assignemt_semantic(
+int mcc_symbol_table_validate_assignment_semantic(
         struct mcc_ast_assignment *assignment,
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec
@@ -376,6 +374,7 @@ int mcc_symbol_table_validate_assignemt_semantic(
 
     // identifier not declare yet
     if(s == NULL) {
+        printf("Validate line 377 \n");
         mcc_symbol_table_add_error(
                 ec,
                 mcc_symbol_table_new_error(&(assignment->node.sloc), MCC_SEMANTIC_ERROR_VARIABLE_NOT_DECLARED));
@@ -403,56 +402,31 @@ int mcc_symbol_table_validate_assignemt_semantic(
     }
 }
 
-// Array
+// --------------------------------------- Statement
 
-int mcc_symbol_table_validate_assignemt_array_semantic(
-        struct mcc_ast_assignment *assignment,
+static int validate_return_expression(
+        struct mcc_ast_expression *expression,
+        enum mcc_ast_data_type return_type,
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec
 ) {
-    UNUSED(assignment);
-    UNUSED(symbol_table);
-    UNUSED(ec);
-    // TODO array validation
+    assert(expression);
+    printf("Return type %d \n", return_type);
+    printf("expression type %d \n", expression -> type);
+
+    // expression is already validated
+    if (mcc_symbol_table_get_expression_return_type(expression, symbol_table) != return_type) {
+        printf("Here ? \n");
+        mcc_symbol_table_add_error(
+                ec,
+                mcc_symbol_table_new_error(&(expression->node.sloc),
+                                           MCC_SEMANTIC_ERROR_INVALID_RETURN_TYPE_IN_NON_VOID_FUNCTION)
+        );
+
+        return 1;
+    }
 
     return 0;
-}
-
-// --------------------------------------- Statement
-
-int mcc_symbol_table_validate_compound_has_return(
-        struct mcc_ast_statement *statement
-) {
-    UNUSED(statement);
-    return 0;
-//    if (statement -> type == MCC_AST_STATEMENT_TYPE_COMPOUND) {
-//        struct mcc_ast_statement_list *stl = statement -> statement_list;
-//        struct mcc_ast_statement *st;
-//        enum mcc_ast_statement_type type;
-//
-//        while (stl) {
-//            st = stl -> statement;
-//            type = st -> type;
-//
-//            switch(type) {
-//                case MCC_AST_STATEMENT_TYPE_RETURN:
-//                    return 0;
-//                case MCC_AST_STATEMENT_TYPE_IF:
-//
-//            }
-//
-//
-//            if (type == MCC_AST_STATEMENT_TYPE_RETURN) {
-//                return 1;
-//            } else if (type == 0)
-//
-//            stl = stl -> next;
-//        }
-//
-//        return 0;
-//    } else {
-//        return 0;
-//    }
 }
 
 int mcc_symbol_table_validate_statement_return(
@@ -460,30 +434,73 @@ int mcc_symbol_table_validate_statement_return(
         enum mcc_ast_data_type return_type,
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec) {
-    if(statement != NULL) {
-        switch(statement->type) {
-            case MCC_AST_STATEMENT_TYPE_IF:
-                mcc_symbol_table_validate_compound_has_return(statement->if_stmt);
-
-                if(statement->else_stmt != NULL) {
-                    mcc_symbol_table_validate_statement_return(statement->else_stmt, return_type, symbol_table, ec);
-                }
-            case MCC_AST_STATEMENT_TYPE_RETURN:
-                return 1;
-            case MCC_AST_STATEMENT_TYPE_WHILE:
-                mcc_symbol_table_validate_statement_return(statement->while_stmt, return_type, symbol_table, ec);
-
-            case MCC_AST_STATEMENT_TYPE_COMPOUND:
-                if (mcc_symbol_table_validate_compound_has_return(statement) == 0) {
-
-                };
-            default:
-                return 0;
-        }
-
-    } else {
-        return 1;
+    struct mcc_ast_statement_list *st_l = NULL;
+    struct mcc_ast_statement_list *next = NULL;
+    assert(statement);
+    // according to parser function can only have a statement list as a body - this should be safe
+    if (statement != NULL && statement -> type == MCC_AST_STATEMENT_TYPE_COMPOUND) {
+        st_l = statement -> statement_list;
     }
+
+    while (st_l != NULL) {
+        next =st_l -> next;
+
+        if (next == NULL) {
+            if (st_l -> statement -> type == MCC_AST_STATEMENT_TYPE_RETURN) {
+                return validate_return_expression(
+                        st_l -> statement -> return_expression,
+                        return_type,
+                        symbol_table,
+                        ec
+                );
+            } else if (st_l -> statement -> type == MCC_AST_STATEMENT_TYPE_WHILE) {
+                return mcc_symbol_table_validate_statement_return(
+                        st_l -> statement -> while_stmt,
+                        return_type,
+                        symbol_table,
+                        ec
+                );
+            } else if (st_l -> statement -> type == MCC_AST_STATEMENT_TYPE_IF) {
+                int valid_if = mcc_symbol_table_validate_statement_return(
+                        st_l -> statement -> if_stmt,
+                        return_type,
+                        symbol_table,
+                        ec
+                );
+
+                int valid_else = 0;
+                if (st_l -> statement -> else_stmt != NULL) {
+                    valid_else = mcc_symbol_table_validate_statement_return(
+                            st_l -> statement -> else_stmt,
+                            return_type,
+                            symbol_table,
+                            ec
+                    );
+                }
+
+                return valid_if | valid_else;
+            } else {
+                mcc_symbol_table_add_error(
+                        ec,
+                        mcc_symbol_table_new_error(&(statement->node.sloc),
+                                                   MCC_SEMANTIC_ERROR_NO_RETURN_IN_NON_VOID_FUNCTION)
+                );
+                return 1;
+            }
+        } else {
+            printf("test 2\n");
+            st_l = st_l -> next;
+        }
+    }
+
+    // should not get to here - if - there was no return anywhere
+    mcc_symbol_table_add_error(
+            ec,
+            mcc_symbol_table_new_error(&(statement->node.sloc),
+                                       MCC_SEMANTIC_ERROR_NO_RETURN_IN_NON_VOID_FUNCTION)
+    );
+
+    return 1;
 }
 
 // Program

@@ -29,6 +29,7 @@ pgen = generator(bison,
 mcc_inc = include_directories('include')
 
 mcc_src = [
+            'src/utils/dynamic_array.c',
             'src/utils/printer.c',
             'src/utils/mcc_scope.c',
             'src/ast.c',

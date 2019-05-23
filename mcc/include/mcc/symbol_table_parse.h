@@ -53,7 +53,8 @@ int mcc_symbol_table_parse_compound_statement(
 int mcc_symbol_table_parse_statement(
         struct mcc_ast_statement *statement,
         struct mcc_symbol_table *symbol_table,
-        struct mcc_symbol_table_error_collector *ec);
+        struct mcc_symbol_table_error_collector *ec,
+		int create_new);
 
 
 void mcc_symbol_table_add_builtins(struct mcc_symbol_table *symbol_table);

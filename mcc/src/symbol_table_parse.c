@@ -5,6 +5,7 @@
 #include "mcc/ast.h"
 #include "mcc/symbol_table_parse.h"
 #include "mcc/symbol_table_semantic_error.h"
+#include "mcc/symbol_table_print.h"
 #include "utils/unused.h"
 
 // ------------------------------------------------------------ Variable
@@ -94,9 +95,6 @@ int mcc_symbol_table_parse_compound_statement(
     assert(symbol_table);
     assert(ec);
 
-    // create it's own inner scope
-    struct mcc_symbol_table *sub_table = mcc_symbol_table_create_inner_table(symbol_table);
-
     struct mcc_ast_statement_list *stl = statement->statement_list;
 
     if(stl == NULL){
@@ -104,11 +102,16 @@ int mcc_symbol_table_parse_compound_statement(
     }
 
     while(stl->statement != NULL ) {
+        int create_new = 0;
+        if (stl -> statement -> type == MCC_AST_STATEMENT_TYPE_COMPOUND) {
+            create_new = 1;
+        }
        
         int statement_result = mcc_symbol_table_parse_statement(
                 stl->statement,
-                sub_table,
-                ec
+                symbol_table,
+                ec,
+                create_new
         );
 
         if(statement_result == 1) {
@@ -128,11 +131,17 @@ int mcc_symbol_table_parse_compound_statement(
 int mcc_symbol_table_parse_statement(
         struct mcc_ast_statement *statement,
         struct mcc_symbol_table *symbol_table,
-        struct mcc_symbol_table_error_collector *ec) {
-
+        struct mcc_symbol_table_error_collector *ec,
+        int create_new) {
     assert(statement);
     assert(symbol_table);
     assert(ec);
+
+    struct mcc_symbol_table *table = symbol_table;
+
+    if (create_new) {
+        table = mcc_symbol_table_create_inner_table(symbol_table);
+    }
 
     switch(statement->type) {
         case MCC_AST_STATEMENT_TYPE_EXPRESSION:
@@ -146,7 +155,7 @@ int mcc_symbol_table_parse_statement(
                         ec
                 ) == 0) {
                     return mcc_symbol_table_parse_statement(
-                            statement->while_stmt, symbol_table, ec);
+                            statement->while_stmt, table, ec, 1);
                 } else {
                     return 1;
                 }
@@ -162,7 +171,7 @@ int mcc_symbol_table_parse_statement(
                         ec
                 ) == 0) {
                     return mcc_symbol_table_parse_statement(
-                            statement->if_stmt, symbol_table, ec);
+                            statement->if_stmt, symbol_table, ec, 1);
                 } else {
                     return 1;
                 }
@@ -170,7 +179,6 @@ int mcc_symbol_table_parse_statement(
                 return 1;
             }
         case MCC_AST_STATEMENT_TYPE_DECL:
-            // TODO extract to separate function
             if(mcc_symbol_table_get_symbol(symbol_table, statement->declaration->ident->i_value) != NULL) {
                 mcc_symbol_table_add_error(ec, mcc_symbol_table_new_error(&(statement->node.sloc),
                                                                           MCC_SEMANTIC_ERROR_VARIABLE_ALREADY_DECLARED));
@@ -183,7 +191,7 @@ int mcc_symbol_table_parse_statement(
                 return mcc_symbol_table_add_variable_declaration(statement->declaration, symbol_table, ec);
             }
         case MCC_AST_STATEMENT_TYPE_ASSGN:
-            return mcc_symbol_table_validate_assignemt_semantic(statement->assignment, symbol_table, ec);
+            return mcc_symbol_table_validate_assignment_semantic(statement->assignment, symbol_table, ec);
         case MCC_AST_STATEMENT_TYPE_ASSGN_ARR:
             return 0;
         case MCC_AST_STATEMENT_TYPE_COMPOUND:
@@ -229,19 +237,23 @@ int mcc_symbol_table_parse_function(
         }
     }
 
-    int valid_function_body = mcc_symbol_table_parse_statement(func_def -> statement, sub_table, ec);
+    int valid_function_body = mcc_symbol_table_parse_statement(func_def -> statement, sub_table, ec, 0);
+
+    if (valid_function_body == 0) {
+        mcc_symbol_table_print(sub_table);
+
+        // valid function body - check if return type of non-void function is correct
+        if (func_def -> return_type != MCC_AST_DATA_TYPE_VOID) {
+            valid_function_body = mcc_symbol_table_validate_statement_return(
+                    func_def -> statement,
+                    func_def -> return_type,
+                    sub_table,
+                    ec
+            );
+        }
+    }
 
     return valid_function_body;
-//    if (valid_function_body == 0) {
-//        return valid_function_body;
-//        // verify if function returns right type
-////        if(func_def->return_type != MCC_AST_DATA_TYPE_VOID) {
-////            // mcc_symbol_table_validate_statement_return
-////            // TODO validate function return
-////        }
-//    } else {
-//      return valid_function_body;
-//    }
 }
 
 int mcc_symbol_table_add_function_declaration(

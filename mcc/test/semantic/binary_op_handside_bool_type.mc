@@ -7,4 +7,6 @@ int main() {
     if (a && b) {
         /* Not in here */
     }
+
+    return 0;
 }

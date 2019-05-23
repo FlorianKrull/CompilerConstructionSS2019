@@ -150,7 +150,7 @@ void WrongArgumentType(CuTest *ct) {
         struct mcc_symbol_table_error_collector *ec =  mcc_symbol_table_new_error_collector();
         struct mcc_symbol_table *symbol_table = mcc_symbol_table_build(prog, ec);
 
-        CuAssertIntEquals(ct, MCC_SEMANTIC_ERROR_WRONG_ARGUMENT_TYPE, ec -> errors[0] -> error_type);
+        CuAssertIntEquals(ct, MCC_SEMANTIC_ERROR_INVALID_ARGUMENT_TYPE, ec -> errors[0] -> error_type);
         clean_pointers(prog, symbol_table, ec);
     } else {
         perror("AST is NULL");
@@ -164,7 +164,7 @@ void WrongNumOfArguments(CuTest *ct) {
         struct mcc_symbol_table_error_collector *ec =  mcc_symbol_table_new_error_collector();
         struct mcc_symbol_table *symbol_table = mcc_symbol_table_build(prog, ec);
 
-        CuAssertIntEquals(ct, MCC_SEMANTIC_ERROR_WRONG_NUM_OF_ARGUMENTS, ec -> errors[0] -> error_type);
+        CuAssertIntEquals(ct, MCC_SEMANTIC_ERROR_INVALID_NUM_OF_ARGUMENTS, ec -> errors[0] -> error_type);
         clean_pointers(prog, symbol_table, ec);
     } else {
         perror("AST is NULL");
@@ -297,6 +297,33 @@ void ConditionBoolExpected(CuTest *ct) {
     }
 }
 
+void NoReturnInNonVoidFunction(CuTest *ct) {
+    struct mcc_ast_program *prog = get_result_from_program("../test/semantic/no_return_in_non_void.mc");
+
+    if(prog != NULL) {
+        struct mcc_symbol_table_error_collector *ec = mcc_symbol_table_new_error_collector();
+        struct mcc_symbol_table *symbol_table = mcc_symbol_table_build(prog, ec);
+
+        CuAssertIntEquals(ct, MCC_SEMANTIC_ERROR_NO_RETURN_IN_NON_VOID_FUNCTION, ec->errors[0]->error_type);
+        clean_pointers(prog, symbol_table, ec);
+    } else {
+        perror("AST is NULL");
+    }
+}
+
+void InvalidReturnType(CuTest *ct) {
+    struct mcc_ast_program *prog = get_result_from_program("../test/semantic/invalid_return_type.mc");
+
+    if(prog != NULL) {
+        struct mcc_symbol_table_error_collector *ec = mcc_symbol_table_new_error_collector();
+        struct mcc_symbol_table *symbol_table = mcc_symbol_table_build(prog, ec);
+
+        CuAssertIntEquals(ct, MCC_SEMANTIC_ERROR_INVALID_RETURN_TYPE_IN_NON_VOID_FUNCTION, ec->errors[0]->error_type);
+        clean_pointers(prog, symbol_table, ec);
+    } else {
+        perror("AST is NULL");
+    }
+}
 
 #define TESTS \
         TEST(BinaryOPDifferentTypes) \
@@ -317,6 +344,8 @@ void ConditionBoolExpected(CuTest *ct) {
         TEST(BinaryOpHandsideNumberType) \
         TEST(BinaryOpHandsideDivisionByZero) \
         TEST(ConditionBoolExpected) \
+        TEST(NoReturnInNonVoidFunction) \
+        TEST(InvalidReturnType) \
 
 #include "main_stub.inc"
 #undef TESTS

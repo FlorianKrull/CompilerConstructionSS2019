@@ -5,4 +5,6 @@ int main () {
     if (!a) {
         int c;
     }
+
+    return 0;
 }

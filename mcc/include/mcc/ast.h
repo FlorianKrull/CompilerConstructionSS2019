@@ -290,8 +290,6 @@ struct mcc_ast_statement {
 		struct mcc_ast_expression *return_expression;
 
 		struct mcc_ast_statement_list *statement_list;
-
-
     };
 };
 

@@ -111,6 +111,8 @@ identifier   [a-zA-Z_][a-zA-Z0-9_]*
 
 [ \t\r\n]+        { /* ignore */ }
 
+{bool_literal}    { yylval->TK_BOOL_LITERAL = strcmp(yytext, "true") == 0; return TK_BOOL_LITERAL; }
+
 {identifier}      {
                     yylval->TK_IDENTIFIER = strdup(yytext);
                     return TK_IDENTIFIER;
@@ -126,8 +128,7 @@ identifier   [a-zA-Z_][a-zA-Z0-9_]*
                     str[yyleng+2] = '\0';
                     yylval->TK_STRING_LITERAL = str;
                     return TK_STRING_LITERAL; }
-                    
-{bool_literal}    { yylval->TK_BOOL_LITERAL = strcmp(yytext, "true") == 0; return TK_BOOL_LITERAL; }
+
 
 
 

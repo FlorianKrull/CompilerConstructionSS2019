@@ -86,10 +86,10 @@ void mcc_symbol_table_print_error(struct mcc_symbol_table_error_collector *ec, F
             case MCC_SEMANTIC_ERROR_FUNC_NOT_DECLARED:
                 error_message = "Function not declared\n";
                 break;
-            case MCC_SEMANTIC_ERROR_WRONG_ARGUMENT_TYPE:
+            case MCC_SEMANTIC_ERROR_INVALID_ARGUMENT_TYPE:
                 error_message = "Wrong type of argument\n";
                 break;
-            case MCC_SEMANTIC_ERROR_WRONG_NUM_OF_ARGUMENTS:
+            case MCC_SEMANTIC_ERROR_INVALID_NUM_OF_ARGUMENTS:
                 error_message = "Wrong number of arguments\n";
                 break;
             case MCC_SEMANTIC_ERROR_VARIABLE_NOT_DECLARED:
@@ -124,6 +124,12 @@ void mcc_symbol_table_print_error(struct mcc_symbol_table_error_collector *ec, F
                 break;
             case MCC_SEMANTIC_ERROR_BINARY_OP_DIV_BY_0:
                 error_message = "Division by 0 not allowed\n";
+                break;
+            case MCC_SEMANTIC_ERROR_INVALID_RETURN_TYPE_IN_NON_VOID_FUNCTION:
+                error_message = "Invlaid return type in non void function\n";
+                break;
+            case MCC_SEMANTIC_ERROR_NO_RETURN_IN_NON_VOID_FUNCTION:
+                error_message = "No return in non void function \n";
                 break;
         }
 

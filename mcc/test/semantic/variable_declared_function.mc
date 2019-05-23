@@ -1,8 +1,10 @@
 int main () {
     a(1, "112");
+
+    return 0;
 }
 
-int a (int b, string c) {
+void a (int b, string c) {
 
     b;
 
