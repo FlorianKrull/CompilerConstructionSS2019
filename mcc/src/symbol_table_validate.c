@@ -453,12 +453,9 @@ static int validate_return_expression(
         struct mcc_symbol_table_error_collector *ec
 ) {
     assert(expression);
-    printf("Return type %d \n", return_type);
-    printf("expression type %d \n", expression->type);
 
     // expression is already validated
     if(mcc_symbol_table_get_expression_return_type(expression, symbol_table) != return_type) {
-        printf("Here ? \n");
         mcc_symbol_table_add_error(
                 ec,
                 mcc_symbol_table_new_error(&(expression->node.sloc),
@@ -530,7 +527,6 @@ int mcc_symbol_table_validate_statement_return(
                 return 1;
             }
         } else {
-            printf("test 2\n");
             st_l = st_l->next;
         }
     }
