@@ -3,9 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "mcc/ast.h"
-#include "mcc/symbol_table_parse.h"
-#include "mcc/symbol_table_semantic_error.h"
-#include "mcc/symbol_table_print.h"
+#include "mcc/symbol_table_parse.h"cd 
 #include "utils/unused.h"
 
 // ------------------------------------------------------------ Variable
@@ -239,7 +237,6 @@ int mcc_symbol_table_parse_function(
     }
 
     int valid_function_body = mcc_symbol_table_parse_statement(func_def -> statement, sub_table, ec, 0);
-
     if (valid_function_body == 0) {
         // valid function body - check if return type of non-void function is correct
         if (func_def -> return_type != MCC_AST_DATA_TYPE_VOID) {
@@ -355,17 +352,14 @@ struct mcc_symbol_table *mcc_symbol_table_build_program(struct mcc_ast_program *
         // check if main exists
 
         if (mcc_symbol_table_validate_main(program, st, ec) == 0) {
-            printf("Symbol table created successfully \n");
             return st;
         } else {
             // handle error collection
-            printf("Symbol table not created due to errors \n");
             return NULL;
         }
 
     } else {
         // handle error collection
-        printf("Symbol table not created due to errors \n");
         return NULL;
     }
 }
@@ -380,16 +374,13 @@ struct mcc_symbol_table *mcc_symbol_table_build_function(struct mcc_ast_function
     int parse_function = mcc_symbol_table_add_function_declaration(function, st, ec);
     if (parse_function == 0) {
         if (mcc_symbol_table_parse_function(function, st, ec) == 0) {
-            printf("Symbol table created successfully \n");
             return st;
         } else {
             // handle error collection
-            printf("Symbol table not created due to errors \n");
             return NULL;
         }
     } else {
         // handle error collection
-        printf("Symbol table not created due to errors \n");
         return NULL;
     }
 }
