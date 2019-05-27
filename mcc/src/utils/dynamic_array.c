@@ -36,9 +36,11 @@ int mcc_add_to_array(Dynamic_Array *dyn_arr, void *elem ) {
             return 1;
         }
 
-        rea_arr -> arr[index] = elem;
-        rea_arr -> index += 1;
-        rea_arr -> size += init_max_size;
+        dyn_arr = rea_arr;
+
+        dyn_arr -> arr[index] = elem;
+        dyn_arr -> index += 1;
+        dyn_arr -> size += init_max_size;
 
         return 0;
     }
