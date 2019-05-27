@@ -6,9 +6,9 @@
 #include <stdio.h>
 
 // Constantcs
-const int PROGRAM_FUNCTION_DEF_SIZE = 4;
-const int PARAMETER_DECLARATION_SIZE = 4;
-const int ARGUMENT_EXPRESSION_SIZE = 4;
+const int MCC_PROGRAM_FUNCTION_DEF_SIZE = 4;
+const int MCC_PARAMETER_DECLARATION_SIZE = 4;
+const int MCC_ARGUMENT_EXPRESSION_SIZE = 4;
 
 // ---------------------------------------------------------------- Expressions
 
@@ -501,9 +501,9 @@ struct mcc_ast_parameter *mcc_ast_new_parameter(struct mcc_ast_declaration *decl
     // assert(params);
 
     if (params == NULL) {
-        struct mcc_ast_parameter *param = malloc(sizeof(*param) + sizeof(struct mcc_ast_declaration*) * PARAMETER_DECLARATION_SIZE);
+        struct mcc_ast_parameter *param = malloc(sizeof(*param) + sizeof(struct mcc_ast_declaration*) * MCC_PARAMETER_DECLARATION_SIZE);
         param -> size = 1;
-        param -> max = PARAMETER_DECLARATION_SIZE;
+        param -> max = MCC_PARAMETER_DECLARATION_SIZE;
         param -> parameters[0] = declaration;
         return param;
     }
@@ -511,14 +511,14 @@ struct mcc_ast_parameter *mcc_ast_new_parameter(struct mcc_ast_declaration *decl
     // add to previous params list
     if ((params -> size) > (params -> max)) {
         int size = params -> size;
-        struct mcc_ast_parameter *new_params = realloc(params, sizeof(*params) + sizeof(struct mcc_ast_declaration*) * PARAMETER_DECLARATION_SIZE);
+        struct mcc_ast_parameter *new_params = realloc(params, sizeof(*params) + sizeof(struct mcc_ast_declaration*) * MCC_PARAMETER_DECLARATION_SIZE);
 		if(new_params == NULL ){
 			mcc_ast_delete_parameter(params);
 			return NULL;
 		}
         new_params -> parameters[size] = declaration;
         new_params -> size += 1;
-        new_params -> max += PARAMETER_DECLARATION_SIZE;
+        new_params -> max += MCC_PARAMETER_DECLARATION_SIZE;
     } else {
         params -> parameters[(params -> size)] = declaration;
         params -> size += 1;
@@ -542,11 +542,11 @@ void mcc_ast_delete_parameter(struct mcc_ast_parameter *parameter) {
 struct mcc_ast_argument *mcc_ast_new_argument(struct mcc_ast_expression *expression) {
     assert(expression);
 
-    struct mcc_ast_argument *argument = malloc(sizeof(*argument) + sizeof(struct mcc_ast_expression*) * ARGUMENT_EXPRESSION_SIZE);
+    struct mcc_ast_argument *argument = malloc(sizeof(*argument) + sizeof(struct mcc_ast_expression*) * MCC_ARGUMENT_EXPRESSION_SIZE);
 
     argument -> expressions[0] = expression;
     argument -> size = 1;
-    argument -> max = ARGUMENT_EXPRESSION_SIZE;
+    argument -> max = MCC_ARGUMENT_EXPRESSION_SIZE;
 
     return argument;
 }
@@ -563,14 +563,14 @@ struct mcc_ast_argument *mcc_ast_add_new_argument(struct mcc_ast_expression *exp
         argument -> size += 1;
     } else {
 
-        argument = realloc(argument, sizeof(*argument) + sizeof(struct mcc_ast_expression*) * ARGUMENT_EXPRESSION_SIZE);
+        argument = realloc(argument, sizeof(*argument) + sizeof(struct mcc_ast_expression*) * MCC_ARGUMENT_EXPRESSION_SIZE);
 		if(argument == NULL ){
 			mcc_ast_delete_argument(argument);
 			return NULL;
 		}
         argument -> expressions[size] = expression;
         argument -> size += 1;
-        argument -> max += ARGUMENT_EXPRESSION_SIZE;
+        argument -> max += MCC_ARGUMENT_EXPRESSION_SIZE;
     }
 
     return argument;
@@ -630,10 +630,10 @@ void mcc_ast_delete_function(struct mcc_ast_function *function) {
 struct mcc_ast_program *mcc_ast_new_program(struct mcc_ast_function *function_def) {
     assert(function_def);
 
-	struct mcc_ast_program *p = malloc(sizeof(*p) + sizeof(struct mcc_ast_function*) * PROGRAM_FUNCTION_DEF_SIZE);
+	struct mcc_ast_program *p = malloc(sizeof(*p) + sizeof(struct mcc_ast_function*) * MCC_PROGRAM_FUNCTION_DEF_SIZE);
 
     p -> size = 1;
-    p -> max = PROGRAM_FUNCTION_DEF_SIZE;
+    p -> max = MCC_PROGRAM_FUNCTION_DEF_SIZE;
     p -> function_def[0] = function_def;
 
     return p;
@@ -650,12 +650,12 @@ struct mcc_ast_program *mcc_ast_add_function(struct mcc_ast_function *function_d
         program -> size += 1;
     } else {
 
-        program = realloc(program, sizeof(*program) + sizeof(struct mcc_ast_function*) * PROGRAM_FUNCTION_DEF_SIZE);
+        program = realloc(program, sizeof(*program) + sizeof(struct mcc_ast_function*) * MCC_PROGRAM_FUNCTION_DEF_SIZE);
 		if(program == NULL ){
 			mcc_ast_delete_program(program);
 			return NULL;
 		}
-        program -> max += PROGRAM_FUNCTION_DEF_SIZE;
+        program -> max += MCC_PROGRAM_FUNCTION_DEF_SIZE;
         program -> function_def[size] = function_def;
         program -> size += 1;
     }

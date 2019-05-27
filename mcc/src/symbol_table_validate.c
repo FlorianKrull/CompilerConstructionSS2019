@@ -531,7 +531,6 @@ static int validate_return_expression(
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec
 ) {
-
     int valid_return = mcc_symbol_table_validate_expression_return_type(
             expression,
             symbol_table,

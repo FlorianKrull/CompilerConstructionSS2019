@@ -261,7 +261,7 @@ void mcc_parser_error(struct MCC_PARSER_LTYPE *yylloc, yyscan_t *scanner,struct 
 	loc -> end_line = yylloc -> last_line;
 	loc -> end_col = yylloc -> last_column;
 
-	struct mcc_parser_error *error = new_parser_error(loc, (char*) msg);
+	struct mcc_parser_error *error = mcc_new_parser_error(loc, (char*) msg);
 	result -> parser_error = error;
 	free(loc);
 }
