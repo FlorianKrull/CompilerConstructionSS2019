@@ -7,7 +7,7 @@
 #include <assert.h>
 #include "mcc/parser.h"
 
-struct mcc_parser_error *new_parser_error(struct mcc_ast_source_location *loc, char *msg) {
+struct mcc_parser_error *mcc_new_parser_error(struct mcc_ast_source_location *loc, char *msg) {
     assert(loc);
     assert(msg);
 

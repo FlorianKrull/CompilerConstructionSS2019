@@ -278,7 +278,7 @@ int mcc_symbol_table_add_function_declaration(
 
 // ---------------------------------------------------------- Program
 
-void add_builtin_function(struct mcc_symbol_table *symbol_table,char *variable_name, enum mcc_ast_data_type return_type, enum mcc_ast_data_type param_type){
+void mcc_add_builtin_function(struct mcc_symbol_table *symbol_table,char *variable_name, enum mcc_ast_data_type return_type, enum mcc_ast_data_type param_type){
 
    struct mcc_symbol *symbol = malloc(sizeof(*symbol));
 
@@ -303,12 +303,12 @@ void add_builtin_function(struct mcc_symbol_table *symbol_table,char *variable_n
 }
 
 void mcc_symbol_table_add_builtins(struct mcc_symbol_table *symbol_table) {
-    add_builtin_function(symbol_table,"print_nl",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_VOID);
-    add_builtin_function(symbol_table,"print",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_STRING);
-    add_builtin_function(symbol_table,"print_int",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_INT);
-    add_builtin_function(symbol_table,"print_float",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_FLOAT);
-    add_builtin_function(symbol_table,"read_int",MCC_AST_DATA_TYPE_INT,MCC_AST_DATA_TYPE_VOID);
-    add_builtin_function(symbol_table,"read_float",MCC_AST_DATA_TYPE_FLOAT,MCC_AST_DATA_TYPE_VOID);
+    mcc_add_builtin_function(symbol_table,"print_nl",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_VOID);
+    mcc_add_builtin_function(symbol_table,"print",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_STRING);
+    mcc_add_builtin_function(symbol_table,"print_int",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_INT);
+    mcc_add_builtin_function(symbol_table,"print_float",MCC_AST_DATA_TYPE_VOID,MCC_AST_DATA_TYPE_FLOAT);
+    mcc_add_builtin_function(symbol_table,"read_int",MCC_AST_DATA_TYPE_INT,MCC_AST_DATA_TYPE_VOID);
+    mcc_add_builtin_function(symbol_table,"read_float",MCC_AST_DATA_TYPE_FLOAT,MCC_AST_DATA_TYPE_VOID);
 }
 
 int mcc_symbol_table_parse_program(

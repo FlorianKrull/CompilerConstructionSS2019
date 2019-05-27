@@ -31,8 +31,8 @@ for(int i = 0; yytext[i] != '\0'; i++) { \
     } \
 }
 
-int line_num = 1;
-int comment_caller;
+int mcc_line_num = 1;
+int mcc_comment_caller;
 %}
 
 int_literal   [0-9]+
@@ -51,19 +51,19 @@ identifier   [a-zA-Z_][a-zA-Z0-9_]*
 
 
 "/*"         {
-                comment_caller = INITIAL;
+                mcc_comment_caller = INITIAL;
                 BEGIN(comment);
              }
 
 <foo>"/*" {
-          comment_caller = foo;
+          mcc_comment_caller = foo;
           BEGIN(comment);
           }
 
 <comment>[^*\n]*        /* eat anything that's not a '*' */
 <comment>"*"+[^*/\n]*   /* eat up '*'s not followed by '/'s */
-<comment>\n             ++line_num;
-<comment>"*"+"/"        BEGIN(comment_caller);
+<comment>\n             ++mcc_line_num;
+<comment>"*"+"/"        BEGIN(mcc_comment_caller);
 
 "+"               { return TK_PLUS; }
 "-"               { return TK_MINUS; }
