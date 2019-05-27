@@ -16,6 +16,6 @@ Dynamic_Array *mcc_create_dynamic_array(int MAX_SIZE);
 
 int mcc_add_to_array(Dynamic_Array *dyn_arr, void *elem);
 
-void mcc_delete_array(Dynamic_Array *dyn_arr, void (*delete)(void*));
+void mcc_delete_array(Dynamic_Array *dyn_arr, void (*delete_func)(void*));
 
 #endif //MCC_DYNAMIC_ARRAY_H

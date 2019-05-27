@@ -48,15 +48,15 @@ static void generic_delete(void* ptr) {
     free(ptr);
 }
 
-void mcc_delete_array(Dynamic_Array *dyn_arr, void (*delete)(void*)) {
+void mcc_delete_array(Dynamic_Array *dyn_arr, void (*delete_func)(void*)) {
     void (*delete_f) (void*) = &generic_delete;
 
-    if (delete == NULL) {
-        delete_f = delete;
+    if (delete_func == NULL) {
+        delete_func = delete_f;
     }
 
     for (int i = 0; i <= dyn_arr -> index; i++) {
-        delete_f(dyn_arr -> arr[i]);
+        delete_func(dyn_arr -> arr[i]);
     }
 }
 
