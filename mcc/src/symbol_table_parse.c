@@ -342,7 +342,7 @@ int mcc_symbol_table_parse_program(
 struct mcc_symbol_table *mcc_symbol_table_build_program(struct mcc_ast_program *program, struct mcc_symbol_table_error_collector *ec) {
     assert(program);
 
-    struct mcc_symbol_table *st = mcc_symbol_table_new_table(NULL,ec);
+    struct mcc_symbol_table *st = mcc_symbol_table_new_table(NULL);
 
     mcc_symbol_table_add_builtins(st);
 
@@ -363,7 +363,7 @@ struct mcc_symbol_table *mcc_symbol_table_build_program(struct mcc_ast_program *
 struct mcc_symbol_table *mcc_symbol_table_build_function(struct mcc_ast_function *function, struct mcc_symbol_table_error_collector *ec) {
     assert(function);
 
-    struct mcc_symbol_table *st = mcc_symbol_table_new_table(NULL,ec);
+    struct mcc_symbol_table *st = mcc_symbol_table_new_table(NULL);
 
     mcc_symbol_table_add_builtins(st);
 

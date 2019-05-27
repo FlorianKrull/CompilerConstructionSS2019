@@ -56,7 +56,7 @@ struct mcc_symbol_table_symbol_container {
 struct mcc_symbol_table {
     // use double-pointer for this as flexible arrays have to be at the end of a struct
     struct mcc_symbol_table_symbol_container *symbol_container;
-    struct mcc_symbol_table_error_collector *ec;
+
     // every symbol table has one parent and can have multiple inner_tables
     struct mcc_symbol_table *parent;
     char *sym_table_name;
@@ -65,7 +65,7 @@ struct mcc_symbol_table {
     struct mcc_symbol_table *inner_tables[];
 };
 
-struct mcc_symbol_table *mcc_symbol_table_new_table(struct mcc_symbol_table *parent, struct mcc_symbol_table_error_collector *ec);
+struct mcc_symbol_table *mcc_symbol_table_new_table(struct mcc_symbol_table *parent);
 
 void mcc_symbol_table_delete_table(struct mcc_symbol_table *parent);
 

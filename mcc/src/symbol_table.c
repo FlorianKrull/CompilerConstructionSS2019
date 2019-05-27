@@ -89,14 +89,12 @@ struct mcc_symbol_table_symbol_container *mcc_symbol_table_new_symbol_container(
 }
 
 struct mcc_symbol_table *mcc_symbol_table_new_table(
-        struct mcc_symbol_table *parent,
-        struct mcc_symbol_table_error_collector *ec) {
+        struct mcc_symbol_table *parent) {
     int mem_children = sizeof(struct mcc_symbol_table*) * MCC_SYMBOL_TABLE_CHILDREN_SIZE;
 
     struct mcc_symbol_table *table = malloc(sizeof(*table) + mem_children);
 
     table -> symbol_container = mcc_symbol_table_new_symbol_container();
-    table -> ec = ec;
     table -> inner_tables_size = 0;
     table -> inner_tables_max = MCC_SYMBOL_TABLE_CHILDREN_SIZE;
 
@@ -133,7 +131,7 @@ struct mcc_symbol_table *mcc_symbol_table_create_inner_table(struct mcc_symbol_t
         symbole_name = parent->sym_table_name;
     }
 
-    struct mcc_symbol_table *child = mcc_symbol_table_new_table(parent, parent->ec);
+    struct mcc_symbol_table *child = mcc_symbol_table_new_table(parent);
 
     child->sym_table_name = symbole_name;
 
