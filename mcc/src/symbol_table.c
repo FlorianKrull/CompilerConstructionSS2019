@@ -117,10 +117,19 @@ void mcc_symbol_table_delete_table(struct mcc_symbol_table *table) {
     free(table);
 }
 
-struct mcc_symbol_table *mcc_symbol_table_create_inner_table(struct mcc_symbol_table *parent) {
+struct mcc_symbol_table *mcc_symbol_table_create_inner_table(struct mcc_symbol_table *parent, char *name) {
     assert(parent);
 
+    char *symbole_name;
+    symbole_name = name;
+
+    if(symbole_name == NULL){
+        symbole_name = parent->sym_table_name;
+    }
+
     struct mcc_symbol_table *child = mcc_symbol_table_new_table(parent, parent->ec);
+
+    child->sym_table_name = symbole_name;
 
     int children_size = parent -> inner_tables_size;
     int children_max = parent -> inner_tables_max;

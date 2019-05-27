@@ -139,7 +139,7 @@ int mcc_symbol_table_parse_statement(
     struct mcc_symbol_table *table = symbol_table;
 
     if (create_new) {
-        table = mcc_symbol_table_create_inner_table(symbol_table);
+        table = mcc_symbol_table_create_inner_table(symbol_table,symbol_table->parent->sym_table_name);
     }
 
     switch(statement->type) {
@@ -216,8 +216,7 @@ int mcc_symbol_table_parse_function(
     assert(ec);
 
     // create new scope and parse function
-    struct mcc_symbol_table *sub_table = mcc_symbol_table_create_inner_table(symbol_table);
-
+    struct mcc_symbol_table *sub_table = mcc_symbol_table_create_inner_table(symbol_table,func_def->identifier->i_value);
     // add params to sub table
     if (func_def -> parameter != NULL && func_def -> parameter -> size > 0) {
         struct mcc_ast_parameter *p = func_def -> parameter;
@@ -285,7 +284,7 @@ void add_builtin_function(struct mcc_symbol_table *symbol_table,char *variable_n
 
     symbol -> variable_name = variable_name;
     symbol -> data_type = return_type;
-    symbol -> symbol_type = MCC_SYMBOL_TYPE_FUNCTION;
+    symbol -> symbol_type = MCC_SYMBOL_TYPE_BUILTIN_FUNCTION;
 
     struct mcc_symbol_function_arguments *fp  = malloc(sizeof(*fp) + sizeof(enum mcc_ast_data_type*) * 4);
 
@@ -297,6 +296,7 @@ void add_builtin_function(struct mcc_symbol_table *symbol_table,char *variable_n
         fp -> arg_types[0] = param_type;
     }
     symbol -> func_arguments = fp;
+    symbol_table ->inner_tables[0] = NULL;
 
     mcc_symbol_table_insert_symbol(symbol_table,symbol);
 
@@ -320,7 +320,6 @@ int mcc_symbol_table_parse_program(
     assert(program);
 
     int function_parse = 0;
-
     for(int i = 0; i < program->size; i++) {
         function_parse = mcc_symbol_table_add_function_declaration(program->function_def[i], symbol_table, ec);
 

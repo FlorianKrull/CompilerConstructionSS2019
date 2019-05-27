@@ -10,7 +10,8 @@
 enum mcc_symbol_type {
     MCC_SYMBOL_TYPE_VARIABLE,
     MCC_SYMBOL_TYPE_ARRAY,
-    MCC_SYMBOL_TYPE_FUNCTION
+    MCC_SYMBOL_TYPE_FUNCTION,
+    MCC_SYMBOL_TYPE_BUILTIN_FUNCTION
 };
 
 struct mcc_symbol_function_arguments {
@@ -60,7 +61,7 @@ struct mcc_symbol_table {
     struct mcc_symbol_table_error_collector *ec;
     // every symbol table has one parent and can have multiple inner_tables
     struct mcc_symbol_table *parent;
-
+    char *sym_table_name;
     int inner_tables_size;
     int inner_tables_max;
     struct mcc_symbol_table *inner_tables[];
@@ -70,7 +71,7 @@ struct mcc_symbol_table *mcc_symbol_table_new_table(struct mcc_symbol_table *par
 
 void mcc_symbol_table_delete_table(struct mcc_symbol_table *parent);
 
-struct mcc_symbol_table* mcc_symbol_table_create_inner_table(struct mcc_symbol_table *parent);
+struct mcc_symbol_table* mcc_symbol_table_create_inner_table(struct mcc_symbol_table *parent, char *name);
 
 int mcc_symbol_table_insert_symbol(struct mcc_symbol_table *table, struct mcc_symbol *symbol);
 
