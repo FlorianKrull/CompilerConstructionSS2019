@@ -18,8 +18,10 @@ Dynamic_Array *mcc_create_dynamic_array(int MAX_SIZE) {
 }
 
 int mcc_add_to_array(Dynamic_Array *dyn_arr, void *elem ) {
+
     int init_max_size = dyn_arr -> init_max_size;
     int block_size = dyn_arr -> block_size;
+
     int size = dyn_arr -> size;
 
     if (size < block_size) {
@@ -28,10 +30,8 @@ int mcc_add_to_array(Dynamic_Array *dyn_arr, void *elem ) {
 
         return 0;
     } else {
-
         void *array = dyn_arr -> arr;
         void *new_arr = realloc(array, sizeof(void*) * (block_size + init_max_size));
-
         if (new_arr == NULL) return 1;
 
         dyn_arr -> arr = new_arr;

@@ -5,7 +5,7 @@
 
 
 const int MCC_ERROR_COLLECTOR_ERROR_MAX = 10;
-const int MCC_TYPE_TRACER_SIZE = 2;
+const int MCC_TYPE_TRACER_SIZE = 100;
 
 // ---------------------------------------------------------- Error
 
