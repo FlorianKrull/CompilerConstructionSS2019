@@ -50,15 +50,16 @@ int mcc_symbol_table_validate_call_expression(
         return 1;
     } else {
         struct mcc_ast_argument *argument = expression->argument;
-        struct mcc_symbol_function_arguments *func_args = s->func_arguments;
-        if((argument == NULL && func_args->arg_size != 0) || (argument != NULL && func_args == NULL)) {
+        Dynamic_Array *func_arguments = s -> func_arguments;
+
+        if((argument == NULL && func_arguments->size != 0) || (argument != NULL && func_arguments == NULL)) {
             mcc_symbol_table_add_error(
                     ec,
                     mcc_symbol_table_new_error(&(expression->node.sloc), MCC_SEMANTIC_ERROR_INVALID_NUM_OF_ARGUMENTS));
 
             return 1;
         }
-        if(argument != NULL && (argument->size != func_args->arg_size)) {
+        if(argument != NULL && (argument->size != func_arguments->size)) {
             mcc_symbol_table_add_error(
                     ec,
                     mcc_symbol_table_new_error(&(expression->node.sloc), MCC_SEMANTIC_ERROR_INVALID_NUM_OF_ARGUMENTS));
@@ -66,8 +67,10 @@ int mcc_symbol_table_validate_call_expression(
             return 1;
         }
 
-        for(int i = 0; i < func_args->arg_size; i++) {
-            enum mcc_ast_data_type func_arg_type = func_args->arg_types[i];
+        for(int i = 0; i < func_arguments-> size; i++) {
+            struct mcc_symbol_function_argument *fa = func_arguments -> arr[i];
+
+            enum mcc_ast_data_type func_arg_type = fa -> arg_type;
             enum mcc_ast_data_type arg_typ = mcc_symbol_table_get_expression_return_type(argument->expressions[i],
                                                                                          symbol_table);
 

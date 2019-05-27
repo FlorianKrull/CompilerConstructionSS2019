@@ -14,6 +14,7 @@
 #include "mcc/mcc_scope.h"
 
 int main(int argc, char *argv[]) {
+
     char* symbol_scope = "program";
     FILE* out = stdout;
 
@@ -103,14 +104,14 @@ int main(int argc, char *argv[]) {
     }
 
 
-   mcc_symbol_table_print_type_check_trace(ec, out);
-    if (symbol_table != NULL) {
-        mcc_symbol_table_print(symbol_table,out);
-    } else {
+    mcc_symbol_table_print_type_check_trace(ec, out);
+    if (symbol_table == NULL) {
         mcc_symbol_table_print_error(ec, out);
+
         return EXIT_FAILURE;
     }
 
+    mcc_symbol_table_print(symbol_table,out);
     mcc_symbol_table_delete_table(symbol_table);
     mcc_ast_delete(prog);
 

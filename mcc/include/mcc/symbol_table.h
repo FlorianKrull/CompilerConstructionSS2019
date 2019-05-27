@@ -2,6 +2,7 @@
 #ifndef MCC_SYMBOL_TABLE_H
 #define MCC_SYMBOL_TABLE_H
 
+#include "mcc/dynamic_array.h"
 #include "mcc/ast.h"
 #include "mcc/symbol_table_semantic_error.h"
 
@@ -14,10 +15,8 @@ enum mcc_symbol_type {
     MCC_SYMBOL_TYPE_BUILTIN_FUNCTION
 };
 
-struct mcc_symbol_function_arguments {
-    int arg_size;
-    int arg_max;
-    enum mcc_ast_data_type arg_types[];
+struct mcc_symbol_function_argument {
+    enum mcc_ast_data_type arg_type;
 };
 
 struct mcc_symbol {
@@ -30,7 +29,7 @@ struct mcc_symbol {
 
     union {
         long array_size;
-        struct mcc_symbol_function_arguments *func_arguments;
+        Dynamic_Array *func_arguments;
     };
 };
 
@@ -43,31 +42,21 @@ struct mcc_symbol *mcc_symbol_new_symbol_function(
         enum mcc_ast_data_type data_type,
         struct mcc_ast_parameter *parameter);
 
-void mcc_symbol_delete_symbol(struct mcc_symbol *symbol);
+void mcc_symbol_delete_symbol(void* symbol);
 
 // ---------------------------------------------------------- Symbol table
 
-struct mcc_symbol_table_symbol_container {
-    int size;
-    int max;
-    struct mcc_symbol *symbols[];
-};
-
 struct mcc_symbol_table {
-    // use double-pointer for this as flexible arrays have to be at the end of a struct
-    struct mcc_symbol_table_symbol_container *symbol_container;
-
-    // every symbol table has one parent and can have multiple inner_tables
     struct mcc_symbol_table *parent;
     char *sym_table_name;
-    int inner_tables_size;
-    int inner_tables_max;
-    struct mcc_symbol_table *inner_tables[];
+
+    Dynamic_Array *symbols;
+    Dynamic_Array *inner_tables;
 };
 
 struct mcc_symbol_table *mcc_symbol_table_new_table(struct mcc_symbol_table *parent);
 
-void mcc_symbol_table_delete_table(struct mcc_symbol_table *parent);
+void mcc_symbol_table_delete_table(void *parent);
 
 struct mcc_symbol_table* mcc_symbol_table_create_inner_table(struct mcc_symbol_table *parent, char *name);
 

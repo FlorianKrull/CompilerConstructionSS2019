@@ -1,9 +1,8 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include<assert.h>
 
 #include "mcc/dynamic_array.h"
-#include "mcc/symbol_table_semantic_error.h"
+#include "mcc/symbol_table.h"
 #include "mcc/symbol_table_print.h"
 
 const static char *type_to_string(enum mcc_ast_data_type type){
@@ -30,10 +29,8 @@ const static char *symbol_type_to_string(enum mcc_symbol_type type){
 }
 
 void mcc_symbol_table_print(struct mcc_symbol_table *symbol_table, FILE *out){
-
-     for(int i = 0; i < symbol_table->symbol_container->size; i++){
-         
-        struct mcc_symbol *sym = symbol_table->symbol_container->symbols[i];
+     for(int i = 0; i < symbol_table->symbols->size; i++){
+        struct mcc_symbol *sym = (struct mcc_symbol *) symbol_table->symbols->arr[i];
 
              if(sym->symbol_type != MCC_SYMBOL_TYPE_FUNCTION){
                 fprintf(out,"\t");
@@ -53,9 +50,12 @@ void mcc_symbol_table_print(struct mcc_symbol_table *symbol_table, FILE *out){
                 case MCC_SYMBOL_TYPE_FUNCTION:
                     if(sym->func_arguments){
                         fprintf(out,"%s(", sym->variable_name);
-                        for(int j = 0; j < sym->func_arguments->arg_size; j++){
-                            fprintf(out,"%s", type_to_string(sym->func_arguments->arg_types[j]));
-                            if (j + 1 < sym->func_arguments->arg_size) {
+                        for(int j = 0; j < sym->func_arguments -> size; j++){
+                            struct mcc_symbol_function_argument *fp =
+                                    (struct mcc_symbol_function_argument *) sym ->func_arguments -> arr[j];
+                            fprintf(out,"%s", type_to_string(fp -> arg_type));
+
+                            if (j + 1 < sym->func_arguments->size) {
                             fprintf(out,", ");
                             }
                         }
@@ -64,9 +64,10 @@ void mcc_symbol_table_print(struct mcc_symbol_table *symbol_table, FILE *out){
                         fprintf(out,"%s()", sym->variable_name);
                     }
                      fprintf(out,"\n");
-                    for(int j = 0; j < symbol_table->inner_tables_size; j++){
-                        if(symbol_table->inner_tables[j]->sym_table_name == sym->variable_name){
-                            mcc_symbol_table_print(symbol_table->inner_tables[j],out);
+                    for(int j = 0; j < symbol_table-> inner_tables -> size; j++){
+                        struct mcc_symbol_table *it= (struct mcc_symbol_table *) symbol_table -> inner_tables -> arr[j];
+                        if(it->sym_table_name == sym->variable_name){
+                           mcc_symbol_table_print(it,out);
                         }
             
                     }
@@ -74,13 +75,7 @@ void mcc_symbol_table_print(struct mcc_symbol_table *symbol_table, FILE *out){
 
             }
             fprintf(out,"\n");
-        
-        
     }
-
-    
-    
-    
 }
 
 void mcc_symbol_table_print_error(struct mcc_symbol_table_error_collector *ec, FILE *out) {
@@ -166,7 +161,7 @@ void mcc_symbol_table_print_type_check_trace(struct mcc_symbol_table_error_colle
         return;
     }
 
-    for (int i = 0; i < type_check_arry -> index; i++) {
+    for (int i = 0; i < type_check_arry -> size; i++) {
         struct type_check *tc = (struct type_check *) type_check_arry -> arr[i];
 
         int sloc = tc ->sloc ->end_line;

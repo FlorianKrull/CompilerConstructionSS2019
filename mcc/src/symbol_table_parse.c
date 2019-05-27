@@ -278,27 +278,29 @@ int mcc_symbol_table_add_function_declaration(
 
 // ---------------------------------------------------------- Program
 
-void mcc_add_builtin_function(struct mcc_symbol_table *symbol_table,char *variable_name, enum mcc_ast_data_type return_type, enum mcc_ast_data_type param_type){
+void mcc_add_builtin_function(
+        struct mcc_symbol_table *symbol_table,
+        char *variable_name,
+        enum mcc_ast_data_type return_type,
+        enum mcc_ast_data_type param_type) {
    struct mcc_symbol *symbol = malloc(sizeof(*symbol));
 
     symbol -> variable_name = variable_name;
     symbol -> data_type = return_type;
     symbol -> symbol_type = MCC_SYMBOL_TYPE_BUILTIN_FUNCTION;
+    symbol -> func_arguments = mcc_create_dynamic_array(5);
 
-    struct mcc_symbol_function_arguments *fp  = malloc(sizeof(*fp) + sizeof(enum mcc_ast_data_type*) * 4);
+    if (param_type != MCC_AST_DATA_TYPE_VOID) {
+        struct mcc_symbol_function_argument *fp  = malloc(sizeof(*fp));
 
-    if(param_type == MCC_AST_DATA_TYPE_VOID){
-        fp -> arg_size = 0;
-        fp -> arg_types[0] = param_type;
-    }else{
-        fp -> arg_size = 1;
-        fp -> arg_types[0] = param_type;
+        fp -> arg_type = param_type;
+
+        mcc_add_to_array(symbol -> func_arguments, fp);
     }
-    symbol -> func_arguments = fp;
-    symbol_table ->inner_tables[0] = NULL;
+
+    symbol_table -> inner_tables -> arr[0] = NULL;
 
     mcc_symbol_table_insert_symbol(symbol_table,symbol);
-
 }
 
 void mcc_symbol_table_add_builtins(struct mcc_symbol_table *symbol_table) {
@@ -314,8 +316,6 @@ int mcc_symbol_table_parse_program(
         struct mcc_ast_program *program,
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec) {
-    
-    UNUSED(symbol_table);
     assert(program);
 
     int function_parse = 0;
@@ -348,7 +348,6 @@ struct mcc_symbol_table *mcc_symbol_table_build_program(struct mcc_ast_program *
 
     if (mcc_symbol_table_parse_program(program, st, ec) == 0) {
         // check if main exists
-
         if (mcc_symbol_table_validate_main(program, st, ec) == 0) {
             return st;
         } else {

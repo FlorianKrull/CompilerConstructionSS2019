@@ -106,15 +106,15 @@ int main(int argc, char *argv[]) {
         symbol_table = mcc_symbol_table_build(func, ec);
     }
 
-   
-    if (symbol_table != NULL) {
-        mcc_symbol_table_print(symbol_table,out);
-        mcc_symbol_table_delete_table(symbol_table);
-    } else {
+
+    if (symbol_table == NULL) {
         mcc_symbol_table_print_error(ec, out);
+
+        return EXIT_FAILURE;
     }
 
-    // cleanup
+    mcc_symbol_table_print(symbol_table,out);
+    mcc_symbol_table_delete_table(symbol_table);
     mcc_ast_delete(prog);
 
     return EXIT_SUCCESS;
