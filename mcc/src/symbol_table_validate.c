@@ -219,6 +219,8 @@ enum mcc_ast_data_type mcc_symbol_table_get_expression_return_type(
             return mcc_symbol_table_get_expression_return_type(expression->expression, symbol_table);
         case MCC_AST_EXPRESSION_TYPE_BRACKET:
             return mcc_symbol_table_get_expression_return_type(expression->bracket_expression, symbol_table);
+        default:
+            return 0;
     }
 }
 

@@ -6,7 +6,7 @@
 #include "mcc/symbol_table_semantic_error.h"
 #include "mcc/symbol_table_print.h"
 
-const static char *type_to_string(enum mcc_ast_data_type type){
+static char *type_to_string(enum mcc_ast_data_type type){
     switch (type)
     {
     case MCC_AST_DATA_TYPE_INT: return "int";
@@ -18,7 +18,7 @@ const static char *type_to_string(enum mcc_ast_data_type type){
     }
 }
 
-const static char *symbol_type_to_string(enum mcc_symbol_type type){
+static char *symbol_type_to_string(enum mcc_symbol_type type){
     switch (type)
     {
     case MCC_SYMBOL_TYPE_VARIABLE: return "variable";
