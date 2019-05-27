@@ -46,8 +46,6 @@ void mcc_symbol_delete_symbol(struct mcc_symbol *symbol);
 
 // ---------------------------------------------------------- Symbol table
 
-// Symbol table implemented as a linked list
-
 struct mcc_symbol_table_symbol_container {
     int size;
     int max;

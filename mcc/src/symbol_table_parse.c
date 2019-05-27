@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "mcc/ast.h"
-#include "mcc/symbol_table_parse.h"cd 
+#include "mcc/symbol_table_parse.h"
 #include "utils/unused.h"
 
 // ------------------------------------------------------------ Variable
@@ -116,9 +116,9 @@ int mcc_symbol_table_parse_compound_statement(
         if(statement_result == 1) {
             return 1;
         }
-        if(stl->next == NULL){
+        if (stl->next == NULL){
             break;
-        }else{
+        } else{
             stl = stl->next;
         }
        
@@ -143,6 +143,7 @@ int mcc_symbol_table_parse_statement(
     }
 
     switch(statement->type) {
+        case MCC_AST_STATEMENT_TYPE_RETURN:
         case MCC_AST_STATEMENT_TYPE_EXPRESSION:
             return mcc_symbol_table_validate_expression(statement->expression, symbol_table, ec);
         case MCC_AST_STATEMENT_TYPE_WHILE:
@@ -190,9 +191,8 @@ int mcc_symbol_table_parse_statement(
                 return mcc_symbol_table_add_variable_declaration(statement->declaration, symbol_table, ec);
             }
         case MCC_AST_STATEMENT_TYPE_ASSGN:
-            return mcc_symbol_table_validate_assignment_semantic(statement->assignment, symbol_table, ec);
         case MCC_AST_STATEMENT_TYPE_ASSGN_ARR:
-            return mcc_symbol_table_validate_assignment_array_semantic(statement->assignment, symbol_table, ec);
+            return mcc_symbol_table_validate_assignment_semantic(statement->assignment, symbol_table, ec);
         case MCC_AST_STATEMENT_TYPE_COMPOUND:
             return mcc_symbol_table_parse_compound_statement(
                     statement,
@@ -279,7 +279,7 @@ int mcc_symbol_table_add_function_declaration(
 
 // ---------------------------------------------------------- Program
 
-void add_builtin_function(struct mcc_symbol_table *symbol_table,char *variable_name, enum mcc_ast_data_type return_type, enum mcc_ast_data_type param_type){
+void add_builtin_function(struct mcc_symbol_table *symbol_table, char *variable_name, enum mcc_ast_data_type return_type, enum mcc_ast_data_type param_type){
 
    struct mcc_symbol *symbol = malloc(sizeof(*symbol));
 
@@ -354,12 +354,10 @@ struct mcc_symbol_table *mcc_symbol_table_build_program(struct mcc_ast_program *
         if (mcc_symbol_table_validate_main(program, st, ec) == 0) {
             return st;
         } else {
-            // handle error collection
             return NULL;
         }
 
     } else {
-        // handle error collection
         return NULL;
     }
 }

@@ -10,7 +10,6 @@ void mcc_ast_to_dot_print_usage(const char *prg)
     printf("     -h, --help                displays this help message:\n");
     printf("     -o, --output <file>       write the output to <file> (defaults to stdout)\n");
     printf("     -f, --function <name>     limit scope to the given function\n");
-
 }
 
 void mcc_symbol_table_print_usage(const char *prg)
@@ -23,7 +22,18 @@ void mcc_symbol_table_print_usage(const char *prg)
     printf("     -h, --help                displays this help message:\n");
     printf("     -o, --output <file>       write the output to <file> (defaults to stdout)\n");
     printf("     -f, --function <name>     limit scope to the given function\n");
+}
 
+void mcc_symbol_table_type_trace_usage(const char *prg)
+{
+    printf("\n\nusage: %s [OPTIONS] file...\n\n", prg);
+    printf("Utility for tracing the type checking process. Errors are reported on\n"
+                   "invalid inputs.\n\n");
+    printf("Use '-' as input file to read from stdin.\n\n");
+    printf("OPTIONS:\n");
+    printf("     -h, --help                displays this help message:\n");
+    printf("     -o, --output <file>       write the output to <file> (defaults to stdout)\n");
+    printf("     -f, --function <name>     limit scope to the given function\n");
 }
 
 

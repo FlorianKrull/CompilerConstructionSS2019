@@ -7,7 +7,8 @@
 
 typedef struct dyn_array {
     int index;
-    int max_size;
+    int init_max_size;
+    int size;
     void *arr[];
 } Dynamic_Array;
 

@@ -1,8 +1,5 @@
-//
-// Created by Clemens Paumgarten on 25.04.19.
-//
-
 #include <stdlib.h>
+#include <stdio.h>
 #include <assert.h>
 #include "mcc/symbol_table_semantic_error.h"
 
@@ -15,6 +12,8 @@ struct mcc_symbol_table_error_collector *mcc_symbol_table_new_error_collector() 
     int error_size = sizeof(struct mcc_parser_error*) * ERROR_COLLECTOR_ERROR_MAX;
 
     struct mcc_symbol_table_error_collector *ec = malloc(sizeof(*ec) + error_size);
+
+    ec -> type_tracer = mcc_create_dynamic_array(2);
 
     ec -> error_max = ERROR_COLLECTOR_ERROR_MAX;
     ec -> error_size = 0;
@@ -63,4 +62,26 @@ int mcc_symbol_table_add_error(struct mcc_symbol_table_error_collector *ec, stru
 
         return 1;
     }
+}
+
+void mcc_symbol_table_add_type_check(
+        struct mcc_symbol_table_error_collector *ec,
+        enum mcc_ast_data_type target_type,
+        enum mcc_ast_data_type receiving_type,
+        enum mcc_semantic_type_check_type type,
+        struct mcc_ast_source_location *sloc) {
+
+    struct type_check *tc = malloc(sizeof(*tc));
+
+    tc -> sloc = sloc;
+    tc -> receiving_type = receiving_type;
+    tc -> target_type = target_type;
+    tc -> type = type;
+
+    mcc_add_to_array(ec -> type_tracer, tc);
+
+}
+
+void mcc_symbol_table_delete_type_check(struct mcc_symbol_table_error_collector *ec) {
+    mcc_delete_array(ec -> type_tracer, NULL);
 }

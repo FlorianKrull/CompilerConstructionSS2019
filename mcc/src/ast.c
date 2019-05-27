@@ -483,7 +483,7 @@ void mcc_ast_delete_statement(struct mcc_ast_statement *statement)
             }
             break;
 		case MCC_AST_STATEMENT_TYPE_RETURN:
-			mcc_ast_delete_expression(statement->return_expression);
+			mcc_ast_delete_expression(statement->expression);
 			break;
         default : break;
     }

@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "mcc/dynamic_array.h"
 
 Dynamic_Array *mcc_create_dynamic_array(const int MAX_SIZE) {
@@ -8,33 +9,37 @@ Dynamic_Array *mcc_create_dynamic_array(const int MAX_SIZE) {
         return NULL;
     }
 
-    dyn_arr -> max_size = MAX_SIZE;
+    dyn_arr -> init_max_size = MAX_SIZE;
+    dyn_arr -> size = MAX_SIZE;
     dyn_arr -> index = 0;
 
     return dyn_arr;
 }
 
-int mcc_add_to_array(Dynamic_Array *dyn_arr, void *elem) {
-    int max_size = dyn_arr -> max_size;
+int mcc_add_to_array(Dynamic_Array *dyn_arr, void *elem ) {
+    int init_max_size = dyn_arr -> init_max_size;
+    int size = dyn_arr -> size;
     int index = dyn_arr -> index;
 
-    if (index < max_size) {
+    if (index < size) {
         dyn_arr -> arr[index] = elem;
         dyn_arr -> index += 1;
 
-        return 1;
+        return 0;
     } else {
-        dyn_arr = realloc(dyn_arr, sizeof(*dyn_arr) + sizeof(void*) * max_size);
+        Dynamic_Array *rea_arr = realloc(dyn_arr, sizeof(*dyn_arr) + sizeof(void*) * init_max_size);
 
-        if (dyn_arr == NULL) {
-            return 0;
+        if (rea_arr == NULL) {
+            perror("Realloc failed");
+            // clean on error
+            return 1;
         }
 
-        dyn_arr -> arr[index] = elem;
-        dyn_arr -> index += 1;
-        dyn_arr -> max_size += max_size;
+        rea_arr -> arr[index] = elem;
+        rea_arr -> index += 1;
+        rea_arr -> size += init_max_size;
 
-        return 1;
+        return 0;
     }
 }
 

@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
         input = argv[optind];
     } else {
         fprintf(stderr, "%s: Missing input!\n", argv[0]);
-        mcc_ast_to_dot_print_usage(argv[0]);
+        mcc_symbol_table_print_usage(argv[0]);
         return EXIT_FAILURE;
     }
 
@@ -114,9 +114,8 @@ int main(int argc, char *argv[]) {
     }
 
     // cleanup
+    mcc_symbol_table_delete_table(symbol_table);
     mcc_ast_delete(prog);
-
-    // TODO free result
 
     return EXIT_SUCCESS;
 }

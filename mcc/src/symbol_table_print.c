@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include<assert.h>
 
+#include "mcc/dynamic_array.h"
+#include "mcc/symbol_table_semantic_error.h"
 #include "mcc/symbol_table_print.h"
 
 const static char *type_to_string(enum mcc_ast_data_type type){
@@ -138,5 +141,52 @@ void mcc_symbol_table_print_error(struct mcc_symbol_table_error_collector *ec, F
 
         fprintf(out, "Error in line %d and col %d \n", error ->sloc ->end_line, error -> sloc -> end_col);
         fprintf(out, "%s \n", error_message);
+    }
+}
+
+void mcc_symbol_table_print_type_check_trace(struct mcc_symbol_table_error_collector *ec, FILE *out) {
+    assert(ec);
+
+    Dynamic_Array *type_check_arry = ec -> type_tracer;
+
+    if (type_check_arry == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < type_check_arry -> index; i++) {
+        struct type_check *tc = (struct type_check *) type_check_arry -> arr[i];
+
+        int sloc = tc ->sloc ->end_line;
+        const char* expected = type_to_string(tc -> target_type);
+        const char* recieved = type_to_string(tc -> receiving_type);
+
+        switch (tc ->type) {
+            case MCC_SEMANTIC_TYPE_CHECK_RETURN:
+                fprintf(out, "Check valid return type @ line %d: Expected: %s - Received: %s \n",
+                        sloc, expected, recieved);
+                break;
+            case MCC_SEMANTIC_TYPE_CHECK_UNARY:
+                fprintf(out, "Check valid unary operator type @ line %d: Expected: %s - Received: %s \n",
+                        sloc, expected, recieved);
+                break;
+            case MCC_SEMANTIC_TYPE_CHECK_ARG_TYPE:
+                fprintf(out, "Check valid arg type @ line %d: Expected: %s - Received: %s \n",
+                        sloc, expected, recieved);
+                break;
+            case MCC_SEMANTIC_TYPE_CHECK_CONDITION_BOOL:
+                fprintf(out, "Check condtion to be boolean @ line %d: Expected: %s - Received: %s \n",
+                        sloc, expected, recieved);
+                break;
+            case MCC_SEMANIC_TYPE_CHECK_BINARY_HANDSIDE_BOTH:
+                fprintf(out, "Check binary operator both handsides same type @ line  %d: Expected (lhs): %s - Received (rhs): %s \n",
+                        sloc, expected, recieved);
+                break;
+            case MCC_SEMANIC_TYPE_CHECK_ASSIGNMENT:
+                fprintf(out, "Check valid assignment type @ line %d: Expected (lhs): %s - Received (rhs): %s \n",
+                        sloc, expected, recieved);
+                break;
+            default:
+                continue;
+        }
     }
 }

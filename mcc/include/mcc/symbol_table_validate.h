@@ -84,7 +84,9 @@ enum mcc_ast_data_type mcc_symbol_table_get_expression_return_type(
 int mcc_symbol_table_validate_expression_return_type(
         struct mcc_ast_expression *expression,
         struct mcc_symbol_table *symbol_table,
-        enum mcc_ast_data_type type
+        enum mcc_ast_data_type expected,
+        enum mcc_semantic_type_check_type type_check,
+        struct mcc_symbol_table_error_collector *ec
 );
 
 /**

@@ -1,7 +1,3 @@
-//
-// Created by Clemens Paumgarten on 25.04.19.
-//
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
@@ -75,6 +71,13 @@ int mcc_symbol_table_validate_call_expression(
             enum mcc_ast_data_type arg_typ = mcc_symbol_table_get_expression_return_type(argument->expressions[i],
                                                                                          symbol_table);
 
+            mcc_symbol_table_add_type_check(
+                    ec,
+                    func_arg_type,
+                    arg_typ,
+                    MCC_SEMANTIC_TYPE_CHECK_ARG_TYPE,
+                    &(expression->node.sloc)
+            );
             // wrong type passed as an argument
             if(func_arg_type != arg_typ) {
                 mcc_symbol_table_add_error(
@@ -104,8 +107,18 @@ int mcc_symbol_table_validate_unary_op(
     if(mcc_symbol_table_validate_expression(u_exp, symbol_table, ec) == 0) {
         enum mcc_ast_data_type data_type;
         if(u_type == MCC_AST_UNARY_OP_NOT) {
+
+
             // check if expression return type is boolean
             data_type = mcc_symbol_table_get_expression_return_type(u_exp, symbol_table);
+
+            mcc_symbol_table_add_type_check(
+                    ec,
+                    MCC_AST_DATA_TYPE_BOOL,
+                    data_type,
+                    MCC_SEMANTIC_TYPE_CHECK_UNARY,
+                    &(expression->node.sloc)
+            );
 
             if(data_type != MCC_AST_DATA_TYPE_BOOL) {
                 mcc_symbol_table_add_error(
@@ -118,6 +131,20 @@ int mcc_symbol_table_validate_unary_op(
         } else {
             // check if expression return type is number type
             data_type = mcc_symbol_table_get_expression_return_type(u_exp, symbol_table);
+
+            mcc_symbol_table_add_type_check(
+                    ec,
+                    MCC_AST_DATA_TYPE_INT,
+                    data_type,
+                    MCC_SEMANTIC_TYPE_CHECK_UNARY,
+                    &(expression->node.sloc)
+            );
+            mcc_symbol_table_add_type_check(
+                    ec,
+                    MCC_AST_DATA_TYPE_FLOAT,
+                    data_type,
+                    MCC_SEMANTIC_TYPE_CHECK_UNARY,
+                    &(expression->node.sloc));
 
             if(data_type != MCC_AST_DATA_TYPE_INT && data_type != MCC_AST_DATA_TYPE_FLOAT) {
                 mcc_symbol_table_add_error(
@@ -142,7 +169,6 @@ enum mcc_ast_data_type mcc_symbol_table_get_expression_return_type_binary_op(
 ) {
 
     enum mcc_ast_data_type lhs_type = mcc_symbol_table_get_expression_return_type(expression->lhs, symbol_table);
-    // enum mcc_ast_data_type rhs_type = mcc_symbol_table_get_expression_return_type(expression->rhs, symbol_table);
 
     // since there is no implicit type conversion AND we expect the binary op to be valid (see comments in mcc_symbol_table_get_expression_return_type)
     // we can just check lhs expression
@@ -176,6 +202,7 @@ enum mcc_ast_data_type mcc_symbol_table_get_expression_return_type(
         struct mcc_symbol_table *symbol_table
 ) {
     assert(expression);
+
     switch(expression->type) {
         case MCC_AST_EXPRESSION_TYPE_LITERAL:
             return expression->literal->type;
@@ -198,9 +225,22 @@ enum mcc_ast_data_type mcc_symbol_table_get_expression_return_type(
 int mcc_symbol_table_validate_expression_return_type(
         struct mcc_ast_expression *expression,
         struct mcc_symbol_table *symbol_table,
-        enum mcc_ast_data_type type
+        enum mcc_ast_data_type expected,
+        enum mcc_semantic_type_check_type type_check,
+        struct mcc_symbol_table_error_collector *ec
 ) {
-    return mcc_symbol_table_get_expression_return_type(expression, symbol_table) == type ? 0 : 1;
+
+    enum mcc_ast_data_type return_type = mcc_symbol_table_get_expression_return_type(expression, symbol_table);
+
+    mcc_symbol_table_add_type_check(
+            ec,
+            expected,
+            return_type,
+            type_check,
+            &(expression->node.sloc)
+    );
+
+    return return_type == expected ? 0 : 1;
 }
 
 int mcc_symbol_table_validate_condition_to_type_bool(
@@ -211,7 +251,15 @@ int mcc_symbol_table_validate_condition_to_type_bool(
     assert(condition);
     assert(symbol_table);
 
-    if(mcc_symbol_table_get_expression_return_type(condition, symbol_table) != MCC_AST_DATA_TYPE_BOOL) {
+    int valid_return = mcc_symbol_table_validate_expression_return_type(
+            condition,
+            symbol_table,
+            MCC_AST_DATA_TYPE_BOOL,
+            MCC_SEMANTIC_TYPE_CHECK_CONDITION_BOOL,
+            ec
+    );
+
+    if(valid_return) {
         mcc_symbol_table_add_error(
                 ec,
                 mcc_symbol_table_new_error(&(condition->node.sloc), MCC_SEMANTIC_ERROR_CONDITION_BOOL_EXPECTED));
@@ -229,11 +277,15 @@ int mcc_symbol_table_validate_binary_operator_handside_number_type_check(
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec
 ) {
-    if(((mcc_symbol_table_get_expression_return_type(expression->lhs, symbol_table) == MCC_AST_DATA_TYPE_INT) ||
-        (mcc_symbol_table_get_expression_return_type(expression->lhs, symbol_table) == MCC_AST_DATA_TYPE_FLOAT))
+
+    enum mcc_ast_data_type lhs_data_type = mcc_symbol_table_get_expression_return_type(expression->lhs, symbol_table);
+    enum mcc_ast_data_type rhs_data_type = mcc_symbol_table_get_expression_return_type(expression-> rhs, symbol_table);
+
+    if((lhs_data_type == MCC_AST_DATA_TYPE_INT ||
+        lhs_data_type == MCC_AST_DATA_TYPE_FLOAT)
        &&
-       ((mcc_symbol_table_get_expression_return_type(expression->rhs, symbol_table) == MCC_AST_DATA_TYPE_INT) ||
-        (mcc_symbol_table_get_expression_return_type(expression->rhs, symbol_table) == MCC_AST_DATA_TYPE_FLOAT))) {
+       (rhs_data_type == MCC_AST_DATA_TYPE_INT ||
+        rhs_data_type == MCC_AST_DATA_TYPE_FLOAT)) {
         // both sides are number types
         return 0;
     } else {
@@ -251,8 +303,12 @@ int mcc_symbol_table_validate_binary_operator_handside_bool_type_check(
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec
 ) {
-    if((mcc_symbol_table_get_expression_return_type(expression->lhs, symbol_table) == MCC_AST_DATA_TYPE_BOOL) &&
-       (mcc_symbol_table_get_expression_return_type(expression->rhs, symbol_table) == MCC_AST_DATA_TYPE_BOOL)) {
+
+    enum mcc_ast_data_type lhs_data_type = mcc_symbol_table_get_expression_return_type(expression->lhs, symbol_table);
+    enum mcc_ast_data_type rhs_data_type = mcc_symbol_table_get_expression_return_type(expression-> rhs, symbol_table);
+
+    if(lhs_data_type &&
+       rhs_data_type) {
         // both sides are bool types
         return 0;
     } else {
@@ -270,15 +326,25 @@ int mcc_symbol_table_validate_binary_operator(
         struct mcc_symbol_table_error_collector *ec
 ) {
 
-    // check if both handsides are semnatically correct expressions
+    // check if both handsides are semantically correct expressions
     if(mcc_symbol_table_validate_expression(expression->lhs, symbol_table, ec) == 1 ||
        mcc_symbol_table_validate_expression(expression->rhs, symbol_table, ec) == 1) {
         return 1;
     }
 
+    enum mcc_ast_data_type lhs_data_type = mcc_symbol_table_get_expression_return_type(expression->lhs, symbol_table);
+    enum mcc_ast_data_type rhs_data_type = mcc_symbol_table_get_expression_return_type(expression-> rhs, symbol_table);
+
+    mcc_symbol_table_add_type_check(
+            ec,
+            lhs_data_type,
+            rhs_data_type,
+            MCC_SEMANIC_TYPE_CHECK_BINARY_HANDSIDE_BOTH,
+            &(expression->node.sloc)
+    );
+
     // check if both handsides have the same return type
-    if(mcc_symbol_table_get_expression_return_type(expression->lhs, symbol_table) !=
-       mcc_symbol_table_get_expression_return_type(expression->rhs, symbol_table)) {
+    if(lhs_data_type != rhs_data_type) {
         mcc_symbol_table_add_error(
                 ec,
                 mcc_symbol_table_new_error(&(expression->node.sloc), MCC_SEMANTIC_ERROR_BINARY_OP_HANDSIDE_SAME_TYPE));
@@ -380,6 +446,7 @@ int mcc_symbol_table_validate_assignment_semantic(
 
         return 1;
     }
+
     if(s->symbol_type == MCC_SYMBOL_TYPE_ARRAY) {
         if(assignment->normal_ass.rhs->type == MCC_AST_EXPRESSION_TYPE_BINARY_OP) {
             mcc_symbol_table_add_error(
@@ -392,10 +459,15 @@ int mcc_symbol_table_validate_assignment_semantic(
     }
 
     if(mcc_symbol_table_validate_expression(assignment->normal_ass.rhs, symbol_table, ec) == 0) {
-        enum mcc_ast_data_type expected_type = s->data_type;
+        enum mcc_ast_data_type expected_type = s -> data_type;
+
         int ret_type = mcc_symbol_table_validate_expression_return_type(
                 assignment->normal_ass.rhs,
-                symbol_table, expected_type);
+                symbol_table,
+                expected_type,
+                MCC_SEMANIC_TYPE_CHECK_ASSIGNMENT,
+                ec
+        );
 
         if(ret_type == 1) {
             mcc_symbol_table_add_error(
@@ -411,38 +483,45 @@ int mcc_symbol_table_validate_assignment_semantic(
     }
 }
 
-int mcc_symbol_table_validate_assignment_array_semantic(
-        struct mcc_ast_assignment *assignment,
-        struct mcc_symbol_table *symbol_table,
-        struct mcc_symbol_table_error_collector *ec
-) {
-
-    struct mcc_symbol *s = mcc_symbol_table_get_symbol(symbol_table, assignment->identifier->i_value);
-    if(mcc_symbol_table_validate_expression(assignment->array_ass.rhs, symbol_table, ec) == 0) {
-        enum mcc_ast_data_type expected_type = s->data_type;
-        int ret_type = mcc_symbol_table_validate_expression_return_type(
-                assignment->array_ass.rhs,
-                symbol_table, expected_type);
-        if(ret_type == 1) {
-            mcc_symbol_table_add_error(
-                    ec,
-                    mcc_symbol_table_new_error(&(assignment->node.sloc), MCC_SEMANTIC_ERROR_TYPE_ASSIGNMENT)
-            );
-        }
-
-    }
-
-
-    if(assignment->array_ass.rhs->type == MCC_AST_EXPRESSION_TYPE_BINARY_OP) {
-        mcc_symbol_table_add_error(
-                ec,
-                mcc_symbol_table_new_error(&(assignment->node.sloc), MCC_SEMANTIC_ERROR_ARRAY_OPERATIONS)
-        );
-        return 1;
-    }
-
-    return 0;
-}
+// NOT USED
+//int mcc_symbol_table_validate_assignment_array_semantic(
+//        struct mcc_ast_assignment *assignment,
+//        struct mcc_symbol_table *symbol_table,
+//        struct mcc_symbol_table_error_collector *ec
+//) {
+//
+//    struct mcc_symbol *s = mcc_symbol_table_get_symbol(symbol_table, assignment->identifier->i_value);
+//    if(mcc_symbol_table_validate_expression(assignment->array_ass.rhs, symbol_table, ec) == 0) {
+//        enum mcc_ast_data_type expected_type = s->data_type;
+//
+//        int ret_type = mcc_symbol_table_validate_expression_return_type(
+//                assignment->array_ass.rhs,
+//                symbol_table,
+//                expected_type,
+//                MCC_SEMANIC_TYPE_CHECK_ASSIGNMENT,
+//                ec
+//        );
+//
+//        if(ret_type == 1) {
+//            mcc_symbol_table_add_error(
+//                    ec,
+//                    mcc_symbol_table_new_error(&(assignment->node.sloc), MCC_SEMANTIC_ERROR_TYPE_ASSIGNMENT)
+//            );
+//        }
+//
+//    }
+//
+//
+//    if(assignment->array_ass.rhs->type == MCC_AST_EXPRESSION_TYPE_BINARY_OP) {
+//        mcc_symbol_table_add_error(
+//                ec,
+//                mcc_symbol_table_new_error(&(assignment->node.sloc), MCC_SEMANTIC_ERROR_ARRAY_OPERATIONS)
+//        );
+//        return 1;
+//    }
+//
+//    return 0;
+//}
 
 // --------------------------------------- Statement
 
@@ -452,13 +531,16 @@ static int validate_return_expression(
         struct mcc_symbol_table *symbol_table,
         struct mcc_symbol_table_error_collector *ec
 ) {
-    assert(expression);
-    printf("Return type %d \n", return_type);
-    printf("expression type %d \n", expression->type);
 
-    // expression is already validated
-    if(mcc_symbol_table_get_expression_return_type(expression, symbol_table) != return_type) {
-        printf("Here ? \n");
+    int valid_return = mcc_symbol_table_validate_expression_return_type(
+            expression,
+            symbol_table,
+            return_type,
+            MCC_SEMANTIC_TYPE_CHECK_RETURN,
+            ec
+    );
+
+    if(valid_return == 1) {
         mcc_symbol_table_add_error(
                 ec,
                 mcc_symbol_table_new_error(&(expression->node.sloc),
@@ -479,7 +561,7 @@ int mcc_symbol_table_validate_statement_return(
     struct mcc_ast_statement_list *st_l = NULL;
     struct mcc_ast_statement_list *next = NULL;
     assert(statement);
-    // according to parser function can only have a statement list as a body - this should be safe
+    // according to parser a function can only have a statement list as a body
     if(statement != NULL && statement->type == MCC_AST_STATEMENT_TYPE_COMPOUND) {
         st_l = statement->statement_list;
     }
@@ -490,7 +572,7 @@ int mcc_symbol_table_validate_statement_return(
         if(next == NULL) {
             if(st_l->statement->type == MCC_AST_STATEMENT_TYPE_RETURN) {
                 return validate_return_expression(
-                        st_l->statement->return_expression,
+                        st_l->statement->expression,
                         return_type,
                         symbol_table,
                         ec
@@ -530,7 +612,6 @@ int mcc_symbol_table_validate_statement_return(
                 return 1;
             }
         } else {
-            printf("test 2\n");
             st_l = st_l->next;
         }
     }
@@ -565,6 +646,5 @@ int mcc_symbol_table_validate_main(
     } else {
         return 0;
     }
-
 }
 

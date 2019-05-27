@@ -1,11 +1,8 @@
-//
-// Created by Clemens Paumgarten on 25.04.19.
-//
-
 #ifndef MCC_SYMBOL_TABLE_SEMANTIC_ERROR_H
 #define MCC_SYMBOL_TABLE_SEMANTIC_ERROR_H
 
 #include "mcc/ast.h"
+#include "mcc/dynamic_array.h"
 
 enum mcc_semantic_error_type {
     MCC_SEMANTIC_ERROR_VARIABLE_ALREADY_DECLARED,
@@ -30,16 +27,36 @@ enum mcc_semantic_error_type {
     MCC_SEMANTIC_ERROR_INVALID_RETURN_TYPE_IN_NON_VOID_FUNCTION
 };
 
+enum mcc_semantic_type_check_type {
+    MCC_SEMANIC_TYPE_CHECK_ASSIGNMENT,
+    MCC_SEMANIC_TYPE_CHECK_BINARY_HANDSIDE_BOTH,
+    MCC_SEMANTIC_TYPE_CHECK_CONDITION_BOOL,
+    MCC_SEMANTIC_TYPE_CHECK_UNARY,
+    MCC_SEMANTIC_TYPE_CHECK_ARG_TYPE,
+    MCC_SEMANTIC_TYPE_CHECK_RETURN
+};
+
+struct type_check {
+    struct mcc_ast_source_location *sloc;
+    enum mcc_semantic_type_check_type type;
+    enum mcc_ast_data_type target_type;
+    enum mcc_ast_data_type receiving_type;
+};
+
 struct mcc_semantic_error {
     struct mcc_ast_source_location *sloc;
     enum mcc_semantic_error_type error_type;
 };
 
 struct mcc_symbol_table_error_collector {
+    Dynamic_Array *type_tracer;
+
     int error_size;
     int error_max;
     struct mcc_semantic_error *errors[];
 };
+
+
 
 struct mcc_symbol_table_error_collector *mcc_symbol_table_new_error_collector();
 
@@ -48,5 +65,14 @@ struct mcc_semantic_error *mcc_symbol_table_new_error(struct mcc_ast_source_loca
 void mcc_symbol_table_delete_error_collector(struct mcc_symbol_table_error_collector *ec);
 
 int mcc_symbol_table_add_error(struct mcc_symbol_table_error_collector *ec, struct mcc_semantic_error *er);
+
+void mcc_symbol_table_add_type_check(
+        struct mcc_symbol_table_error_collector *ec,
+        enum mcc_ast_data_type target_type,
+        enum mcc_ast_data_type receiving_type,
+        enum mcc_semantic_type_check_type type,
+        struct mcc_ast_source_location *sloc);
+
+void mcc_symbol_table_delete_type_check(struct mcc_symbol_table_error_collector *ec);
 
 #endif //MCC_SYMBOL_TABLE_SEMANTIC_ERROR_H

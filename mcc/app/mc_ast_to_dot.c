@@ -98,7 +98,5 @@ int main(int argc, char *argv[]) {
     // cleanup
     mcc_ast_delete_program(prog);
 
-    // TODO free result
-
     return EXIT_SUCCESS;
 }

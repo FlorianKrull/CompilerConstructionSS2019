@@ -8,4 +8,6 @@ void mcc_symbol_table_print_error(struct mcc_symbol_table_error_collector *ec, F
 
 void mcc_symbol_table_print(struct mcc_symbol_table *sym, FILE *out);
 
+void mcc_symbol_table_print_type_check_trace(struct mcc_symbol_table_error_collector *ec, FILE *out);
+
 #endif //MCC_SYMBOL_TABLE_PRINT_H
