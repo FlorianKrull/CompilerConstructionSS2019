@@ -79,7 +79,6 @@ void mcc_symbol_table_add_type_check(
     tc -> type = type;
 
     mcc_add_to_array(ec -> type_tracer, tc);
-
 }
 
 void mcc_symbol_table_delete_type_check(struct mcc_symbol_table_error_collector *ec) {

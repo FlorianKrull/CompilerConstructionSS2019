@@ -109,12 +109,12 @@ int main(int argc, char *argv[]) {
    
     if (symbol_table != NULL) {
         mcc_symbol_table_print(symbol_table,out);
+        mcc_symbol_table_delete_table(symbol_table);
     } else {
         mcc_symbol_table_print_error(ec, out);
     }
 
     // cleanup
-    mcc_symbol_table_delete_table(symbol_table);
     mcc_ast_delete(prog);
 
     return EXIT_SUCCESS;

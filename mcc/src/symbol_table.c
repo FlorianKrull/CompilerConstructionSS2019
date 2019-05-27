@@ -109,13 +109,11 @@ void mcc_symbol_table_delete_table(struct mcc_symbol_table *table) {
     // Delete symbols
     assert(table);
 
-    for (int i = 0; i < table -> symbol_container -> size; i++) {
-        if (table -> symbol_container -> symbols[i] != NULL) {
-            mcc_symbol_delete_symbol(table -> symbol_container -> symbols[i]);
-        }
-
-        printf("Symbo name %s \n",table -> symbol_container -> symbols[i] -> variable_name);
-    }
+//    for (int i = 0; i < table -> symbol_container -> size; i++) {
+//        if (table -> symbol_container -> symbols[i] != NULL) {
+//            mcc_symbol_delete_symbol(table -> symbol_container -> symbols[i]);
+//        }
+//    }
 
 
     // Delete all inner tables

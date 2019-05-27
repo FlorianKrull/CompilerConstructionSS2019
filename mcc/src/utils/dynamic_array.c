@@ -27,6 +27,7 @@ int mcc_add_to_array(Dynamic_Array *dyn_arr, void *elem ) {
 
         return 0;
     } else {
+
         Dynamic_Array *rea_arr = realloc(dyn_arr, sizeof(*dyn_arr) + sizeof(void*) * init_max_size);
 
         if (rea_arr == NULL) {
